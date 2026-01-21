@@ -1,0 +1,22 @@
+{
+  // Jadikan Biome sebagai formatter utama
+  "editor.defaultFormatter": "biomejs.biome",
+
+  // Auto format
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+
+  // Pastikan editor pakai 2 spasi (fallback)
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  // Biome actions
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit"
+  },
+
+  // Jangan biarkan formatter lain ikut campur
+  "eslint.enable": false,
+  "prettier.enable": false
+}
