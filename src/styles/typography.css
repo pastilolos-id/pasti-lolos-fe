@@ -1,0 +1,4 @@
+@theme inline {
+  --font-sans: var(--font-plus-jakarta-sans);
+  --font-mono: var(--font-roboto-mono);
+}
