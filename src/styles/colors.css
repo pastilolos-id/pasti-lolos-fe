@@ -43,6 +43,21 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  /* --- DESIGN SYSTEM --- */
+  --color-primary-4: var(--primary-4);
+  --color-primary-5: var(--primary-5);
+
+  --color-neutral-1: var(--neutral-1);
+  --color-neutral-2: var(--neutral-2);
+  --color-neutral-3: var(--neutral-3);
+  --color-neutral-4: var(--neutral-4);
+  --color-neutral-5: var(--neutral-5);
+  --color-neutral-6: var(--neutral-6);
+
+  --color-yellow: var(--yellow);
+  --color-green: var(--green);
+  --color-red: var(--red);
 }
 
 :root {
@@ -90,6 +105,21 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* --- DESIGN SYSTEM --- */
+  --primary-4: oklch(0.7554 0.1256 260.02);
+  --primary-5: oklch(0.6487 0.188 260.08);
+
+  --neutral-1: oklch(1 0 0);
+  --neutral-2: oklch(0.9731 0 0);
+  --neutral-3: oklch(0.9491 0 0);
+  --neutral-4: oklch(0.8015 0 0);
+  --neutral-5: oklch(0.5693 0 0);
+  --neutral-6: oklch(0.3715 0 0);
+
+  --yellow: oklch(0.8442 0.172159 84.9338);
+  --green: oklch(0.67 0.1542 144.4);
+  --red: oklch(0.6816 0.2071 28.2);
 }
 
 .dark {
