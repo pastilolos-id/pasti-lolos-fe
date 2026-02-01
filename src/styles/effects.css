@@ -1,0 +1,7 @@
+:root {
+  --shadow-secondary-button: inset -5px -5px 10px 0px rgba(64, 64, 64, 0.1);
+}
+
+@theme inline {
+  --inset-shadow-secondary-button: var(--shadow-secondary-button);
+}
