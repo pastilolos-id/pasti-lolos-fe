@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${plusJakartaSans.variable} ${robotoMono.variable} antialiased`}
+        className={`${plusJakartaSans.variable} ${robotoMono.variable} antialiased bg-gradient-root-layout`}
       >
         {children}
       </body>
