@@ -20,12 +20,14 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[javascriptreact]": {
+    "editor.tabSize": 2,
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescriptreact]": {
+    "editor.tabSize": 2,
     "editor.defaultFormatter": "biomejs.biome"
   },
 
