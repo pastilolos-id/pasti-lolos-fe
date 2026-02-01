@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${plusJakartaSans.variable} ${robotoMono.variable} antialiased bg-gradient-root-layout`}
       >
-        {children}
+        <div className="mx-auto">{children}</div>
       </body>
     </html>
   );
