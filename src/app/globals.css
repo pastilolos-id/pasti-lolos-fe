@@ -9,7 +9,11 @@
 @custom-variant dark (&:is(.dark *));
 
 .bg-gradient-root-layout {
-  background-image: linear-gradient(292.97deg, var(--primary-5) 46.24%, var(--primary-4) 101.65%);
+  background-image: linear-gradient(
+    292.97deg,
+    var(--primary-5) 46.24%,
+    var(--primary-4) 101.65%
+  );
 }
 
 @layer base {
