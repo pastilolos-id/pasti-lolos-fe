@@ -1,10 +1,12 @@
 import { Navbar } from "@/components";
+import Hero from "./Hero";
 import { leftMenuItems, rightMenuItems } from "./menuItems";
 
 export default function Dashboard() {
   return (
-    <div className="min-w-screen h-500 flex items-center justify-center">
+    <div className="h-500 px-3">
       <Navbar leftMenu={leftMenuItems} rightMenu={rightMenuItems} />
+      <Hero />
     </div>
   );
 }
