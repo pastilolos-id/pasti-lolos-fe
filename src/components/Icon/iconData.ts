@@ -1,3 +1,5 @@
+import abdiNegaraIcon from "@/assets/icons/abdi-negara.svg";
+import bumnIcon from "@/assets/icons/bumn.svg";
 import hamburgerMenuToggleIcon from "@/assets/icons/hamburger-menu-toggle.svg";
 
 type IconsType = {
@@ -8,6 +10,14 @@ const iconImagePath = {
   "hamburger-menu-toggle": {
     src: hamburgerMenuToggleIcon,
     alt: "Hamburger Menu Toggle Icon",
+  },
+  bumn: {
+    src: bumnIcon,
+    alt: "BUMN Icon",
+  },
+  "abdi-negara": {
+    src: abdiNegaraIcon,
+    alt: "Abdi Negara Icon",
   },
 };
 
