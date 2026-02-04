@@ -21,7 +21,7 @@ export default function NavBar({
     <Card
       data-state={dataState ? "open" : "closed"}
       className="
-        fixed top-3 right-3 left-3 md:top-6 md:right-6 md:left-6 lg:top-10 lg:left-17.5 lg:right-17.5
+        fixed z-50 top-3 right-3 left-3 md:top-6 md:right-6 md:left-6 lg:top-10 lg:left-17.5 lg:right-17.5
         mx-auto
         w-[calc(100%-1.5rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-8.75rem)]
         data-[state=open]:rounded-[2rem] md:data-[state=open]:rounded-full rounded-full
