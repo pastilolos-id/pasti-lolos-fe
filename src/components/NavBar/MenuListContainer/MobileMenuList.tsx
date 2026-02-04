@@ -7,7 +7,7 @@ export default function MobileMenuList({
   rightMenu,
 }: typeof CollapsibleContent & menuListContainerType) {
   return (
-    <CollapsibleContent className="flex flex-col gap-5 mt-5">
+    <CollapsibleContent className="flex flex-col gap-5 mt-5 md:hidden">
       <div className="flex flex-col gap-4">
         {leftMenu.map((item) => (
           <Link key={item.label} href={item.href}>

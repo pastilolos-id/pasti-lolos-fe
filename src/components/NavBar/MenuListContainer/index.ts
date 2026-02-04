@@ -8,5 +8,6 @@ type menuListContainerType = {
   rightMenu: menuItemType[];
 };
 
+export { default as DesktopMenuList } from "./DesktopMenuList";
 export { default as MobileMenuList } from "./MobileMenuList";
 export type { menuListContainerType, menuItemType };
