@@ -1,5 +1,5 @@
 @theme inline {
-  --container-8xl: 90rem;
+  --container-8xl: 96rem;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
