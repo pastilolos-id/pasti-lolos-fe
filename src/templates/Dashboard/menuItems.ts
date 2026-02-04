@@ -1,4 +1,4 @@
-import type { menuItemType } from "@/components/NavBar";
+import type { menuItemType } from "@/components/NavBar/MenuListContainer";
 
 const leftMenuItems: menuItemType[] = [
   { label: "Beranda", href: "#home" },
