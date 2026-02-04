@@ -1,4 +1,6 @@
 {
+  "files.eol": "\n",
+
   // Jadikan Biome sebagai formatter utama
   "editor.defaultFormatter": "biomejs.biome",
 
