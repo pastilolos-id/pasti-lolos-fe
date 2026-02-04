@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button, CollapsibleContent } from "@/components/ui";
-import type { menuListContainerType } from "./index";
+import type { menuListContainerType } from "../index";
 
 export default function MobileMenuList({
   leftMenu,
