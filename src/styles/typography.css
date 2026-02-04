@@ -56,24 +56,20 @@
   --text-b1: var(--text-xl);
   --text-b1--line-height: var(--line-height-medium) /* 140% */;
   --text-b1--letter-spacing: var(--letter-spacing-medium) /* 0% */;
-  --text-b1--font-weight: var(--font-weight-semibold);
 
   --text-b2: var(--text-base);
   --text-b2--line-height: var(--line-height-medium) /* 140% */;
   --text-b2--letter-spacing: var(--letter-spacing-medium) /* 0% */;
-  --text-b2--font-weight: var(--font-weight-semibold);
 
   --text-b3: var(--text-sm);
   --text-b3--line-height: var(--line-height-medium) /* 140% */;
   --text-b3--letter-spacing: var(--letter-spacing-medium) /* 0% */;
-  --text-b3--font-weight: var(--font-weight-semibold);
 
   /*  --- TEXT CAPTION --- */
 
   --text-c1: var(--text-xs) /* 0.75rem = 12px */;
   --text-c1--line-height: var(--line-height-small) /* 140% */;
   --text-c1--letter-spacing: var(--letter-spacing-small) /* 0% */;
-  --text-c1--font-weight: var(--font-weight-semibold);
 
   /*  --- TEXT XS FROM SHACDN --- */
 
