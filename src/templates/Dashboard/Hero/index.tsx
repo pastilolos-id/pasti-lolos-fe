@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 export default function Hero() {
   return (
     <>
-      <div className="mt-38.25 w-full flex flex-col gap-y-6 md:gap-0 text-white ">
+      <div className="mt-38.25 md:mt-46 lg:mt-53 w-full flex flex-col gap-y-6 md:gap-0 text-white z-10 relative">
         <h1 className="text-4xl md:text-h1 font-bold leading-tight md:mb-8">
           <p>Pendamping</p>
           <p>Belajarmu Menuju</p>
@@ -45,6 +45,11 @@ export default function Hero() {
           className="absolute bottom-1/5 md:bottom-1/3 lg:bottom-2/5 left-1/4 lg:left-auto lg:right-162"
           name="abdi-negara"
           size={50}
+        />
+        <Icon
+          className="absolute -top-30 -right-10 -z-10 hidden lg:block"
+          name="dashboard-bg-ellipse"
+          size={976}
         />
       </div>
     </>

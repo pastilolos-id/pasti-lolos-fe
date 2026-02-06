@@ -4,7 +4,13 @@ import { iconImagePath, icons } from "./iconData";
 type IconProps = {
   className?: string;
   pathClassName?: string;
-  name: "hamburger-menu-toggle" | "slash-circle" | "bumn" | "abdi-negara" | "";
+  name:
+    | "hamburger-menu-toggle"
+    | "slash-circle"
+    | "bumn"
+    | "abdi-negara"
+    | "dashboard-bg-ellipse"
+    | "";
   size?: number | string;
   fill?: string | null;
   onClick?: (event: React.MouseEvent<SVGSVGElement | HTMLImageElement>) => void;
@@ -22,6 +28,7 @@ const Icon = ({
     case "hamburger-menu-toggle":
     case "bumn":
     case "abdi-negara":
+    case "dashboard-bg-ellipse":
       return (
         <IconImage
           name={name as keyof typeof iconImagePath}

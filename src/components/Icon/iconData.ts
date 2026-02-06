@@ -1,5 +1,6 @@
 import abdiNegaraIcon from "@/assets/icons/abdi-negara.svg";
 import bumnIcon from "@/assets/icons/bumn.svg";
+import dashboardBgEllipse from "@/assets/icons/dashboard-bg-ellipse.svg";
 import hamburgerMenuToggleIcon from "@/assets/icons/hamburger-menu-toggle.svg";
 
 type IconsType = {
@@ -18,6 +19,10 @@ const iconImagePath = {
   "abdi-negara": {
     src: abdiNegaraIcon,
     alt: "Abdi Negara Icon",
+  },
+  "dashboard-bg-ellipse": {
+    src: dashboardBgEllipse,
+    alt: "Dashboard Background Ellipse",
   },
 };
 
