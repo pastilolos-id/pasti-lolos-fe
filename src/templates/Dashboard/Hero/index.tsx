@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 export default function Hero() {
   return (
     <>
-      <div className="mt-38.25 md:mt-46 lg:mt-53 w-full flex flex-col gap-y-6 md:gap-0 text-white z-10 relative">
+      <div className="mt-38.25 px-3 md:px-6 lg:px-17.5 md:mt-46 lg:mt-53 w-full flex flex-col gap-y-6 md:gap-0 text-white z-10 relative">
         <h1 className="text-4xl md:text-h1 font-bold leading-tight md:mb-8">
           <p>Pendamping</p>
           <p>Belajarmu Menuju</p>
@@ -25,7 +25,7 @@ export default function Hero() {
         <Button className="py-4 md:w-fit px-8">Coba Sekarang</Button>
       </div>
 
-      <div className="relative z-0 md:-mt-54 lg:-mt-140 -mr-3 md:-mr-6 lg:-mr-17.5">
+      <div className="relative z-0 md:-mt-54 lg:-mt-140">
         <Image
           className="ml-auto md:hidden lg:block"
           src={HeroImageMobile}
