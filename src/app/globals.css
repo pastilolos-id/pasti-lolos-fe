@@ -16,6 +16,14 @@
   );
 }
 
+.bg-gradient-problem-solution-card {
+  background: linear-gradient(
+    117.08deg,
+    var(--primary-5) 33.09%,
+    var(--primary-4) 77.66%
+  );
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

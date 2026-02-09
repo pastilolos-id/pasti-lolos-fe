@@ -1,15 +1,17 @@
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { problemSolutionData } from "./problemSolutionData";
 
 export default function ProblemSolutionSection() {
   return (
-    <div className="relative z-10 -mt-7 flex flex-col gap-13 p-3 md:p-6 lg:p-4 pb-6 rounded-card-large bg-white">
+    <div className="relative z-10 -mt-10 flex flex-col gap-13 p-3 md:p-6 lg:p-4 pb-6 rounded-card-large bg-white">
       {problemSolutionData.map((section) => (
-        <Card
-          key={section.title}
-          className="p-0 bg-transparent border-0 shadow-none"
-        >
-          <div className="aspect-[0.89/1] rounded-card-medium bg-teal-500"></div>
+        <Card key={section.title} className="p-0 border-0 shadow-none">
+          <Image
+            src={section.image}
+            alt={section.title}
+            className="w-full h-full object-cover  rounded-card-medium bg-gradient-problem-solution-card"
+          />
           <div>
             <CardHeader>
               <CardTitle>{section.title}</CardTitle>
