@@ -1,7 +1,8 @@
+import type { SVGProps } from "react";
 import IconImage from "./IconImage";
 import { iconImagePath, icons } from "./iconData";
 
-type IconProps = {
+type IconProps = SVGProps<SVGSVGElement> & {
   className?: string;
   pathClassName?: string;
   name:
@@ -12,6 +13,10 @@ type IconProps = {
     | "landing-page-bg-ellipse"
     | "cross-circle-fill"
     | "checklist-circle-fill"
+    | "sun"
+    | "analysis-fill"
+    | "phone-fill"
+    | "exam-multiple-choice"
     | "";
   size?: number | string;
   fill?: string | null;
@@ -25,6 +30,7 @@ const Icon = ({
   size,
   fill,
   onClick,
+  ...props
 }: IconProps) => {
   switch (name) {
     case "hamburger-menu-toggle":
@@ -64,6 +70,7 @@ const Icon = ({
           width={size || 24}
           height={size || 24}
           viewBox="0 0 24 24"
+          {...props}
         >
           <title>{name || "Icon"}</title>
           <path
@@ -95,7 +102,8 @@ const Icon = ({
           className={`${className}`}
           width={size || 24}
           height={size || 24}
-          viewBox="0 0 24 24"
+          viewBox="0 0 41 41"
+          {...props}
         >
           <title>{name || "Icon"}</title>
           <path
