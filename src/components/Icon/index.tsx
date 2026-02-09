@@ -10,6 +10,8 @@ type IconProps = {
     | "bumn"
     | "abdi-negara"
     | "dashboard-bg-ellipse"
+    | "cross-circle-fill"
+    | "checklist-circle-fill"
     | "";
   size?: number | string;
   fill?: string | null;
@@ -29,6 +31,8 @@ const Icon = ({
     case "bumn":
     case "abdi-negara":
     case "dashboard-bg-ellipse":
+    case "cross-circle-fill":
+    case "checklist-circle-fill":
       return (
         <IconImage
           name={name as keyof typeof iconImagePath}
@@ -45,13 +49,17 @@ const Icon = ({
       return (
         <svg
           onClick={onClick}
-          onKeyDown={(e) => {
-            if (onClick && e.key === "Enter") {
-              e.preventDefault();
-              // biome-ignore lint/suspicious/noExplicitAny: false positive
-              onClick(e as any);
-            }
-          }}
+          onKeyDown={
+            !onclick
+              ? undefined
+              : (e) => {
+                  if (onClick && e.key === "Enter") {
+                    e.preventDefault();
+                    // biome-ignore lint/suspicious/noExplicitAny: false positive
+                    onClick(e as any);
+                  }
+                }
+          }
           className={`${className ? className : ""}`}
           width={size || 24}
           height={size || 24}
@@ -73,13 +81,17 @@ const Icon = ({
       return (
         <svg
           onClick={onClick}
-          onKeyDown={(e) => {
-            if (onClick && e.key === "Enter") {
-              e.preventDefault();
-              // biome-ignore lint/suspicious/noExplicitAny: false positive
-              onClick(e as any);
-            }
-          }}
+          onKeyDown={
+            !onClick
+              ? undefined
+              : (e) => {
+                  if (onClick && e.key === "Enter") {
+                    e.preventDefault();
+                    // biome-ignore lint/suspicious/noExplicitAny: false positive
+                    onClick(e as any);
+                  }
+                }
+          }
           className={`${className}`}
           width={size || 24}
           height={size || 24}

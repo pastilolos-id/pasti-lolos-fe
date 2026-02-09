@@ -1,5 +1,7 @@
 import abdiNegaraIcon from "@/assets/icons/abdi-negara.svg";
 import bumnIcon from "@/assets/icons/bumn.svg";
+import checklistCircleFillIcon from "@/assets/icons/checklist-circle-fill.svg";
+import crossCircleFillIcon from "@/assets/icons/cross-circle-fill.svg";
 import dashboardBgEllipse from "@/assets/icons/dashboard-bg-ellipse.svg";
 import hamburgerMenuToggleIcon from "@/assets/icons/hamburger-menu-toggle.svg";
 
@@ -23,6 +25,14 @@ const iconImagePath = {
   "dashboard-bg-ellipse": {
     src: dashboardBgEllipse,
     alt: "Dashboard Background Ellipse",
+  },
+  "cross-circle-fill": {
+    src: crossCircleFillIcon,
+    alt: "Cross Circle Fill Icon",
+  },
+  "checklist-circle-fill": {
+    src: checklistCircleFillIcon,
+    alt: "Checklist Circle Fill Icon",
   },
 };
 
