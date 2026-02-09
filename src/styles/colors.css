@@ -45,6 +45,7 @@
   --color-chart-5: var(--chart-5);
 
   /* --- DESIGN SYSTEM --- */
+  --color-primary-3: var(--primary-3);
   --color-primary-4: var(--primary-4);
   --color-primary-5: var(--primary-5);
 
@@ -58,6 +59,8 @@
   --color-yellow: var(--yellow);
   --color-green: var(--green);
   --color-red: var(--red);
+
+  --color-card-border: var(--card-border);
 }
 
 :root {
@@ -107,6 +110,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* --- DESIGN SYSTEM --- */
+  --primary-3: oklch(0.7438 0.1321 260.14);
   --primary-4: oklch(0.7554 0.1256 260.02);
   --primary-5: oklch(0.6487 0.188 260.08);
 
@@ -120,6 +124,8 @@
   --yellow: oklch(0.8442 0.172159 84.9338);
   --green: oklch(0.67 0.1542 144.4);
   --red: oklch(0.6816 0.2071 28.2);
+
+  --card-border: oklch(0.9158 0 0);
 }
 
 .dark {

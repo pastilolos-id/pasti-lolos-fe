@@ -1,9 +1,11 @@
 :root {
   --shadow-secondary-button: inset -5px -5px 10px 0px rgba(64, 64, 64, 0.1);
-  --shadow-primary-button: inset -7px -8px 10px 0px #FFFFFF2E;
+  --shadow-primary-button: inset -7px -8px 10px 0px #ffffff2e;
+  --shadow-card: 0px -10px 24px 0px #00000026 inset;
 }
 
 @theme inline {
   --inset-shadow-secondary-button: var(--shadow-secondary-button);
   --inset-shadow-primary-button: var(--shadow-primary-button);
+  --inset-shadow-card: var(--shadow-card);
 }
