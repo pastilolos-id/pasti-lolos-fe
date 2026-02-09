@@ -5,7 +5,7 @@ import { problemSolutionData } from "./problemSolutionData";
 
 export default function ProblemSolutionSection() {
   return (
-    <div className="relative z-10 -mt-10 flex flex-col gap-13 p-3 md:p-6 lg:p-4 pb-6 rounded-card-large bg-white">
+    <div className="relative z-10 -mt-10 flex flex-col gap-13 p-3 md:p-6 lg:p-4 pb-6 md:pb-13 lg:pb-4 rounded-card-large bg-white">
       {problemSolutionData.map((section) => (
         <Card
           key={section.title}
