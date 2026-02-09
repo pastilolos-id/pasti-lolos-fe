@@ -50,7 +50,7 @@ const Icon = ({
         <svg
           onClick={onClick}
           onKeyDown={
-            !onclick
+            !onClick
               ? undefined
               : (e) => {
                   if (onClick && e.key === "Enter") {
