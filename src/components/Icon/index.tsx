@@ -9,7 +9,7 @@ type IconProps = {
     | "slash-circle"
     | "bumn"
     | "abdi-negara"
-    | "dashboard-bg-ellipse"
+    | "landing-page-bg-ellipse"
     | "cross-circle-fill"
     | "checklist-circle-fill"
     | "";
@@ -30,7 +30,7 @@ const Icon = ({
     case "hamburger-menu-toggle":
     case "bumn":
     case "abdi-negara":
-    case "dashboard-bg-ellipse":
+    case "landing-page-bg-ellipse":
     case "cross-circle-fill":
     case "checklist-circle-fill":
       return (

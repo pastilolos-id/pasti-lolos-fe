@@ -1,5 +1,5 @@
-import Dashboard from "@/templates/Dashboard";
+import LandingPage from "@/templates/LandingPage";
 
 export default function Home() {
-  return <Dashboard />;
+  return <LandingPage />;
 }

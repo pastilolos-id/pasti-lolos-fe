@@ -1,6 +1,6 @@
 import Image from "next/image";
-import HeroImageMobile from "@/assets/images/dashboard/hero-mobile.png";
-import HeroImageTablet from "@/assets/images/dashboard/hero-tablet.png";
+import HeroImageMobile from "@/assets/images/landing-page/hero-mobile.png";
+import HeroImageTablet from "@/assets/images/landing-page/hero-tablet.png";
 import { Icon } from "@/components";
 import { Button } from "@/components/ui";
 
@@ -29,12 +29,12 @@ export default function Hero() {
         <Image
           className="ml-auto md:hidden lg:block"
           src={HeroImageMobile}
-          alt="dashboard hero"
+          alt="landing page hero"
         />
         <Image
           className="md:block lg:hidden hidden w-full"
           src={HeroImageTablet}
-          alt="dashboard hero"
+          alt="landing page hero"
         />
         <Icon
           className="absolute top-24 md:top-54 lg:top-40 left-[calc(50%-46.18px)] lg:left-auto lg:right-96 z-0"
@@ -48,7 +48,7 @@ export default function Hero() {
         />
         <Icon
           className="absolute -top-30 -right-10 -z-10 hidden lg:block"
-          name="dashboard-bg-ellipse"
+          name="landing-page-bg-ellipse"
           size={976}
         />
       </div>

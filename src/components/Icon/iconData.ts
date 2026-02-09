@@ -2,8 +2,8 @@ import abdiNegaraIcon from "@/assets/icons/abdi-negara.svg";
 import bumnIcon from "@/assets/icons/bumn.svg";
 import checklistCircleFillIcon from "@/assets/icons/checklist-circle-fill.svg";
 import crossCircleFillIcon from "@/assets/icons/cross-circle-fill.svg";
-import dashboardBgEllipse from "@/assets/icons/dashboard-bg-ellipse.svg";
 import hamburgerMenuToggleIcon from "@/assets/icons/hamburger-menu-toggle.svg";
+import landingPageBgEllipse from "@/assets/icons/landing-page-bg-ellipse.svg";
 
 type IconsType = {
   [key: string]: string;
@@ -22,9 +22,9 @@ const iconImagePath = {
     src: abdiNegaraIcon,
     alt: "Abdi Negara Icon",
   },
-  "dashboard-bg-ellipse": {
-    src: dashboardBgEllipse,
-    alt: "Dashboard Background Ellipse",
+  "landing-page-bg-ellipse": {
+    src: landingPageBgEllipse,
+    alt: "Landing Page Background Ellipse",
   },
   "cross-circle-fill": {
     src: crossCircleFillIcon,

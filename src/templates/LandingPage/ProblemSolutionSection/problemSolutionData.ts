@@ -1,8 +1,8 @@
 import type { StaticImageData } from "next/image";
-import problemImageMobile from "@/assets/images/dashboard/problem-section-mobile.png";
-import problemImageDesktop from "@/assets/images/dashboard/promblem-section-desktop.png";
-import solutionImageDesktop from "@/assets/images/dashboard/solution-section-desktop.png";
-import solutionImageMobile from "@/assets/images/dashboard/solution-section-mobile.png";
+import problemImageMobile from "@/assets/images/landing-page/problem-section-mobile.png";
+import problemImageDesktop from "@/assets/images/landing-page/promblem-section-desktop.png";
+import solutionImageDesktop from "@/assets/images/landing-page/solution-section-desktop.png";
+import solutionImageMobile from "@/assets/images/landing-page/solution-section-mobile.png";
 import type { IconProps } from "@/components/Icon";
 
 type problemSolutionSectionType = {
