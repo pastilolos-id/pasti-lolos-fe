@@ -2,6 +2,7 @@ import { Navbar } from "@/components";
 import Features from "./Features";
 import Hero from "./Hero";
 import { leftMenuItems, rightMenuItems } from "./menuItems";
+import Pricing from "./Pricing";
 import ProblemSolutionSection from "./ProblemSolutionSection";
 
 export default function LandingPage() {
@@ -23,6 +24,8 @@ export default function LandingPage() {
           lolos jadi lebih besar. &rdquo;
         </p>
       </section>
+
+      <Pricing />
     </div>
   );
 }

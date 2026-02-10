@@ -1,0 +1,61 @@
+import { Icon } from "@/components";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui";
+
+import { planData } from "./pricingData";
+
+export default function Pricing() {
+  return (
+    <section
+      id="plans"
+      className="rounded-card-large font-bold py-13 px-4 bg-white"
+    >
+      <h2 className="mb-10 -tracking-wide text-2xl text-center">
+        Pilih Paket Sesuai Kebutuhanmu
+      </h2>
+
+      <div className="flex flex-col gap-11">
+        {planData.map((plan) => (
+          <Card key={plan.id} className="rounded-card-medium p-8 gap-0">
+            <CardHeader className="mb-6.5 p-0">
+              <CardTitle className="mb-3 gap-0 font-extrabold text-2xl leading-1.4 tracking-normal">
+                {plan.title}
+              </CardTitle>
+              <CardDescription className="font-extrabold text-h2">
+                {plan.price}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex flex-col gap-4 mb-13 p-0 ">
+              {plan.benefitList.map((benefit) => (
+                <div
+                  key={benefit.order}
+                  className="rounded-full p-4 flex items-center gap-3 border border-[#E3E3E3] inset-shadow-secondary-button"
+                >
+                  <Icon name="" fill="black" />
+                  <p>{benefit.name}</p>
+                </div>
+              ))}
+            </CardContent>
+
+            <CardFooter className="p-0">
+              <Button
+                variant="secondary"
+                className="w-full rounded-full text-2xl border border-[#80B0FF80]"
+              >
+                Beli Sekarang
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
