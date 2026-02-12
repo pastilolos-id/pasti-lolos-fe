@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { formatToCurrency } from "@/utils";
 import { planData } from "./pricingData";
 
 export default function Pricing() {
@@ -38,7 +39,7 @@ export default function Pricing() {
                 {plan.title}
               </CardTitle>
               <CardDescription className="font-extrabold text-h2">
-                {plan.price}
+                {formatToCurrency(plan.price)}
               </CardDescription>
             </CardHeader>
 
