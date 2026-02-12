@@ -16,12 +16,22 @@
   );
 }
 
+.bg-gradient-pricing-card-recommended {
+  background: linear-gradient(293.93deg, #448aff 20.2%, #80b0ff 95.72%);
+}
+
 .bg-gradient-problem-solution-card {
   background: linear-gradient(
     117.08deg,
     var(--primary-5) 33.09%,
     var(--primary-4) 77.66%
   );
+}
+
+.shadow-pricing-card-recommended {
+  box-shadow:
+    6px 18px 14.1px 0px rgba(0, 0, 0, 0.14901960784313725),
+    inset -8px -16px 20.8px 0px #ffffff26;
 }
 
 @layer base {

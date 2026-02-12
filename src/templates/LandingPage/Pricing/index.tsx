@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui";
-
+import { cn } from "@/lib/utils";
 import { planData } from "./pricingData";
 
 export default function Pricing() {
@@ -25,7 +25,13 @@ export default function Pricing() {
         {planData.map((plan) => (
           <Card
             key={plan.id}
-            className={`max-w-136 rounded-card-medium p-8 gap-0 ${plan.isRecommended ? "bg-primary-5 text-white lg:rotate-1 lg:translate-y-1" : "bg-inherit text-neutral-6"}`}
+            className={cn(
+              "max-w-136 rounded-card-medium p-8 gap-0", // Class dasar
+              plan.isRecommended
+                ? "bg-gradient-pricing-card-recommended shadow-pricing-card-recommended text-white lg:rotate-1 lg:translate-y-1"
+                : "bg-inherit text-neutral-6",
+            )}
+            // className={`max-w-136 rounded-card-medium p-8 gap-0 ${plan.isRecommended ? "bg-gradient-pricing-card-recommended shadow-pricing-card-recommended inset-shadow-pricing-card-recommended text-white lg:rotate-1 lg:translate-y-1" : "bg-inherit text-neutral-6"}`}
           >
             <CardHeader className="mb-6.5 p-0">
               <CardTitle className="mb-3 gap-0 font-extrabold text-2xl leading-1.4 tracking-normal">
