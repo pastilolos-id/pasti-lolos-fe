@@ -23,7 +23,10 @@ export default function Pricing() {
 
       <div className="flex flex-col gap-11">
         {planData.map((plan) => (
-          <Card key={plan.id} className="rounded-card-medium p-8 gap-0">
+          <Card
+            key={plan.id}
+            className={`rounded-card-medium p-8 gap-0 ${plan.isRecommended ? "bg-primary-5 text-white" : "bg-inherit text-neutral-6"}`}
+          >
             <CardHeader className="mb-6.5 p-0">
               <CardTitle className="mb-3 gap-0 font-extrabold text-2xl leading-1.4 tracking-normal">
                 {plan.title}
@@ -37,21 +40,36 @@ export default function Pricing() {
               {plan.benefitList.map((benefit) => (
                 <div
                   key={benefit.order}
-                  className="rounded-full p-4 flex items-center gap-3 border border-[#E3E3E3] inset-shadow-secondary-button"
+                  className={`rounded-full p-4 flex items-center gap-3 border border-[#E3E3E3] inset-shadow-secondary-button ${benefit.isInclude ? "bg-white text-neutral-6" : "bg-red text-white"}`}
                 >
-                  <Icon name="" fill="black" />
+                  <Icon
+                    name={
+                      benefit.isInclude
+                        ? "checklist-circle-fill-green"
+                        : "cross-circle-fill"
+                    }
+                  />
                   <p>{benefit.name}</p>
                 </div>
               ))}
             </CardContent>
 
             <CardFooter className="p-0">
-              <Button
-                variant="secondary"
-                className="w-full rounded-full text-2xl border border-[#80B0FF80]"
-              >
-                Beli Sekarang
-              </Button>
+              {plan.isRecommended ? (
+                <Button
+                  variant="primary"
+                  className="w-full rounded-full text-2xl border border-white"
+                >
+                  Beli Sekarang
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  className="w-full rounded-full text-2xl border border-[#80B0FF80]"
+                >
+                  Beli Sekarang
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}

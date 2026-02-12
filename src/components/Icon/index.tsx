@@ -13,6 +13,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "landing-page-bg-ellipse"
     | "cross-circle-fill"
     | "checklist-circle-fill"
+    | "checklist-circle-fill-green"
     | "sun"
     | "analysis-fill"
     | "phone-fill"
@@ -39,6 +40,7 @@ const Icon = ({
     case "landing-page-bg-ellipse":
     case "cross-circle-fill":
     case "checklist-circle-fill":
+    case "checklist-circle-fill-green":
       return (
         <IconImage
           name={name as keyof typeof iconImagePath}

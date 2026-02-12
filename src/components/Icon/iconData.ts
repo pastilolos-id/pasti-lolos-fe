@@ -1,6 +1,7 @@
 import abdiNegaraIcon from "@/assets/icons/abdi-negara.svg";
 import bumnIcon from "@/assets/icons/bumn.svg";
 import checklistCircleFillIcon from "@/assets/icons/checklist-circle-fill.svg";
+import checklistCircleFillGreenIcon from "@/assets/icons/checklist-circle-fill-green.svg";
 import crossCircleFillIcon from "@/assets/icons/cross-circle-fill.svg";
 import hamburgerMenuToggleIcon from "@/assets/icons/hamburger-menu-toggle.svg";
 import landingPageBgEllipse from "@/assets/icons/landing-page-bg-ellipse.svg";
@@ -33,6 +34,10 @@ const iconImagePath = {
   "checklist-circle-fill": {
     src: checklistCircleFillIcon,
     alt: "Checklist Circle Fill Icon",
+  },
+  "checklist-circle-fill-green": {
+    src: checklistCircleFillGreenIcon,
+    alt: "Checklist Circle Fill Green Icon",
   },
 };
 
