@@ -17,15 +17,15 @@ export default function Pricing() {
       id="plans"
       className="rounded-card-large font-bold py-13 px-4 bg-white"
     >
-      <h2 className="mb-10 -tracking-wide text-2xl text-center">
+      <h2 className="mb-10 -tracking-wide md:-tracking-wider text-2xl md:text-h2 max-w-sm text-center mx-auto">
         Pilih Paket Sesuai Kebutuhanmu
       </h2>
 
-      <div className="flex flex-col gap-11">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-11">
         {planData.map((plan) => (
           <Card
             key={plan.id}
-            className={`rounded-card-medium p-8 gap-0 ${plan.isRecommended ? "bg-primary-5 text-white" : "bg-inherit text-neutral-6"}`}
+            className={`max-w-136 rounded-card-medium p-8 gap-0 ${plan.isRecommended ? "bg-primary-5 text-white lg:rotate-1 lg:translate-y-1" : "bg-inherit text-neutral-6"}`}
           >
             <CardHeader className="mb-6.5 p-0">
               <CardTitle className="mb-3 gap-0 font-extrabold text-2xl leading-1.4 tracking-normal">
