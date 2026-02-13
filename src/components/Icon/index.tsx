@@ -18,6 +18,8 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "analysis-fill"
     | "phone-fill"
     | "exam-multiple-choice"
+    | "instagram-fill"
+    | "linkedin-fill"
     | "";
   size?: number | string;
   fill?: string | null;

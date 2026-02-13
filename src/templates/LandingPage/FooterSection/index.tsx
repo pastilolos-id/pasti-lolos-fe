@@ -1,3 +1,4 @@
+import Bottom from "./Bottom";
 import CTA from "./CTA";
 import FooterMain from "./FooterMain";
 
@@ -6,6 +7,7 @@ export default function FooterSection() {
     <section className="rounded-tl-card-medium bg-gradient-footer-landing-page py-10">
       <CTA />
       <FooterMain />
+      <Bottom />
     </section>
   );
 }
