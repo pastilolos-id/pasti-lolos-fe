@@ -1,5 +1,6 @@
 import { Navbar } from "@/components";
 import Features from "./Features";
+import FooterSection from "./FooterSection";
 import Hero from "./Hero";
 import { leftMenuItems, rightMenuItems } from "./menuItems";
 import Pricing from "./Pricing";
@@ -26,6 +27,7 @@ export default function LandingPage() {
       </section>
 
       <Pricing />
+      <FooterSection />
     </div>
   );
 }

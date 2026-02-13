@@ -28,6 +28,10 @@
   );
 }
 
+.bg-gradient-footer-landing-page {
+  background: linear-gradient(277.6deg, #448aff 55.88%, #80b0ff 92.94%);
+}
+
 .shadow-pricing-card-recommended {
   box-shadow:
     6px 18px 14.1px 0px rgba(0, 0, 0, 0.14901960784313725),
