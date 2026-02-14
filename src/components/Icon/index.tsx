@@ -20,6 +20,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "exam-multiple-choice"
     | "instagram-fill"
     | "linkedin-fill"
+    | "google-fullcolor"
     | "";
   size?: number | string;
   fill?: string | null;
@@ -43,6 +44,7 @@ const Icon = ({
     case "cross-circle-fill":
     case "checklist-circle-fill":
     case "checklist-circle-fill-green":
+    case "google-fullcolor":
       return (
         <IconImage
           name={name as keyof typeof iconImagePath}

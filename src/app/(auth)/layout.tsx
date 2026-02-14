@@ -7,7 +7,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
+    <div className="grid grid-cols-1 lg:grid-cols-2 text-white">
       <div>{children}</div>
 
       <div className="bg-white hidden lg:block fixed h-screen w-1/2 right-0 top-0 px-5 pt-6 pb-6.5">
