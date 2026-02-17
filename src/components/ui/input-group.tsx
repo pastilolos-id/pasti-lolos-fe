@@ -7,22 +7,24 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-function InputGroup({ className, ...props }: React.ComponentProps<"fieldset">) {
+function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <fieldset
+    // biome-ignore lint/a11y/useSemanticElements: false positive, using div for better composition
+    <div
+      role="group"
       data-slot="input-group"
       className={cn(
-        "group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none",
-        "h-9 min-w-0 has-[>textarea]:h-auto",
+        "group/input-group border-white/50 dark:bg-input/30 relative flex w-full p-2 items-center rounded-full border inset-shadow-input bg-white/15 transition-[color,box-shadow] outline-none",
+        "h-14 min-w-0 has-[>textarea]:h-auto",
 
         // Variants based on alignment.
-        "has-[>[data-align=inline-start]]:[&>input]:pl-2",
-        "has-[>[data-align=inline-end]]:[&>input]:pr-2",
+        "has-[>[data-align=inline-start]]:[&>input]:pl-3",
+        "has-[>[data-align=inline-end]]:[&>input]:pr-3",
         "has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3",
         "has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3",
 
         // Focus state.
-        "has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]",
+        "has-[[data-slot=input-group-control]:focus-visible]:ring-white/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:bg-white/5",
 
         // Error state.
         "has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
@@ -35,14 +37,14 @@ function InputGroup({ className, ...props }: React.ComponentProps<"fieldset">) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
+  "flex cursor-text items-center justify-center gap-2 p-2 bg-primary-4 rounded-full text-sm font-medium select-none [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
   {
     variants: {
       align: {
         "inline-start":
-          "order-first pl-3 has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]",
+          "order-first has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]",
         "inline-end":
-          "order-last pr-3 has-[>button]:mr-[-0.45rem] has-[>kbd]:mr-[-0.35rem]",
+          "order-last has-[>button]:mr-[-0.45rem] has-[>kbd]:mr-[-0.35rem]",
         "block-start":
           "order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5",
         "block-end":
@@ -59,12 +61,11 @@ function InputGroupAddon({
   className,
   align = "inline-start",
   ...props
-}: React.ComponentProps<"fieldset"> &
-  VariantProps<typeof inputGroupAddonVariants>) {
+}: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>) {
   const handleOnClick = (
     e:
-      | React.MouseEvent<HTMLFieldSetElement, MouseEvent>
-      | React.KeyboardEvent<HTMLFieldSetElement>,
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     if ((e.target as HTMLElement).closest("button")) {
       return;
@@ -73,7 +74,9 @@ function InputGroupAddon({
   };
 
   return (
-    <fieldset
+    // biome-ignore lint/a11y/useSemanticElements: false positive, using div for better composition
+    <div
+      role="group"
       data-slot="input-group-addon"
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
