@@ -17,4 +17,9 @@ export type inputTextFieldType = ComponentProps<"input"> &
     type: "text" | "email" | "password" | "number";
   };
 
-export type inputDataType = inputTextFieldType;
+export type inputPasswordFieldType = ComponentProps<"input"> &
+  inputType & {
+    type: "password";
+  };
+
+export type inputDataType = inputTextFieldType | inputPasswordFieldType;
