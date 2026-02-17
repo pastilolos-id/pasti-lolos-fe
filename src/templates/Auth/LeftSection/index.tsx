@@ -24,7 +24,7 @@ export default function AuthLeftSection({
     <div
       {...props}
       className={cn(
-        "py-10 lg:py-10 px-4 md:px-20 lg:pl-10 lg:pr-25 flex flex-col justify-between gap-15 lg:gap-11",
+        "bg-gradient-root-layout min-h-screen py-10 lg:py-10 px-4 md:px-20 lg:pl-10 lg:pr-25 flex flex-col justify-between gap-11",
         className,
       )}
     >
@@ -40,10 +40,20 @@ export default function AuthLeftSection({
           {title}
         </h1>
 
+        {title === "Masuk" && (
+          <p className="lg:-mb-1 text-center lg:text-left text-b3 md:text-b1 max-w-80 md:max-w-120 mx-auto lg:mx-0">
+            Silahkan masuk dengan email atau akun google yang sudah terdaftar
+          </p>
+        )}
+
         <button
           type="button"
           onClick={googleButton.onClick}
-          className="w-full text-neutral-6 font-bold flex items-center justify-center gap-3 py-3 bg-white rounded-full mx-auto"
+          className={cn(
+            "w-full text-neutral-6 font-bold flex items-center justify-center gap-3 py-3 bg-white rounded-full mx-auto",
+            // hover condition
+            "hover:cursor-pointer hover:scale-105 transition",
+          )}
         >
           <Icon name="google-fullcolor" size={32} />
           <p>{googleButton.text}</p>
