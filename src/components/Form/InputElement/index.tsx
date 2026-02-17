@@ -1,3 +1,4 @@
+import InputCheckBox from "./InputCheckbox";
 import InputPasswordField from "./InputPasswordField";
 import InputTextField from "./InputTextField";
 import type { inputDataType } from "./types";
@@ -17,6 +18,9 @@ export default function InputElement({ input }: InputElementType) {
 
     case "password":
       return <InputPasswordField {...input} />;
+
+    case "checkbox":
+      return <InputCheckBox {...input} />;
 
     default:
       return (

@@ -22,4 +22,12 @@ export type inputPasswordFieldType = ComponentProps<"input"> &
     type: "password";
   };
 
-export type inputDataType = inputTextFieldType | inputPasswordFieldType;
+export type inputCheckboxType = ComponentProps<"input"> &
+  inputType & {
+    type: "checkbox";
+  };
+
+export type inputDataType =
+  | inputTextFieldType
+  | inputPasswordFieldType
+  | inputCheckboxType;
