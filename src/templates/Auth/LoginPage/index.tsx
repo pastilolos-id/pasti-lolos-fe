@@ -1,22 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import type { FormEvent } from "react";
+import { useState } from "react";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
+import { delay } from "@/utils";
 import AuthLeftSection from "../LeftSection";
 import { loginInputData } from "./inputData";
 
 export default function LoginPage() {
+  const [loading, setLoading] = useState(false);
+
   const handleOnClickGoogleButton = () => {
     console.log("Google button clicked");
   };
 
-  const handleOnSubmitForm = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(
-      "========================  Form Submitted  ========================\n",
-    );
+  const handleOnSubmitForm = async (payload: Record<string, unknown>) => {
+    setLoading(true);
+    await delay(3);
+
+    if (
+      payload.username === "user@gmail.com" &&
+      payload.password === "user123"
+    ) {
+      console.log("Berhasil login");
+    } else {
+      console.log("Gagal login, pastikan username dan password benar");
+    }
+
+    console.log({ payload });
+
+    setLoading(false);
   };
 
   return (
@@ -31,9 +45,12 @@ export default function LoginPage() {
         inputData={loginInputData}
         onSubmitForm={(e) => handleOnSubmitForm(e)}
       >
-        <Button type="submit" className="col-span-12 mt-6">
-          Masuk
-        </Button>
+        <Button
+          isLoading={loading}
+          text="Masuk"
+          type="submit"
+          className="col-span-12 mt-6"
+        />
       </Form>
       <p className="text-center lg:text-left text-sm lg:text-base mt-7">
         Belum punya akun ?{" "}

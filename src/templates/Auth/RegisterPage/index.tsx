@@ -1,18 +1,33 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
+import { delay } from "@/utils";
 import AuthLeftSection from "../LeftSection";
 import { registerInputData } from "./inputData";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+
   const handleOnClickGoogleButton = () => {
     console.log("Google button clicked");
   };
 
-  const handleOnSubmitForm = (payload: Record<string, unknown>) => {
-    console.log({ payload });
+  const handleOnSubmitForm = async (payload: Record<string, unknown>) => {
+    setLoading(true);
+    const isSuccess = await delay(3);
+
+    if (isSuccess) {
+      console.log({ payload });
+    }
+
+    setLoading(false);
+    router.push("/login");
   };
 
   return (
@@ -24,9 +39,12 @@ export default function RegisterPage() {
       }}
     >
       <Form inputData={registerInputData} onSubmitForm={handleOnSubmitForm}>
-        <Button type="submit" className="col-span-12 mt-6">
-          Daftar
-        </Button>
+        <Button
+          text="Daftar"
+          type="submit"
+          className="col-span-12 mt-6"
+          isLoading={loading}
+        />
       </Form>
 
       <p className="text-center lg:text-left text-sm lg:text-base mt-7">
