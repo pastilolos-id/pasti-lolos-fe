@@ -4,7 +4,7 @@ import type { IconProps } from "@/components/Icon";
 type inputType = {
   name: string;
   className: string;
-  label?: string;
+  label: string;
   description?: string;
   helperText?: string;
   error?: boolean;
@@ -14,7 +14,7 @@ type inputType = {
 
 export type inputTextFieldType = ComponentProps<"input"> &
   inputType & {
-    type: "text" | "email" | "password" | "number";
+    type: "text" | "email" | "number";
   };
 
 export type inputPasswordFieldType = ComponentProps<"input"> &

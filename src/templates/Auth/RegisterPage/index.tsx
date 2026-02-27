@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import type { FormEvent } from "react";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
 import AuthLeftSection from "../LeftSection";
@@ -12,11 +11,8 @@ export default function RegisterPage() {
     console.log("Google button clicked");
   };
 
-  const handleOnSubmitForm = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(
-      "========================  Form Submitted  ========================\n",
-    );
+  const handleOnSubmitForm = (payload: Record<string, unknown>) => {
+    console.log({ payload });
   };
 
   return (
@@ -27,10 +23,7 @@ export default function RegisterPage() {
         text: "Daftar Dengan Akun Google",
       }}
     >
-      <Form
-        inputData={registerInputData}
-        onSubmitForm={(e) => handleOnSubmitForm(e)}
-      >
+      <Form inputData={registerInputData} onSubmitForm={handleOnSubmitForm}>
         <Button type="submit" className="col-span-12 mt-6">
           Daftar
         </Button>

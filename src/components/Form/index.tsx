@@ -1,9 +1,7 @@
-import type {
-  DetailedHTMLProps,
-  FormEvent,
-  FormHTMLAttributes,
-  ReactNode,
-} from "react";
+"use client";
+
+import type { DetailedHTMLProps, FormHTMLAttributes, ReactNode } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { FieldGroup } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import InputElement from "./InputElement";
@@ -14,7 +12,7 @@ export type formType = DetailedHTMLProps<
   HTMLFormElement
 > & {
   inputData: inputDataType[];
-  onSubmitForm: (data: FormEvent<HTMLFormElement>) => void;
+  onSubmitForm: (data: Record<string, unknown>) => void;
   error?: string | Record<string, string[]>;
   children?: ReactNode;
 };
@@ -27,15 +25,20 @@ export default function Form({
   className,
   ...props
 }: formType) {
-  const onSubmitHandler = (data: FormEvent<HTMLFormElement>) => {
-    console.log("Berhasil submit form dengan data:", data);
+  const { control, handleSubmit } = useForm();
+
+  const onSubmitHandler: SubmitHandler<Record<string, unknown>> = async (
+    data: Record<string, unknown>,
+  ) => {
+    console.log("Berhasil submit form");
+    onSubmitForm(data);
   };
 
   return (
-    <form {...props} onSubmit={(e) => onSubmitHandler(e)} noValidate>
+    <form {...props} onSubmit={handleSubmit(onSubmitHandler)} noValidate>
       <FieldGroup className={cn("w-full", className)}>
         {inputData.map((input) => (
-          <InputElement key={input.name} input={input} />
+          <InputElement control={control} key={input.name} input={input} />
         ))}
 
         {children}

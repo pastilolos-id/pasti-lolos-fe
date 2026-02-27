@@ -8,6 +8,7 @@ const registerInputData: inputDataType[] = [
     className: "",
     name: "username",
     leftIcon: "profile-circle",
+    required: true,
   },
   {
     type: "text",
@@ -16,6 +17,7 @@ const registerInputData: inputDataType[] = [
     className: "",
     name: "phone",
     leftIcon: "phone",
+    required: true,
   },
   {
     type: "email",
@@ -24,6 +26,7 @@ const registerInputData: inputDataType[] = [
     className: "",
     name: "email",
     leftIcon: "mail",
+    required: true,
   },
   {
     type: "password",
@@ -33,6 +36,7 @@ const registerInputData: inputDataType[] = [
     name: "password",
     leftIcon: "lock",
     rightIcon: "eye-closed",
+    required: true,
   },
   {
     type: "password",
@@ -42,14 +46,16 @@ const registerInputData: inputDataType[] = [
     name: "confirmPassword",
     leftIcon: "lock",
     rightIcon: "eye-closed",
+    required: true,
   },
   {
     type: "checkbox",
     label: "Setujui syarat dan ketentuan",
-    className: "",
+    className: "col-span-12",
     name: "agreement",
     description:
       "Dengan mencentang kotak ini, Anda menyatakan telah membaca dan menyetujui Syarat dan Ketentuan serta Kebijakan Privasi. Jika Anda berusia di bawah 18 tahun, Anda menyatakan telah mendapatkan persetujuan dari orang tua atau wali.",
+    required: true,
   },
 ];
 

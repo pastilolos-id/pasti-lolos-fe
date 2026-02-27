@@ -1,21 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { Controller } from "react-hook-form";
 import Icon from "@/components/Icon";
 import {
   Field,
+  FieldError,
   FieldLabel,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui";
-import type { inputTextFieldType } from "../types";
+import type { inputControlType } from "..";
+import type { inputPasswordFieldType } from "../types";
 
 export default function InputPasswordField({
+  control,
   label,
   error,
   ...input
-}: inputTextFieldType) {
+}: inputPasswordFieldType & inputControlType) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleOnClickEyeIcon = () => {
@@ -23,40 +27,60 @@ export default function InputPasswordField({
   };
 
   return (
-    <Field key={input.name} className={input.className}>
-      <FieldLabel htmlFor={input.name}>{label}</FieldLabel>
-
-      <InputGroup>
-        <InputGroupAddon
-          align="inline-start"
-          className="inset-shadow-primary-button"
+    <Controller
+      name={input.name}
+      control={control}
+      rules={{
+        required: input.required ? `${label} is required` : false,
+      }}
+      render={({ field, fieldState }) => (
+        <Field
+          key={input.name}
+          className={input.className}
+          aria-invalid={fieldState.invalid}
         >
-          <Icon
-            viewBox="0 0 24 24"
-            name={input.leftIcon ? input.leftIcon : "lock"}
-            size={24}
-          />
-        </InputGroupAddon>
+          <FieldLabel htmlFor={input.name} aria-invalid={fieldState.invalid}>
+            {label}
+          </FieldLabel>
 
-        <InputGroupInput
-          id={input.name}
-          type={showPassword ? "text" : "password"}
-          placeholder={input.placeholder}
-          name={input.name}
-        />
+          <InputGroup>
+            <InputGroupAddon
+              align="inline-start"
+              aria-invalid={fieldState.invalid}
+              className="inset-shadow-primary-button"
+            >
+              <Icon
+                viewBox="0 0 24 24"
+                name={input.leftIcon ? input.leftIcon : "lock"}
+                size={24}
+              />
+            </InputGroupAddon>
 
-        <InputGroupAddon
-          align="inline-end"
-          className="cursor-pointer bg-transparent"
-        >
-          <Icon
-            onClick={handleOnClickEyeIcon}
-            viewBox="0 0 24 24"
-            name={showPassword ? "phone" : "eye-closed"}
-            size={24}
-          />
-        </InputGroupAddon>
-      </InputGroup>
-    </Field>
+            <InputGroupInput
+              {...field}
+              id={input.name}
+              type={showPassword ? "text" : "password"}
+              placeholder={input.placeholder}
+              name={input.name}
+              aria-invalid={fieldState.invalid}
+            />
+
+            <InputGroupAddon
+              onClick={handleOnClickEyeIcon}
+              align="inline-end"
+              aria-invalid={fieldState.invalid}
+              className="cursor-pointer bg-transparent"
+            >
+              <Icon
+                viewBox="0 0 24 24"
+                name={showPassword ? "phone" : "eye-closed"}
+                size={24}
+              />
+            </InputGroupAddon>
+          </InputGroup>
+          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+        </Field>
+      )}
+    />
   );
 }
