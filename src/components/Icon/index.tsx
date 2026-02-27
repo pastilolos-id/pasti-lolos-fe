@@ -27,6 +27,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "lock"
     | "eye-closed"
     | "eye-open"
+    | "spinner"
     | "";
   size?: number | string;
   fill?: string | null;
