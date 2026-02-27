@@ -22,7 +22,16 @@ export default function InputTextField({
       name={input.name}
       control={control}
       rules={{
-        required: input.required ? `${label} is required` : false,
+        required: input.required ? `${label} wajib diisi` : false,
+        pattern:
+          input.type === "email"
+            ? {
+                value:
+                  /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9-]*\.)+[a-z]{2,}$/i,
+                message:
+                  "Gunakan format email yang benar (contoh: nama@gmail.com)",
+              }
+            : undefined,
       }}
       render={({ field, fieldState }) => (
         <Field
