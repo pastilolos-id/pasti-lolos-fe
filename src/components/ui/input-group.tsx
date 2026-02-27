@@ -27,7 +27,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
         "has-[[data-slot=input-group-control]:focus-visible]:ring-white/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:bg-white/5",
 
         // Error state.
-        "has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
+        "has-[[data-slot][aria-invalid=true]]:ring-red/20 has-[[data-slot][aria-invalid=true]]:border-red dark:has-[[data-slot][aria-invalid=true]]:ring-red/40",
 
         className,
       )}
@@ -37,7 +37,12 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 const inputGroupAddonVariants = cva(
-  "flex cursor-text items-center justify-center gap-2 p-2 bg-primary-4 rounded-full text-sm font-medium select-none [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
+  cn(
+    "flex cursor-text items-center justify-center gap-2 p-2 bg-primary-4 rounded-full text-sm font-medium select-none [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
+
+    // Error state
+    "aria-invalid:bg-red aria-invalid:inset-shadow-red",
+  ),
   {
     variants: {
       align: {
@@ -145,6 +150,7 @@ function InputGroupInput({
       data-slot="input-group-control"
       className={cn(
         "flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent",
+        "aria-invalid:placeholder:text-red",
         className,
       )}
       {...props}
