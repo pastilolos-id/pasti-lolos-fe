@@ -73,7 +73,7 @@ export default function InputPasswordField({
             >
               <Icon
                 viewBox="0 0 24 24"
-                name={showPassword ? "phone" : "eye-closed"}
+                name={showPassword ? "eye-open" : "eye-closed"}
                 size={24}
               />
             </InputGroupAddon>
