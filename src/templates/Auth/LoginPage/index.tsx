@@ -1,14 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
+import { setUser } from "@/lib/redux/slices/userSlice";
+import user from "@/mock-data/user";
 import { delay } from "@/utils";
 import AuthLeftSection from "../LeftSection";
 import { loginInputData } from "./inputData";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
   const handleOnClickGoogleButton = () => {
@@ -23,7 +29,9 @@ export default function LoginPage() {
       payload.username === "user@gmail.com" &&
       payload.password === "user123"
     ) {
+      dispatch(setUser(user));
       console.log("Berhasil login");
+      router.push("/");
     } else {
       console.log("Gagal login, pastikan username dan password benar");
     }
