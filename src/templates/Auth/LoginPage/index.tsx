@@ -6,8 +6,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
+import { setToken } from "@/lib/cookies";
 import { setUser } from "@/lib/redux/slices/userSlice";
-import user from "@/mock-data/user";
+import userData from "@/mock-data/user";
 import { delay } from "@/utils";
 import AuthLeftSection from "../LeftSection";
 import { loginInputData } from "./inputData";
@@ -25,11 +26,14 @@ export default function LoginPage() {
     setLoading(true);
     await delay(3);
 
+    const { token, ...user } = userData;
+
     if (
       payload.username === "user@gmail.com" &&
       payload.password === "user123"
     ) {
       dispatch(setUser(user));
+      setToken(token);
       console.log("Berhasil login");
       router.push("/");
     } else {
