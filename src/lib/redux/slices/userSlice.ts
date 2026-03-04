@@ -3,7 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { User, UserState } from "@/types/user";
 
 const initialState: UserState = {
-  user: { id: "0", username: "", name: "", email: "", role: "" },
+  user: {
+    id: "0",
+    username: "",
+    name: "",
+    email: "",
+    profileImg: "",
+    role: "",
+  },
   isAuthenticated: false,
 };
 

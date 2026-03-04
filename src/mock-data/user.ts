@@ -6,6 +6,7 @@ const user: AuthUser = {
   name: "Student User",
   email: "user@gmail.com",
   role: "student",
+  profileImg: "/img/user/student-mock.jpg",
   token: "mocked-jwt-token",
 };
 
