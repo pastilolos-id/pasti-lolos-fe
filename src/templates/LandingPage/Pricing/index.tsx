@@ -8,8 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui";
-import { cn } from "@/lib/utils";
-import { formatToCurrency } from "@/utils";
+import { cn, formatToCurrency } from "@/lib/utils";
 import { planData } from "./pricingData";
 
 export default function Pricing() {

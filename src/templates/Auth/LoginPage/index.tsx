@@ -6,10 +6,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
-import { setToken } from "@/lib/cookies";
 import { setUser } from "@/lib/redux/slices/userSlice";
+import { delay, setToken } from "@/lib/utils";
 import userData from "@/mock-data/user";
-import { delay } from "@/utils";
 import AuthLeftSection from "../LeftSection";
 import { loginInputData } from "./inputData";
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Form } from "@/components";
 import { Button } from "@/components/ui";
-import { delay } from "@/utils";
+import { delay } from "@/lib/utils";
 import AuthLeftSection from "../LeftSection";
 import { registerInputData } from "./inputData";
 

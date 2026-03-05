@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
-import { getAvatarInitials } from "@/lib/avatarInitials";
 import type { RootState } from "@/lib/redux/store";
 import { cn } from "@/lib/utils";
+import { getAvatarInitials } from "@/lib/utils/avatarInitials";
 
 export default function NavbarAvatar(props: React.ComponentProps<"button">) {
   const user = useSelector((state: RootState) => state.user.user);
