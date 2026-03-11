@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import { TooltipProvider } from "@/components/ui";
 import { ReduxProvider } from "@/lib/redux/Provider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -29,11 +30,13 @@ export default function RootLayout({
       <body
         className={`${plusJakartaSans.variable} ${robotoMono.variable} antialiased bg-gradient-root-layout`}
       >
-        <ReduxProvider>
-          <div className="mx-auto text-neutral-6 font-sans max-w-8xl">
-            {children}
-          </div>
-        </ReduxProvider>
+        <TooltipProvider>
+          <ReduxProvider>
+            <div className="mx-auto text-neutral-6 font-sans max-w-8xl">
+              {children}
+            </div>
+          </ReduxProvider>
+        </TooltipProvider>
       </body>
     </html>
   );
