@@ -22,15 +22,16 @@ export default function NavbarContainer({
         fixed z-50 top-3 right-3 left-3 md:top-6 md:right-6 md:left-6 lg:top-10 lg:left-17.5 lg:right-17.5
         mx-auto
         w-[calc(100%-1.5rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-8.75rem)]
-        data-[state=open]:rounded-[2rem] md:data-[state=open]:rounded-full rounded-full
+        data-[state=open]:rounded-4xl md:data-[state=open]:rounded-full rounded-full
         p-2
         bg-white/15
         border border-white/25 backdrop-blur-2xl shadow-[0_4px_34.1px_0_rgba(0,0,0,0.15)]
       "
+      {...props}
     >
       <CardContent
         data-state={dataState ? "open" : "closed"}
-        className="p-3 data-[state=open]:rounded-[1.5rem] md:data-[state=open]:rounded-full rounded-full bg-white"
+        className="p-3 data-[state=open]:rounded-3xl md:data-[state=open]:rounded-full rounded-full bg-white"
       >
         <Collapsible className="ml-1">
           <div className="flex justify-between items-center">

@@ -33,7 +33,12 @@
 }
 
 .bg-gradient-auth-layout-hero {
-  background: linear-gradient(180deg, rgba(166, 166, 166, 0) 0%, rgba(133, 133, 133, 0.5) 49.52%, #000000 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(166, 166, 166, 0) 0%,
+    rgba(133, 133, 133, 0.5) 49.52%,
+    #000000 100%
+  );
 }
 
 .shadow-pricing-card-recommended {
