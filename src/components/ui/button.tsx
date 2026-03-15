@@ -62,9 +62,9 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      aria-loading={isLoading}
+      aria-busy={isLoading}
       className={cn(
-        "aria-loading:opacity-70 aria-loading:cursor-not-allowed",
+        "aria-busy:opacity-70 aria-busy:cursor-not-allowed",
         buttonVariants({ variant, size, className }),
       )}
       {...props}
