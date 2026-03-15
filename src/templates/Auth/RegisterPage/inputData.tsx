@@ -53,6 +53,8 @@ const registerInputData: inputDataType[] = [
     label: "Setujui syarat dan ketentuan",
     className: "col-span-12",
     name: "agreement",
+    trueValue: true,
+    falseValue: false,
     description:
       "Dengan mencentang kotak ini, Anda menyatakan telah membaca dan menyetujui Syarat dan Ketentuan serta Kebijakan Privasi. Jika Anda berusia di bawah 18 tahun, Anda menyatakan telah mendapatkan persetujuan dari orang tua atau wali.",
     required: true,

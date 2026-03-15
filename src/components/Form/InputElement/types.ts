@@ -25,6 +25,8 @@ export type inputPasswordFieldType = ComponentProps<"input"> &
 export type inputCheckboxType = ComponentProps<"input"> &
   inputType & {
     type: "checkbox";
+    trueValue: string | boolean | number;
+    falseValue: string | boolean | number;
   };
 
 export type inputDataType =

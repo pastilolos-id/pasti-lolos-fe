@@ -14,8 +14,6 @@ type InputElementType = inputControlType & {
 };
 
 export default function InputElement({ control, input }: InputElementType) {
-  console.log({ input });
-
   switch (input.type) {
     case "text":
     case "email":

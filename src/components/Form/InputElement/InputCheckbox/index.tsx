@@ -19,6 +19,7 @@ export default function InputCheckBox({
     <Controller
       name={input.name}
       control={control}
+      defaultValue={input.defaultValue ?? input.falseValue}
       rules={{
         required: input.required ? `${input.label} harus dicentang` : false,
       }}
@@ -31,9 +32,9 @@ export default function InputCheckBox({
           >
             <Checkbox
               {...field}
-              checked={field.value === "Y"}
+              checked={field.value === input.trueValue}
               onCheckedChange={(checked) => {
-                const newValue = checked ? "Y" : undefined;
+                const newValue = checked ? input.trueValue : input.falseValue;
                 field.onChange(newValue);
               }}
               id={input.name}

@@ -21,6 +21,7 @@ export default function InputTextField({
     <Controller
       name={input.name}
       control={control}
+      defaultValue={input.defaultValue ?? ""}
       rules={{
         required: input.required ? `${label} wajib diisi` : false,
         pattern:
