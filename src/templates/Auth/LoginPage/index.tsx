@@ -30,7 +30,7 @@ export default function LoginPage() {
 
     if (
       isSuccess &&
-      payload.username === "user@gmail.com" &&
+      payload.email === "user@gmail.com" &&
       payload.password === "user123"
     ) {
       dispatch(setUser(user));
@@ -42,6 +42,7 @@ export default function LoginPage() {
     }
 
     console.log({ payload });
+    console.log(isSuccess);
 
     setLoading(false);
   };
