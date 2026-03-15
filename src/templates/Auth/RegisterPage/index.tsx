@@ -23,11 +23,14 @@ export default function RegisterPage() {
     const isSuccess = await delay(3);
 
     if (isSuccess) {
-      console.log({ payload });
+      console.log("Berhasil Register");
+      router.push("/login");
+    } else {
+      console.log("Gagal Register");
     }
 
+    console.log({ payload });
     setLoading(false);
-    router.push("/login");
   };
 
   return (

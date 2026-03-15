@@ -24,11 +24,12 @@ export default function LoginPage() {
 
   const handleOnSubmitForm = async (payload: Record<string, unknown>) => {
     setLoading(true);
-    await delay(3);
+    const isSuccess = await delay(3);
 
     const { token, ...user } = userData;
 
     if (
+      isSuccess &&
       payload.username === "user@gmail.com" &&
       payload.password === "user123"
     ) {
