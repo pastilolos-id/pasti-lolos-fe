@@ -6,28 +6,39 @@ type IconProps = SVGProps<SVGSVGElement> & {
   className?: string;
   pathClassName?: string;
   name:
-    | "hamburger-menu-toggle"
-    | "slash-circle"
-    | "bumn"
     | "abdi-negara"
-    | "landing-page-bg-ellipse"
-    | "cross-circle-fill"
+    | "activity"
+    | "analysis-fill"
+    | "arrow-left-circle"
+    | "bumn"
+    | "bumn-wrapped-text"
+    | "card"
     | "checklist-circle-fill"
     | "checklist-circle-fill-green"
-    | "sun"
-    | "analysis-fill"
-    | "phone-fill"
+    | "chevron-down-fill"
+    | "course"
+    | "cross-circle-fill"
+    | "door"
     | "exam-multiple-choice"
-    | "instagram-fill"
-    | "linkedin-fill"
-    | "google-fullcolor"
-    | "profile-circle"
-    | "phone"
-    | "mail"
-    | "lock"
     | "eye-closed"
     | "eye-open"
+    | "google-fullcolor"
+    | "hamburger-menu-toggle"
+    | "home"
+    | "instagram-fill"
+    | "landing-page-bg-ellipse"
+    | "linkedin-fill"
+    | "lock"
+    | "mail"
+    | "notification"
+    | "people-circle-fill"
+    | "phone"
+    | "phone-fill"
+    | "profile-circle"
+    | "slash-circle"
     | "spinner"
+    | "sun"
+    | "tryout"
     | "";
   size?: number | string;
   fill?: string | null;
@@ -46,7 +57,9 @@ const Icon = ({
   switch (name) {
     case "hamburger-menu-toggle":
     case "bumn":
+    case "bumn-wrapped-text":
     case "abdi-negara":
+    case "arrow-left-circle":
     case "landing-page-bg-ellipse":
     case "cross-circle-fill":
     case "checklist-circle-fill":
