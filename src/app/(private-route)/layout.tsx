@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components";
+import { Sidebar, TokenValidator } from "@/components";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui";
 
 export default function PrivateRouteLayout({
@@ -8,6 +8,7 @@ export default function PrivateRouteLayout({
 }>) {
   return (
     <SidebarProvider className="bg-primary-5">
+      <TokenValidator />
       <Sidebar />
       <div className="w-full h-screen py-4 pr-4">
         <div className="fixed h-screen flex items-center">
