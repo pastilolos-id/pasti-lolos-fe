@@ -10,13 +10,12 @@ export default function PrivateRouteLayout({
     <SidebarProvider className="bg-primary-5">
       <TokenValidator />
       <Sidebar />
-      <div className="w-full h-screen py-4 pr-4">
-        <div className="fixed h-screen flex items-center">
+      <div className="w-full min-h-screen py-4 pr-4 md:pl-0 sm:p-6 p-3">
+        <div className="fixed h-screen flex items-center z-50">
           <SidebarTrigger className="" />
         </div>
-        <div className="w-full h-full bg-white rounded-card-medium pl-8 pt-7">
-          {/* <p>PrivateRouteLayout</p> */}
-          <div>Halaman {children}</div>
+        <div className="w-full min-h-full bg-white rounded-card-medium md:p-3 sm:p-6 p-3">
+          {children}
         </div>
       </div>
     </SidebarProvider>
