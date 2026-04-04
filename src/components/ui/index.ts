@@ -12,5 +12,7 @@ export * from "./separator";
 export * from "./sheet";
 export * from "./sidebar";
 export * from "./skeleton";
+export * from "./table";
+export * from "./tabs";
 export * from "./textarea";
 export * from "./tooltip";
