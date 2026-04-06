@@ -1,3 +1,4 @@
+export { default as BottomNavBar } from "./BottomNavBar";
 export { default as Form } from "./Form";
 export { default as Icon } from "./Icon";
 export { default as Logo } from "./Logo";

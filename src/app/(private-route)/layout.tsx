@@ -1,4 +1,4 @@
-import { Sidebar, TokenValidator, TopBar } from "@/components";
+import { BottomNavBar, Sidebar, TokenValidator, TopBar } from "@/components";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui";
 
 export default function PrivateRouteLayout({
@@ -14,10 +14,14 @@ export default function PrivateRouteLayout({
         <div className="fixed h-screen items-center z-50 hidden lg:flex">
           <SidebarTrigger className="" />
         </div>
+
         <TopBar />
+
         <div className="w-full min-h-full bg-white rounded-card-medium lg:p-3 sm:p-6 p-3 mt-28 lg:mt-0">
           {children}
         </div>
+
+        <BottomNavBar />
       </div>
     </SidebarProvider>
   );
