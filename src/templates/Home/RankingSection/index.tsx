@@ -16,7 +16,7 @@ export default function RankingSection({
       )}
     >
       <div className="bg-primary-5 rounded-b-3xl py-3 mb-3">
-        <h2 className="text-white text-2xl font-bold text-center tracking-[0.4] mb-4">
+        <h2 className="text-white text-2xl w-full min-w-80 mx-auto font-bold text-center tracking-[0.4] mb-4">
           🏆 Ranking Tryout 🏆
         </h2>
         <TabsList>

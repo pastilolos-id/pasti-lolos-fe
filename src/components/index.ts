@@ -6,3 +6,4 @@ export { default as Sidebar } from "./Sidebar";
 export { default as Table } from "./Table";
 export * from "./Table/types";
 export { default as TokenValidator } from "./TokenValidator";
+export { default as TopBar } from "./TopBar";

@@ -8,7 +8,7 @@ import SidebarFooterSection from "./SidebarFooterSection";
 
 export default function Sidebar() {
   return (
-    <SidebarContainer collapsible="icon" className="py-4">
+    <SidebarContainer collapsible="icon" className="py-4 hidden lg:flex">
       <SidebarHeader>
         <Link href="/">
           <Logo className="text-center" />
