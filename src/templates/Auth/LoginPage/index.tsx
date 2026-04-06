@@ -36,7 +36,7 @@ export default function LoginPage() {
       dispatch(setUser(user));
       setToken(token);
       console.log("Berhasil login");
-      router.push("/");
+      router.push("/home");
     } else {
       console.log("Gagal login, pastikan username dan password benar");
     }
