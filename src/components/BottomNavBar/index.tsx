@@ -23,7 +23,7 @@ export default function BottomNavBar() {
 
   return (
     <nav
-      className="
+      className={`
         fixed bottom-0 left-0 
         w-full 
         bg-primary-5 
@@ -31,7 +31,7 @@ export default function BottomNavBar() {
         z-50
         p-3 flex justify-around
         lg:hidden
-      "
+      `}
     >
       {menuItems.map((menu) => {
         if (menu.subMenu === undefined) {
