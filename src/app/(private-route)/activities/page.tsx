@@ -1,3 +1,5 @@
+import ActivitiesPage from "@/templates/ActivitiesPage";
+
 export default function Activities() {
-  return <div>Activities</div>;
+  return <ActivitiesPage />;
 }

@@ -22,6 +22,8 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "exam-multiple-choice"
     | "eye-closed"
     | "eye-open"
+    | "fluent-textbox"
+    | "fluent-textbox-blue"
     | "google-fullcolor"
     | "hamburger-menu-toggle"
     | "home"
@@ -38,6 +40,8 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "slash-circle"
     | "spinner"
     | "sun"
+    | "text-box-edit"
+    | "text-box-edit-blue"
     | "tryout"
     | "";
   size?: number | string;
@@ -64,9 +68,11 @@ const Icon = ({
     case "cross-circle-fill":
     case "checklist-circle-fill":
     case "checklist-circle-fill-green":
+    case "fluent-textbox-blue":
     case "google-fullcolor":
     case "profile-circle":
     case "eye-closed":
+    case "text-box-edit-blue":
       return (
         <IconImage
           name={name as keyof typeof iconImagePath}
