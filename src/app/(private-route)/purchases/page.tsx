@@ -1,3 +1,5 @@
-export default function Purchases() {
-  return <div>Purchases</div>;
+import PurchasesPage from "@/templates/Purchases/PurchasesPage";
+
+export default function PurchasesRoute() {
+  return <PurchasesPage />;
 }
