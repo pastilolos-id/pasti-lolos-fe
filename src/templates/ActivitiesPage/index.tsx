@@ -1,11 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import ActivityFilter from "./ActivityFilter";
+import { FilterSelect, type FilterType } from "@/components";
 import { mockActivities } from "./data";
 import MaterialCard from "./MaterialCard";
 import TryoutCard from "./TryoutCard";
-import type { FilterType } from "./types";
 
 export default function ActivitiesPage() {
   const [filter, setFilter] = useState<FilterType>("semua");
@@ -27,7 +26,7 @@ export default function ActivitiesPage() {
       <div className="flex flex-wrap items-center justify-between gap-4 p-4">
         <h1 className="text-h4 font-bold text-neutral-6">Aktivitas Belajar</h1>
 
-        <ActivityFilter value={filter} onChange={setFilter} />
+        <FilterSelect value={filter} onChange={setFilter} />
       </div>
 
       {/* Content Section */}

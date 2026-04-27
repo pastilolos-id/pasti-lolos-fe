@@ -8,9 +8,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import type { FilterType } from "../types";
+import type { FilterType } from "./types";
 
-interface ActivityFilterProps {
+interface FilterSelectProps {
   value: FilterType;
   onChange: (filter: FilterType) => void;
 }
@@ -21,10 +21,7 @@ const filterOptions: Array<{ value: FilterType; label: string }> = [
   { value: "materi", label: "Materi" },
 ];
 
-export default function ActivityFilter({
-  value,
-  onChange,
-}: ActivityFilterProps) {
+export default function FilterSelect({ value, onChange }: FilterSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const currentLabel = filterOptions.find((opt) => opt.value === value)?.label;
 

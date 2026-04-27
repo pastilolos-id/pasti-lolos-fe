@@ -1,6 +1,5 @@
 export type ActivityType = "tryout" | "materi";
 export type ActivityStatus = "kadaluarsa" | "selesai" | "belum_dimulai";
-export type FilterType = "semua" | "tryout" | "materi";
 
 export interface ActivityBase {
   id: string;
