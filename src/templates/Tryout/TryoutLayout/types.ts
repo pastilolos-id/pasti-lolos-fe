@@ -1,6 +1,5 @@
+import type { TryoutCategory } from "../data";
 import type { TryoutCardData } from "./TryoutCard/types";
-
-export type TryoutCategory = "bumn" | "cpns";
 
 export interface TryoutLayoutProps {
   category: TryoutCategory;

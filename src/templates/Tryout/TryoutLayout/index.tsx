@@ -1,21 +1,13 @@
-// import Link from "next/link";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import TryoutCard from "./TryoutCard";
 import type { TryoutLayoutProps } from "./types";
 
-// const tabs = [
-//   {
-//     key: "bumn",
-//     label: "BUMN",
-//     href: "/tryout/bumn",
-//   },
-//   {
-//     key: "cpns",
-//     label: "CPNS",
-//     href: "/tryout/cpns",
-//   },
-// ] as const;
+const tabs = [
+  { key: "bumn", label: "BUMN", href: "/tryout/bumn" },
+  { key: "cpns", label: "CPNS", href: "/tryout/cpns" },
+] as const;
 
 export default function TryoutLayout({
   category,
@@ -28,9 +20,7 @@ export default function TryoutLayout({
       <article
         className={cn(
           "relative overflow-hidden rounded-card-medium p-4 sm:p-6",
-          category === "cpns"
-            ? "bg-gradient-root-layout"
-            : "bg-gradient-problem-solution-card",
+          category === "cpns" ? "bg-gradient-root-layout" : "bg-gradient-problem-solution-card",
         )}
       >
         <div className="max-w-2xl">
@@ -49,7 +39,7 @@ export default function TryoutLayout({
         </div>
       </article>
 
-      {/* <div className="no-scrollbar flex gap-3 overflow-x-auto pb-1 lg:hidden">
+      <div className="no-scrollbar flex gap-3 overflow-x-auto pb-1 lg:hidden">
         {tabs.map((tab) => {
           const isActive = tab.key === category;
 
@@ -60,17 +50,17 @@ export default function TryoutLayout({
               className={cn(
                 "rounded-full border px-6 py-2 text-s1 whitespace-nowrap transition-all",
                 isActive
-                  ? "bg-primary-4 text-neutral-1 border-primary-4"
-                  : "bg-neutral-1 text-primary-4 border-primary-4/30",
+                  ? "border-primary-4 bg-primary-4 text-neutral-1"
+                  : "border-primary-4/30 bg-neutral-1 text-primary-4",
               )}
             >
               {tab.label}
             </Link>
           );
         })}
-      </div> */}
+      </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 p-4 rounded-3xl bg-neutral-2 border border-neutral-3">
+      <div className="grid grid-cols-1 gap-4 rounded-3xl border border-neutral-3 bg-neutral-2 p-4 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
           <TryoutCard key={card.id} data={card} />
         ))}

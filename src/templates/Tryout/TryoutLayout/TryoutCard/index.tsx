@@ -4,8 +4,7 @@ import Link from "next/link";
 
 import { Icon } from "@/components";
 import { buttonVariants, Card } from "@/components/ui";
-import { cn } from "@/lib/utils";
-import formatToCurrency from "@/lib/utils/formatToCurrency";
+import { cn, formatToCurrency } from "@/lib/utils";
 import type { TryoutCardProps } from "./types";
 
 export default function TryoutCard({ data }: TryoutCardProps) {
