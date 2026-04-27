@@ -1,3 +1,5 @@
-export default function TryoutCPNS() {
-  return <div>TryoutCPNS</div>;
+import CpnsPage from "@/templates/TryoutPage/CpnsPage";
+
+export default function TryoutCpnsRoute() {
+  return <CpnsPage />;
 }

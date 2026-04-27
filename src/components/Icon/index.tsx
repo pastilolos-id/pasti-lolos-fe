@@ -20,6 +20,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "cross-circle-fill"
     | "door"
     | "exam-multiple-choice"
+    | "exam-multiple-choice-outline"
     | "eye-closed"
     | "eye-open"
     | "fluent-textbox"
@@ -42,6 +43,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "sun"
     | "text-box-edit"
     | "text-box-edit-blue"
+    | "time-outlined"
     | "tryout"
     | "";
   size?: number | string;
@@ -72,6 +74,7 @@ const Icon = ({
     case "google-fullcolor":
     case "profile-circle":
     case "eye-closed":
+    case "exam-multiple-choice-outline":
     case "text-box-edit-blue":
       return (
         <IconImage
@@ -83,6 +86,39 @@ const Icon = ({
           className={className}
           onClick={onClick as React.MouseEventHandler<HTMLImageElement>}
         />
+      );
+
+    case "time-outlined":
+      return (
+        <svg
+          onClick={onClick}
+          onKeyDown={
+            !onClick
+              ? undefined
+              : (e) => {
+                  if (onClick && e.key === "Enter") {
+                    e.preventDefault();
+                    // biome-ignore lint/suspicious/noExplicitAny: false positive
+                    onClick(e as any);
+                  }
+                }
+          }
+          className={`${className}`}
+          width={size || 20}
+          height={size || 20}
+          viewBox="0 0 20 20"
+          {...props}
+        >
+          <title>{name || "Icon"}</title>
+          <path
+            className={pathClassName}
+            d={icons[name]}
+            fill={fill || "#777777"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          ></path>
+        </svg>
       );
 
     case "":

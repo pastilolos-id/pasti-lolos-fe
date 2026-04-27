@@ -1,3 +1,5 @@
-export default function TryoutBUMN() {
-  return <div>TryoutBUMN</div>;
+import BumnPage from "@/templates/TryoutPage/BumnPage";
+
+export default function TryoutBumnRoute() {
+  return <BumnPage />;
 }
