@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import { Icon } from "@/components";
-import { Button } from "@/components/ui";
-import { formatToCurrency } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui";
+import { cn, formatToCurrency } from "@/lib/utils";
+import { getPurchaseIdFromTryout } from "@/templates/Purchases/purchasesData";
 import type { TryoutCategory, TryoutItem } from "../data";
 
 interface TryoutDetailPageProps {
@@ -17,6 +18,7 @@ export default function TryoutDetailPage({
   const hasSpecialPrice =
     typeof tryout.specialPrice === "number" &&
     typeof tryout.originalPrice === "number";
+  const purchaseId = getPurchaseIdFromTryout(category, tryout.id);
 
   return (
     <section className="space-y-4">
@@ -71,9 +73,15 @@ export default function TryoutDetailPage({
           </div>
         </div>
 
-        <Button className="w-full rounded-full text-s1 text-white bg-red hover:bg-red/75">
+        <Link
+          href={`/purchases/${purchaseId}`}
+          className={cn(
+            buttonVariants({ size: "default" }),
+            "w-full rounded-full text-s1 text-white bg-red hover:bg-red/75",
+          )}
+        >
           Beli Sekarang
-        </Button>
+        </Link>
       </div>
 
       <div className="rounded-3xl border-6 border-primary-4 p-6 space-y-3">
