@@ -17,7 +17,7 @@ export default function CpnsPage() {
         price: item.price,
         specialPrice: item.specialPrice,
         originalPrice: item.originalPrice,
-        detailHref: `/tryout/cpns/preview/${item.id}`,
+        detailHref: `/tryout/cpns/${item.id}/preview`,
       }))}
     />
   );
