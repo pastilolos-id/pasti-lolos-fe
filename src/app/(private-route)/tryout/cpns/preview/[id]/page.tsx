@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
-
-import TryoutDetailPage from "@/templates/Tryout/TryoutDetailPage";
 import { getTryoutById } from "@/templates/Tryout/data";
+import TryoutPreviewPage from "@/templates/Tryout/TryoutPreviewPage";
 
 interface TryoutCpnsDetailRouteProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function TryoutCpnsDetailRoute({ params }: TryoutCpnsDetailRouteProps) {
+export default async function TryoutCpnsDetailRoute({
+  params,
+}: TryoutCpnsDetailRouteProps) {
   const { id } = await params;
   const tryout = getTryoutById("cpns", id);
 
@@ -15,5 +16,5 @@ export default async function TryoutCpnsDetailRoute({ params }: TryoutCpnsDetail
     notFound();
   }
 
-  return <TryoutDetailPage category="cpns" tryout={tryout} />;
+  return <TryoutPreviewPage category="cpns" tryout={tryout} />;
 }

@@ -17,7 +17,7 @@ export default function BumnPage() {
         price: item.price,
         specialPrice: item.specialPrice,
         originalPrice: item.originalPrice,
-        detailHref: `/tryout/bumn/${item.id}`,
+        detailHref: `/tryout/bumn/preview/${item.id}`,
       }))}
     />
   );

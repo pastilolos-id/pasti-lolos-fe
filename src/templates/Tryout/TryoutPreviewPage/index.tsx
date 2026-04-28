@@ -11,7 +11,7 @@ interface TryoutDetailPageProps {
   tryout: TryoutItem;
 }
 
-export default function TryoutDetailPage({
+export default function TryoutPreviewPage({
   category,
   tryout,
 }: TryoutDetailPageProps) {
