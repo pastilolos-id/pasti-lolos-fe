@@ -6,7 +6,8 @@ import { useCallback, useMemo, useState } from "react";
 import { Icon } from "@/components";
 import { Button } from "@/components/ui";
 import type { TryoutCategory } from "../data";
-import ExamSection from "./ExamSection";
+import ExamSection, { type ExamAnswers } from "./ExamSection";
+import ResultSection from "./ResultSection";
 import RulesSection from "./RulesSection";
 
 interface ExamPageProps {
@@ -25,6 +26,9 @@ const TOTAL_QUESTIONS = 110;
 export default function ExamPage({ category, id }: ExamPageProps) {
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [examAnswers, setExamAnswers] = useState<ExamAnswers>({});
+  const [resultHighlightQuestion, setResultHighlightQuestion] =
+    useState(TOTAL_QUESTIONS);
 
   const storageKey = useMemo(
     () => `tryout-exam-deadline-${category}-${id}`,
@@ -80,12 +84,24 @@ export default function ExamPage({ category, id }: ExamPageProps) {
           </div>
         </section>
       ) : finished ? (
-        <p>hasil</p>
+        <ResultSection
+          category={category}
+          id={id}
+          totalQuestions={TOTAL_QUESTIONS}
+          answers={examAnswers}
+          highlightQuestionNumber={resultHighlightQuestion}
+        />
       ) : (
         <ExamSection
           storageKey={storageKey}
           totalQuestions={TOTAL_QUESTIONS}
-          onFinish={() => setFinished(true)}
+          initialAnswers={examAnswers}
+          onAnswersChange={setExamAnswers}
+          onFinish={(answers, lastQuestionIndex) => {
+            setExamAnswers(answers);
+            setResultHighlightQuestion(lastQuestionIndex);
+            setFinished(true);
+          }}
         />
       )}
     </>

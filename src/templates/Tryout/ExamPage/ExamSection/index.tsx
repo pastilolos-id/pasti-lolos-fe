@@ -29,22 +29,28 @@ function getDeadlineMs(storageKey: string): number {
   return fallback;
 }
 
+export type ExamAnswers = Record<number, "A" | "B" | "C" | "D" | null>;
+
 interface ExamSectionProps {
   storageKey: string;
   totalQuestions: number;
-  onFinish: () => void;
+  initialAnswers?: ExamAnswers;
+  onAnswersChange?: (answers: ExamAnswers) => void;
+  onFinish: (answers: ExamAnswers, lastQuestionIndex: number) => void;
 }
 
 export default function ExamSection({
   storageKey,
   totalQuestions,
+  initialAnswers,
+  onAnswersChange,
   onFinish,
 }: ExamSectionProps) {
   const [deadlineMs, setDeadlineMs] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(1);
-  const [answers, setAnswers] = useState<
-    Record<number, (typeof OPTIONS)[number] | null>
-  >({});
+  const [answers, setAnswers] = useState<ExamAnswers>(
+    () => initialAnswers ?? {},
+  );
 
   useEffect(() => {
     setDeadlineMs(getDeadlineMs(storageKey));
@@ -64,7 +70,11 @@ export default function ExamSection({
   const selected = answers[currentIndex] ?? null;
 
   const setAnswer = (letter: (typeof OPTIONS)[number]) => {
-    setAnswers((prev) => ({ ...prev, [currentIndex]: letter }));
+    setAnswers((prev) => {
+      const next = { ...prev, [currentIndex]: letter };
+      onAnswersChange?.(next);
+      return next;
+    });
   };
 
   const isAnswered = (n: number) => answers[n] != null;
@@ -192,7 +202,7 @@ export default function ExamSection({
               type="button"
               variant="primary"
               size="default"
-              onClick={onFinish}
+              onClick={() => onFinish(answers, currentIndex)}
               className={cn(
                 "w-full rounded-full px-6 py-3 text-s1 text-neutral-1 sm:w-auto sm:min-w-41",
                 !isFirst && "sm:ml-auto",
@@ -215,6 +225,7 @@ export default function ExamSection({
                 key={n}
                 type="button"
                 onClick={() => setCurrentIndex(n)}
+                aria-current={isCurrent ? "true" : undefined}
                 className={cn(
                   "flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold transition-colors cursor-pointer",
                   isCurrent
