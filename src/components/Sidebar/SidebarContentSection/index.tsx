@@ -1,7 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { Icon } from "@/components";
+import Notifications from "@/components/Notifications";
 import {
   Accordion,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Separator,
   SidebarContent,
   SidebarGroup,
@@ -14,6 +21,8 @@ import MenuItemWithSubMenu from "./../MenuItemWithSubMenu";
 import { middleMenuItems, topMenuItems } from "./../sidebarData";
 
 export default function SidebarContentSection() {
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
   return (
     <SidebarContent className="grid grid-rows-3">
       <SidebarGroup>
@@ -44,6 +53,35 @@ export default function SidebarContentSection() {
         <SidebarGroupLabel>Lainnya</SidebarGroupLabel>
         <SidebarMenu>
           {middleMenuItems.map((menu) => {
+            if (menu.title === "Notifikasi") {
+              return (
+                <SidebarMenuItem key={menu.title}>
+                  <Popover
+                    open={isNotificationsOpen}
+                    onOpenChange={setIsNotificationsOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <SidebarMenuButton tooltip={menu.title}>
+                        <Icon size={24} viewBox="0 0 24 24" name={menu.icon} />
+                        <p>{menu.title}</p>
+                      </SidebarMenuButton>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side="right"
+                      align="center"
+                      sideOffset={12}
+                      className="w-98.5 border-none bg-transparent p-0 shadow-none"
+                    >
+                      <Notifications
+                        onItemClick={() => setIsNotificationsOpen(false)}
+                        onSeeAllClick={() => setIsNotificationsOpen(false)}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </SidebarMenuItem>
+              );
+            }
+
             return (
               <SidebarMenuItem key={menu.title}>
                 <SidebarMenuButton tooltip={menu.title} asChild>
