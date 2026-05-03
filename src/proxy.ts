@@ -3,7 +3,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_ROUTES = ["/login", "/register"];
-const PRIVATE_ROUTES = ["/home", "/profile"];
+const PRIVATE_ROUTES = [
+  "/home",
+  "/profile",
+  "/activities",
+  "/course",
+  "/notifications",
+  "/purchases",
+  "/tryout",
+];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
