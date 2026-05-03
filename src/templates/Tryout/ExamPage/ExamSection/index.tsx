@@ -227,7 +227,7 @@ export default function ExamSection({
                 onClick={() => setCurrentIndex(n)}
                 aria-current={isCurrent ? "true" : undefined}
                 className={cn(
-                  "flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold transition-colors cursor-pointer",
+                  "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold transition-colors cursor-pointer",
                   isCurrent
                     ? "border-primary-4 bg-primary-5 text-neutral-1"
                     : done

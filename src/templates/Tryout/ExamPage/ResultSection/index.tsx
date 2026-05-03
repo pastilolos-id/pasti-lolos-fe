@@ -88,7 +88,7 @@ export default function ResultSection({
               <div
                 key={n}
                 className={cn(
-                  "flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold",
+                  "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold",
                   isHighlight
                     ? "border-primary-4 bg-primary-5 text-neutral-1"
                     : done
