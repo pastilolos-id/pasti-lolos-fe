@@ -1,6 +1,4 @@
-import Link from "next/link";
-
-import { buttonVariants } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import type { TryoutCategory } from "../../data";
 import type { ExamAnswers } from "../ExamSection";
@@ -14,16 +12,18 @@ interface ResultSectionProps {
   highlightQuestionNumber?: number;
   score?: number;
   feedbackText?: string;
+  onReviewSoal: () => void;
 }
 
 export default function ResultSection({
   category,
-  id,
+  id: _id,
   totalQuestions,
   answers,
   highlightQuestionNumber,
   score: scoreProp,
   feedbackText: feedbackProp,
+  onReviewSoal,
 }: ResultSectionProps) {
   const answeredIds = Object.values(answers).filter((v) => v != null).length;
 
@@ -67,15 +67,15 @@ export default function ResultSection({
           <p className="mt-6 text-b2 text-neutral-6">{feedbackText}</p>
         </div>
 
-        <Link
-          href={`/tryout/${category}/${id}/review`}
-          className={cn(
-            buttonVariants({ variant: "outline", size: "default" }),
-            "mt-10 w-full rounded-full border-primary-4/50 px-6 py-3 text-s1 font-semibold text-neutral-6 sm:mt-14",
-          )}
+        <Button
+          type="button"
+          variant="outline"
+          size="default"
+          onClick={onReviewSoal}
+          className="mt-10 w-full rounded-full border-primary-4/50 px-6 py-3 text-s1 font-semibold text-neutral-6 sm:mt-14"
         >
           Review Soal
-        </Link>
+        </Button>
       </div>
 
       <aside className="w-full max-h-[calc(100vh-75px)] shrink-0 overflow-auto rounded-3xl border border-neutral-3 bg-neutral-1 p-4 sm:p-6 xl:w-80">
