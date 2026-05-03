@@ -1,12 +1,13 @@
 import abdiNegaraIcon from "@/assets/icons/abdi-negara.svg";
 import arrowLeftCircle from "@/assets/icons/arrow-left-circle.svg";
+import arrowLeftCircleBgBlue from "@/assets/icons/arrow-left-circle-bg-blue.svg";
 import bumnIcon from "@/assets/icons/bumn.svg";
 import bumnWrappedTextIcon from "@/assets/icons/bumn-wrapped-text.svg";
 import checklistCircleFillIcon from "@/assets/icons/checklist-circle-fill.svg";
 import checklistCircleFillGreenIcon from "@/assets/icons/checklist-circle-fill-green.svg";
 import crossCircleFillIcon from "@/assets/icons/cross-circle-fill.svg";
-import eyeClosedIcon from "@/assets/icons/eye-closed.svg";
 import examMultipleChoiceOutlineIcon from "@/assets/icons/exam-multiple-choice-outline.svg";
+import eyeClosedIcon from "@/assets/icons/eye-closed.svg";
 import fluentTextboxBlueIcon from "@/assets/icons/fluent-textbox-blue.svg";
 import googleFullcolorIcon from "@/assets/icons/google-fullcolor.svg";
 import hamburgerMenuToggleIcon from "@/assets/icons/hamburger-menu-toggle.svg";
@@ -34,6 +35,10 @@ const iconImagePath = {
   "arrow-left-circle": {
     src: arrowLeftCircle,
     alt: "Arrow Left Circle",
+  },
+  "arrow-left-circle-bg-blue": {
+    src: arrowLeftCircleBgBlue,
+    alt: "Arrow Left Circle with Blue Background",
   },
   "bumn-wrapped-text": {
     src: bumnWrappedTextIcon,

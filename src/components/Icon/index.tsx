@@ -10,6 +10,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "activity"
     | "analysis-fill"
     | "arrow-left-circle"
+    | "arrow-left-circle-bg-blue"
     | "bumn"
     | "bumn-wrapped-text"
     | "card"
@@ -66,6 +67,7 @@ const Icon = ({
     case "bumn-wrapped-text":
     case "abdi-negara":
     case "arrow-left-circle":
+    case "arrow-left-circle-bg-blue":
     case "landing-page-bg-ellipse":
     case "cross-circle-fill":
     case "checklist-circle-fill":
