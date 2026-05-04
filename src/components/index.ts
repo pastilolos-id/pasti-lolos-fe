@@ -1,6 +1,7 @@
 export { default as BottomNavBar } from "./BottomNavBar";
 export { default as FilterSelect } from "./FilterSelect";
 export type { FilterType } from "./FilterSelect/types";
+export type { FormHandle } from "./Form";
 export { default as Form } from "./Form";
 export { default as Icon } from "./Icon";
 export { default as Logo } from "./Logo";

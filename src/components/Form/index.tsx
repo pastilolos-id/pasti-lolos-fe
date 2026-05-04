@@ -1,37 +1,62 @@
 "use client";
 
-import type { DetailedHTMLProps, FormHTMLAttributes, ReactNode } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {
+  type DetailedHTMLProps,
+  type FormHTMLAttributes,
+  forwardRef,
+  type ReactNode,
+  useImperativeHandle,
+} from "react";
+import {
+  type FieldValues,
+  type SubmitHandler,
+  type UseFormClearErrors,
+  type UseFormSetError,
+  useForm,
+} from "react-hook-form";
 import { FieldGroup } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import InputElement from "./InputElement";
 import type { inputDataType } from "./InputElement/types";
+
+export type FormHandle = {
+  setError: UseFormSetError<FieldValues>;
+  clearErrors: UseFormClearErrors<FieldValues>;
+};
 
 export type formType = DetailedHTMLProps<
   FormHTMLAttributes<HTMLFormElement>,
   HTMLFormElement
 > & {
   inputData: inputDataType[];
-  onSubmitForm: (data: Record<string, unknown>) => void;
+  onSubmitForm: (data: Record<string, unknown>) => void | Promise<void>;
   error?: string | Record<string, string[]>;
   children?: ReactNode;
 };
 
-export default function Form({
-  inputData,
-  onSubmitForm,
-  error,
-  children,
-  className,
-  ...props
-}: formType) {
-  const { control, handleSubmit } = useForm();
+const Form = forwardRef<FormHandle, formType>(function Form(
+  { inputData, onSubmitForm, error: _error, children, className, ...props },
+  ref,
+) {
+  const { control, handleSubmit, setError, clearErrors } = useForm<
+    Record<string, unknown>
+  >({
+    mode: "onSubmit",
+  });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      setError,
+      clearErrors,
+    }),
+    [setError, clearErrors],
+  );
 
   const onSubmitHandler: SubmitHandler<Record<string, unknown>> = async (
     data: Record<string, unknown>,
   ) => {
-    console.log("Berhasil submit form");
-    onSubmitForm(data);
+    await onSubmitForm(data);
   };
 
   return (
@@ -45,4 +70,6 @@ export default function Form({
       </FieldGroup>
     </form>
   );
-}
+});
+
+export default Form;
