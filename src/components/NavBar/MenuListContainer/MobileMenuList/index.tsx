@@ -11,7 +11,7 @@ export default async function MobileMenuList({
   rightMenu,
 }: typeof CollapsibleContent & menuListContainerType) {
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
+  const token = cookieStore.get("token")?.value;
 
   return (
     <CollapsibleContent className="flex flex-col gap-5 mt-5 md:hidden">

@@ -15,7 +15,7 @@ const PRIVATE_ROUTES = [
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get("auth_token")?.value;
+  const token = request.cookies.get("token")?.value;
 
   // If user is on a public route and has token, send to home
   if (PUBLIC_ROUTES.some((r) => pathname.startsWith(r)) && token) {

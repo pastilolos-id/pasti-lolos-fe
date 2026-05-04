@@ -4,12 +4,12 @@ import type { User, UserState } from "@/types/user";
 
 const initialState: UserState = {
   user: {
-    id: "0",
+    id: 0,
     username: "",
-    name: "",
+    fullName: null,
     email: "",
-    profileImg: "",
-    role: "",
+    profilePictureUrl: null,
+    roleId: 0,
   },
   isAuthenticated: false,
 };
@@ -20,7 +20,7 @@ export const userSlice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<User>) {
       state.user = action.payload;
-      state.isAuthenticated = action.payload.id !== "0";
+      state.isAuthenticated = action.payload.id !== 0;
     },
     clearUser(state) {
       state.user = initialState.user;

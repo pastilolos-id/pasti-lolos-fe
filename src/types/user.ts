@@ -1,13 +1,13 @@
 export interface User {
-  id: string;
+  id: number;
   username: string;
-  name: string;
+  fullName: string | null;
   email: string;
-  profileImg: string;
-  role: string;
+  profilePictureUrl: string | null;
+  roleId: number;
 }
 
-// Response from login/check-token includes token field
+// Response from login/check-token may include token field (e.g. mock)
 export interface AuthUser extends User {
   token: string;
 }

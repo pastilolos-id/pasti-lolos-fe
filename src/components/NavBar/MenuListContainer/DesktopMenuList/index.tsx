@@ -11,7 +11,7 @@ export default async function DesktopMenuList({
   rightMenu = [],
 }: menuListContainerType) {
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
+  const token = cookieStore.get("token")?.value;
 
   return (
     <div className="hidden md:flex justify-between items-center grow ml-8">

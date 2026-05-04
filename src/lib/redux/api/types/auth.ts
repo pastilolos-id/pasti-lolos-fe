@@ -32,3 +32,36 @@ export type RegisterSuccessResponse = {
   message?: string;
   data?: unknown;
 };
+
+/**
+ * Client ↔ POST /auth/login
+ */
+
+export type ApiUser = {
+  id: number;
+  email: string;
+  username: string;
+  userRoleId: number;
+  fullName: string | null;
+  profilePictureUrl: string | null;
+};
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export type LoginFormValues = LoginRequest;
+
+export type LoginFieldErrors = Partial<Record<keyof LoginRequest, string[]>>;
+
+export type LoginErrorResponse = {
+  statusCode: number;
+  message: string;
+  errors?: LoginFieldErrors;
+};
+
+export type LoginSuccessResponse = {
+  message: string;
+  user: ApiUser;
+};

@@ -25,10 +25,17 @@ export default function SidebarAvatar(props: React.ComponentProps<"div">) {
         )}
       >
         <Avatar className="border border-white">
-          <AvatarImage src={user.profileImg} alt={user.name} />
-          <AvatarFallback>{getAvatarInitials(user.name)}</AvatarFallback>
+          <AvatarImage
+            src={user.profilePictureUrl ?? undefined}
+            alt={user.fullName ?? user.username}
+          />
+          <AvatarFallback>
+            {getAvatarInitials(user.fullName ?? user.username)}
+          </AvatarFallback>
         </Avatar>
-        <p className="mr-3 group-data-[collapsible=icon]:hidden">{user.name}</p>
+        <p className="mr-3 group-data-[collapsible=icon]:hidden">
+          {user.fullName ?? user.username}
+        </p>
 
         <div className="ml-auto cursor-pointer group-data-[collapsible=icon]:hidden">
           <Icon

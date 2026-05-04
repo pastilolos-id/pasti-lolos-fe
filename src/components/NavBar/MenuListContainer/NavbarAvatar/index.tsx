@@ -20,10 +20,15 @@ export default function NavbarAvatar(props: React.ComponentProps<"button">) {
         )}
       >
         <Avatar className="border border-white">
-          <AvatarImage src={user.profileImg} alt={user.name} />
-          <AvatarFallback>{getAvatarInitials(user.name)}</AvatarFallback>
+          <AvatarImage
+            src={user.profilePictureUrl ?? undefined}
+            alt={user.fullName ?? user.username}
+          />
+          <AvatarFallback>
+            {getAvatarInitials(user.fullName ?? user.username)}
+          </AvatarFallback>
         </Avatar>
-        <p className="mr-3">{user.name}</p>
+        <p className="mr-3">{user.fullName ?? user.username}</p>
       </Button>
     </Link>
   );

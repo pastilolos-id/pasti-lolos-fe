@@ -34,7 +34,7 @@ export default function TokenValidator() {
       refetch();
     }
 
-    if (user.id === "0") {
+    if (user.id === 0) {
       dispatch(setUser(userData));
     }
   }, [pathname, refetch, user, dispatch, userData]);

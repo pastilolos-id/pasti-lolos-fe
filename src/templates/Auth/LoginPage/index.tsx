@@ -1,50 +1,63 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Form } from "@/components";
-import { Button } from "@/components/ui";
-import { setToken } from "@/lib/cookies";
+import { Form, type FormHandle } from "@/components";
+import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import { useLoginMutation } from "@/lib/redux/api/authApi";
+import {
+  applyLoginFieldErrors,
+  mapApiUserToStateUser,
+  normalizeLoginPayload,
+} from "@/lib/redux/api/mapLoginApiErrors";
+import { parseLoginMutationError } from "@/lib/redux/api/parseLoginMutationError";
 import { setUser } from "@/lib/redux/slices/userSlice";
-import { delay } from "@/lib/utils";
-import userData from "@/mock-data/user";
 import AuthLeftSection from "../LeftSection";
 import { loginInputData } from "./inputData";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const formRef = useRef<FormHandle>(null);
+  const [globalMessage, setGlobalMessage] = useState<string | null>(null);
+
+  const [loginUser, { isLoading }] = useLoginMutation();
 
   const handleOnClickGoogleButton = () => {
     console.log("Google button clicked");
   };
 
   const handleOnSubmitForm = async (payload: Record<string, unknown>) => {
-    setLoading(true);
-    const isSuccess = await delay(3);
+    setGlobalMessage(null);
+    formRef.current?.clearErrors();
 
-    const { token, ...user } = userData;
+    const body = normalizeLoginPayload(payload);
 
-    if (
-      isSuccess &&
-      payload.email === "user@gmail.com" &&
-      payload.password === "user123"
-    ) {
-      dispatch(setUser(user));
-      setToken(token);
-      console.log("Berhasil login");
+    try {
+      const res = await loginUser(body).unwrap();
+      dispatch(setUser(mapApiUserToStateUser(res.user)));
       router.push("/home");
-    } else {
-      console.log("Gagal login, pastikan username dan password benar");
+    } catch (err) {
+      const parsed = parseLoginMutationError(err);
+
+      if (parsed?.message?.trim()) {
+        setGlobalMessage(parsed.message.trim());
+      }
+
+      if (parsed?.errors && formRef.current) {
+        applyLoginFieldErrors(formRef.current.setError, parsed.errors);
+      }
+
+      if (
+        !parsed?.message?.trim() &&
+        (!parsed?.errors || Object.keys(parsed.errors).length === 0)
+      ) {
+        setGlobalMessage("Terjadi kesalahan. Silakan coba lagi.");
+      }
     }
-
-    console.log({ payload });
-    console.log(isSuccess);
-
-    setLoading(false);
   };
 
   return (
@@ -55,12 +68,21 @@ export default function LoginPage() {
         text: "Masuk Dengan Akun Google",
       }}
     >
+      {globalMessage ? (
+        <Alert variant="destructive" className="col-span-12 mb-4">
+          <AlertCircle className="col-start-1 row-start-1" aria-hidden />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{globalMessage}</AlertDescription>
+        </Alert>
+      ) : null}
+
       <Form
+        ref={formRef}
         inputData={loginInputData}
-        onSubmitForm={(e) => handleOnSubmitForm(e)}
+        onSubmitForm={handleOnSubmitForm}
       >
         <Button
-          isLoading={loading}
+          isLoading={isLoading}
           text="Masuk"
           type="submit"
           className="col-span-12 mt-6"

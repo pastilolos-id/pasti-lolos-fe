@@ -102,8 +102,13 @@ export default function BottomNavBar() {
         className="flex flex-col items-center flex-1 text-neutral-1 hover:text-neutral-2"
       >
         <Avatar className="border border-white size-6">
-          <AvatarImage src={user.profileImg} alt={user.name} />
-          <AvatarFallback>{getAvatarInitials(user.name)}</AvatarFallback>
+          <AvatarImage
+            src={user.profilePictureUrl ?? undefined}
+            alt={user.fullName ?? user.username}
+          />
+          <AvatarFallback>
+            {getAvatarInitials(user.fullName ?? user.username)}
+          </AvatarFallback>
         </Avatar>
         <p className="text-c1">akun</p>
       </Link>
