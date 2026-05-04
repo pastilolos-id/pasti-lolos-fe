@@ -1,36 +1,58 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Form } from "@/components";
-import { Button } from "@/components/ui";
-import { delay } from "@/lib/utils";
+import { useRef, useState } from "react";
+import { Form, type FormHandle } from "@/components";
+import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import { useRegisterMutation } from "@/lib/redux/api/authApi";
+import {
+  applyRegisterFieldErrors,
+  normalizeRegisterPayload,
+} from "@/lib/redux/api/mapRegisterApiErrors";
+import { parseRegisterMutationError } from "@/lib/redux/api/parseRegisterMutationError";
 import AuthLeftSection from "../LeftSection";
 import { registerInputData } from "./inputData";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const formRef = useRef<FormHandle>(null);
+  const [globalMessage, setGlobalMessage] = useState<string | null>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [registerUser, { isLoading }] = useRegisterMutation();
 
   const handleOnClickGoogleButton = () => {
     console.log("Google button clicked");
   };
 
   const handleOnSubmitForm = async (payload: Record<string, unknown>) => {
-    setLoading(true);
-    const isSuccess = await delay(3);
+    setGlobalMessage(null);
+    formRef.current?.clearErrors();
 
-    if (isSuccess) {
-      console.log("Berhasil Register");
+    const body = normalizeRegisterPayload(payload);
+
+    try {
+      await registerUser(body).unwrap();
       router.push("/login");
-    } else {
-      console.log("Gagal Register");
-    }
+    } catch (err) {
+      const parsed = parseRegisterMutationError(err);
 
-    console.log({ payload });
-    setLoading(false);
+      if (parsed?.message?.trim()) {
+        setGlobalMessage(parsed.message.trim());
+      }
+
+      if (parsed?.errors && formRef.current) {
+        applyRegisterFieldErrors(formRef.current.setError, parsed.errors);
+      }
+
+      if (
+        !parsed?.message?.trim() &&
+        (!parsed?.errors || Object.keys(parsed.errors).length === 0)
+      ) {
+        setGlobalMessage("Terjadi kesalahan. Silakan coba lagi.");
+      }
+    }
   };
 
   return (
@@ -41,12 +63,24 @@ export default function RegisterPage() {
         text: "Daftar Dengan Akun Google",
       }}
     >
-      <Form inputData={registerInputData} onSubmitForm={handleOnSubmitForm}>
+      {globalMessage ? (
+        <Alert variant="destructive" className="col-span-12 mb-4">
+          <AlertCircle className="col-start-1 row-start-1" aria-hidden />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{globalMessage}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      <Form
+        ref={formRef}
+        inputData={registerInputData}
+        onSubmitForm={handleOnSubmitForm}
+      >
         <Button
           text="Daftar"
           type="submit"
           className="col-span-12 mt-6"
-          isLoading={loading}
+          isLoading={isLoading}
         />
       </Form>
 
