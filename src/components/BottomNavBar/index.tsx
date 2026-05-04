@@ -13,13 +13,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui";
+import { useLogout } from "@/lib/hooks/useLogout";
 import type { RootState } from "@/lib/redux/store";
 import { getAvatarInitials } from "@/lib/utils";
 import { menuItems } from "./bottomNavBarData";
 
 export default function BottomNavBar() {
   const user = useSelector((state: RootState) => state.user.user);
-  const [openStates, setOpenStates] = useState<Record<string, boolean>>({}); // State baru untuk melacak popover per menu
+  const [openStates, setOpenStates] = useState<Record<string, boolean>>({});
+  const [accountOpen, setAccountOpen] = useState(false);
+  const {
+    performLogout,
+    isLoading: isLogoutLoading,
+    errorMessage,
+  } = useLogout();
 
   return (
     <nav
@@ -97,21 +104,58 @@ export default function BottomNavBar() {
         }
       })}
 
-      <Link
-        href={"/profile"}
-        className="flex flex-col items-center flex-1 text-neutral-1 hover:text-neutral-2"
-      >
-        <Avatar className="border border-white size-6">
-          <AvatarImage
-            src={user.profilePictureUrl ?? undefined}
-            alt={user.fullName ?? user.username}
+      <Popover open={accountOpen} onOpenChange={setAccountOpen}>
+        <PopoverTrigger
+          className={`flex flex-col items-center flex-1 text-neutral-1 hover:text-neutral-2 cursor-pointer ${accountOpen ? "justify-center" : ""}`}
+        >
+          <div
+            className={`flex flex-col items-center w-fit ${accountOpen ? "border border-primary-4 rounded-full p-3" : ""}`}
+          >
+            <Avatar className="border border-white size-6">
+              <AvatarImage
+                src={user.profilePictureUrl ?? undefined}
+                alt={user.fullName ?? user.username}
+              />
+              <AvatarFallback>
+                {getAvatarInitials(user.fullName ?? user.username)}
+              </AvatarFallback>
+            </Avatar>
+            <p className={`text-c1 ${accountOpen ? "hidden" : ""}`}>akun</p>
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto min-w-40 bg-primary-5 flex flex-col gap-2 rounded-3xl border-0 p-3">
+          <PopoverPrimitive.Arrow
+            width={41}
+            height={9}
+            className="fill-primary-4 z-20"
           />
-          <AvatarFallback>
-            {getAvatarInitials(user.fullName ?? user.username)}
-          </AvatarFallback>
-        </Avatar>
-        <p className="text-c1">akun</p>
-      </Link>
+          <PopoverPrimitive.Arrow
+            width={40}
+            height={8}
+            className="fill-primary-5 z-20"
+          />
+          <Link
+            href="/profile"
+            onClick={() => setAccountOpen(false)}
+            className="flex items-center gap-2 rounded-2xl px-3 py-2 text-neutral-1 hover:bg-primary-4/30 hover:text-neutral-2"
+          >
+            <Icon name="people-circle-fill" size={24} viewBox="0 0 24 24" />
+            <span className="text-c1 font-medium">Profil</span>
+          </Link>
+          <button
+            type="button"
+            disabled={isLogoutLoading}
+            onClick={() => void performLogout()}
+            className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-red hover:bg-red/20 disabled:opacity-50"
+          >
+            <Icon name="door" size={24} viewBox="0 0 24 24" />
+            <span className="text-c1 font-medium">Keluar</span>
+          </button>
+          {errorMessage ? (
+            <p className="text-xs text-red px-1">{errorMessage}</p>
+          ) : null}
+        </PopoverContent>
+      </Popover>
     </nav>
   );
 }

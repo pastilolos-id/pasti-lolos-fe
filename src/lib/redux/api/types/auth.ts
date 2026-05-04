@@ -65,3 +65,11 @@ export type LoginSuccessResponse = {
   message: string;
   user: ApiUser;
 };
+
+/**
+ * Client ↔ GET /auth/logout
+ */
+
+export type LogoutSuccessResponse = {
+  message: string;
+};

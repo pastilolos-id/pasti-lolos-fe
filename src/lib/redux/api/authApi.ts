@@ -2,6 +2,7 @@ import { baseApi } from "./baseApi";
 import type {
   LoginRequest,
   LoginSuccessResponse,
+  LogoutSuccessResponse,
   RegisterRequest,
   RegisterSuccessResponse,
 } from "./types/auth";
@@ -22,7 +23,14 @@ export const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    logout: build.mutation<LogoutSuccessResponse, void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useLogoutMutation } =
+  authApi;

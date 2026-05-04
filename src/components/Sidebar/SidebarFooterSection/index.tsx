@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui";
+import LogoutSidebarMenuButton from "./LogoutSidebarMenuButton";
 import SidebarAvatar from "./SidebarAvatar";
 
 export default function SidebarFooterSection() {
@@ -40,15 +41,7 @@ export default function SidebarFooterSection() {
             </SidebarMenuItem>
           </SidebarMenu>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                tooltip="Keluar"
-                className="px-2 py-3 hover:bg-red active:bg-red/70 w-full! flex group-data-[collapsible=icon]:justify-center"
-              >
-                <Icon size={24} viewBox="0 0 24 24" name="door" />
-                <p className="group-data-[collapsible=icon]:hidden">Keluar</p>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <LogoutSidebarMenuButton />
           </SidebarMenu>
         </CollapsibleContent>
 
