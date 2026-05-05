@@ -4,7 +4,7 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { skipToken } from "@reduxjs/toolkit/query";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import qrisImage from "@/assets/images/QRIS.jpeg";
 import { Form, type FormHandle, Icon } from "@/components";
 import type { inputDataType } from "@/components/Form/InputElement/types";
@@ -129,10 +129,13 @@ export default function CheckoutPage({
   productType,
 }: CheckoutPageProps) {
   const couponFormRef = useRef<FormHandle>(null);
+  const transferProofInputRef = useRef<HTMLInputElement>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     PaymentMethod["id"] | null
   >(null);
   const [copyLabel, setCopyLabel] = useState("Copy No. Rekening");
+  const [transferProofUrl, setTransferProofUrl] = useState<string | null>(null);
+  const [isProofPreviewOpen, setIsProofPreviewOpen] = useState(false);
 
   const numericId = /^\d+$/.test(idProduk) ? Number(idProduk) : null;
   const idArg = numericId !== null && numericId > 0 ? numericId : null;
@@ -193,6 +196,29 @@ export default function CheckoutPage({
     setSelectedPaymentMethodId((currentMethodId) =>
       currentMethodId === methodId ? null : methodId,
     );
+  };
+
+  useEffect(() => {
+    return () => {
+      if (transferProofUrl) {
+        URL.revokeObjectURL(transferProofUrl);
+      }
+    };
+  }, [transferProofUrl]);
+
+  const handleTransferProofChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) {
+      return;
+    }
+
+    if (transferProofUrl) {
+      URL.revokeObjectURL(transferProofUrl);
+    }
+
+    const localPreviewUrl = URL.createObjectURL(selectedFile);
+    setTransferProofUrl(localPreviewUrl);
+    setIsProofPreviewOpen(false);
   };
 
   const priceAmount = preview ? parseCheckoutAmount(preview.price) : 0;
@@ -397,6 +423,53 @@ export default function CheckoutPage({
               </div>
             </section>
 
+            <section className="mt-6">
+              <h2 className="text-s1 text-neutral-6">Bukti Transfer</h2>
+              <p className="mt-1 text-c1 text-neutral-5">
+                Upload gambar bukti transfer (JPG, JPEG, PNG).
+              </p>
+
+              <input
+                ref={transferProofInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg"
+                onChange={handleTransferProofChange}
+                className="hidden"
+              />
+
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => transferProofInputRef.current?.click()}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "rounded-full text-s1 px-6 py-5",
+                  )}
+                >
+                  {transferProofUrl
+                    ? "Ganti Bukti Transfer"
+                    : "Upload Bukti Transfer"}
+                </button>
+              </div>
+
+              {transferProofUrl ? (
+                <button
+                  type="button"
+                  onClick={() => setIsProofPreviewOpen(true)}
+                  className="mt-3 block w-fit rounded-2xl border border-neutral-3 bg-neutral-2 p-2 transition hover:border-primary-5"
+                >
+                  <Image
+                    src={transferProofUrl}
+                    alt="Preview bukti transfer"
+                    width={200}
+                    height={200}
+                    className="h-32 w-32 rounded-xl object-cover"
+                    unoptimized
+                  />
+                </button>
+              ) : null}
+            </section>
+
             <button
               type="button"
               className={cn(
@@ -409,6 +482,30 @@ export default function CheckoutPage({
           </div>
         )}
       </div>
+
+      {isProofPreviewOpen && transferProofUrl ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="relative w-full max-w-3xl rounded-2xl bg-neutral-1 p-3 sm:p-4">
+            <button
+              type="button"
+              onClick={() => setIsProofPreviewOpen(false)}
+              className="mb-3 ml-auto block rounded-full bg-primary-4 px-4 py-2 text-s1 text-neutral-1"
+            >
+              Tutup
+            </button>
+            <div className="overflow-hidden rounded-xl border border-neutral-3 bg-neutral-2 p-2">
+              <Image
+                src={transferProofUrl}
+                alt="Bukti transfer fullscreen"
+                width={1200}
+                height={1200}
+                className="h-auto max-h-[75vh] w-full rounded-lg object-contain"
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
