@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { Form, type FormHandle } from "@/components";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import { startGoogleOAuthRedirect } from "@/lib/auth/googleAuth";
 import { useRegisterMutation } from "@/lib/redux/api/authApi";
 import {
   applyRegisterFieldErrors,
@@ -23,7 +24,9 @@ export default function RegisterPage() {
   const [registerUser, { isLoading }] = useRegisterMutation();
 
   const handleOnClickGoogleButton = () => {
-    console.log("Google button clicked");
+    setGlobalMessage(null);
+    formRef.current?.clearErrors();
+    startGoogleOAuthRedirect();
   };
 
   const handleOnSubmitForm = async (payload: Record<string, unknown>) => {

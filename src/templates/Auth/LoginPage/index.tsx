@@ -2,11 +2,12 @@
 
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Form, type FormHandle } from "@/components";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import { startGoogleOAuthRedirect } from "@/lib/auth/googleAuth";
 import { useLoginMutation } from "@/lib/redux/api/authApi";
 import {
   applyLoginFieldErrors,
@@ -20,14 +21,31 @@ import { loginInputData } from "./inputData";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useDispatch();
   const formRef = useRef<FormHandle>(null);
   const [globalMessage, setGlobalMessage] = useState<string | null>(null);
 
   const [loginUser, { isLoading }] = useLoginMutation();
 
+  useEffect(() => {
+    const errorFromQuery = searchParams.get("error");
+    if (!errorFromQuery?.trim()) {
+      return;
+    }
+    const raw = errorFromQuery.trim();
+    try {
+      setGlobalMessage(decodeURIComponent(raw.replace(/\+/g, " ")));
+    } catch {
+      setGlobalMessage(raw.replace(/\+/g, " "));
+    }
+    router.replace("/login", { scroll: false });
+  }, [searchParams, router]);
+
   const handleOnClickGoogleButton = () => {
-    console.log("Google button clicked");
+    setGlobalMessage(null);
+    formRef.current?.clearErrors();
+    startGoogleOAuthRedirect();
   };
 
   const handleOnSubmitForm = async (payload: Record<string, unknown>) => {

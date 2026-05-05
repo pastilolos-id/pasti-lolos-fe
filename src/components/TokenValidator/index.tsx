@@ -1,24 +1,12 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "@/lib/redux/slices/userSlice";
-import type { RootState } from "@/lib/redux/store";
+import { useCallback, useEffect } from "react";
 import { delay } from "@/lib/utils";
-import mockUserData from "@/mock-data/user";
 
 export default function TokenValidator() {
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useDispatch();
-
-  const userData = useMemo(() => {
-    const { token: _, ...rest } = mockUserData;
-    return rest;
-  }, []);
-
-  const user = useSelector((state: RootState) => state.user.user);
 
   const refetch = useCallback(async () => {
     await delay(1000);
@@ -34,10 +22,9 @@ export default function TokenValidator() {
       refetch();
     }
 
-    if (user.id === 0) {
-      dispatch(setUser(userData));
-    }
-  }, [pathname, refetch, user, dispatch, userData]);
+    // Tidak mengisi mock user: session OAuth/Google hanya menyetel cookie;
+    // data profil akan di-hydrate lewat endpoint terpisah nanti.
+  }, [pathname, refetch]);
 
   useEffect(() => {
     // Jika isError adalah konstanta statis (false), Biome melarangnya di deps.
