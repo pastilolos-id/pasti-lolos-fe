@@ -8,6 +8,7 @@ const PRIVATE_ROUTES = [
   "/profile",
   "/activities",
   "/course",
+  "/checkout",
   "/notifications",
   "/purchases",
   "/tryout",
