@@ -3,6 +3,7 @@ import type {
   LoginRequest,
   LoginSuccessResponse,
   LogoutSuccessResponse,
+  MyProfileResponse,
   RegisterRequest,
   RegisterSuccessResponse,
 } from "./types/auth";
@@ -29,8 +30,18 @@ export const authApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getMyProfile: build.query<MyProfileResponse, void>({
+      query: () => ({
+        url: "/auth/myProfile",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useLogoutMutation } =
-  authApi;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useLogoutMutation,
+  useLazyGetMyProfileQuery,
+} = authApi;

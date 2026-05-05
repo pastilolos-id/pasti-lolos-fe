@@ -46,6 +46,21 @@ export type ApiUser = {
   profilePictureUrl: string | null;
 };
 
+/**
+ * Client ↔ GET /auth/myProfile
+ */
+export type MyProfileResponse = {
+  id: number;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  profilePictureUrl: string | null;
+  userRoleId: number;
+  status: string;
+  fullName: string | null;
+};
+
 export type LoginRequest = {
   email: string;
   password: string;

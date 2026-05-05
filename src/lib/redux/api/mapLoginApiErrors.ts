@@ -1,6 +1,11 @@
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 import type { User } from "@/types/user";
-import type { ApiUser, LoginErrorResponse, LoginRequest } from "./types/auth";
+import type {
+  ApiUser,
+  LoginErrorResponse,
+  LoginRequest,
+  MyProfileResponse,
+} from "./types/auth";
 
 const LOGIN_FIELD_KEYS = [
   "email",
@@ -39,5 +44,16 @@ export function mapApiUserToStateUser(apiUser: ApiUser): User {
     roleId: apiUser.userRoleId,
     fullName: apiUser.fullName,
     profilePictureUrl: apiUser.profilePictureUrl,
+  };
+}
+
+export function mapMyProfileToStateUser(profile: MyProfileResponse): User {
+  return {
+    id: profile.id,
+    email: profile.email,
+    username: profile.username,
+    roleId: profile.userRoleId,
+    fullName: profile.fullName,
+    profilePictureUrl: profile.profilePictureUrl,
   };
 }
