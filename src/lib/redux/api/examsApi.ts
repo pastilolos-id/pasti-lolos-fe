@@ -1,6 +1,7 @@
 import { baseApi } from "./baseApi";
 import type {
   ExamCategoryParam,
+  ExamPackageDetailSuccessResponse,
   ExamsListSuccessResponse,
 } from "./types/exams";
 
@@ -15,7 +16,14 @@ export const examsApi = baseApi.injectEndpoints({
         params: { category },
       }),
     }),
+    getExamPackageDetail: build.query<ExamPackageDetailSuccessResponse, number>(
+      {
+        query: (id) => ({
+          url: `/exams/package-detail/${id}`,
+        }),
+      },
+    ),
   }),
 });
 
-export const { useGetExamsQuery } = examsApi;
+export const { useGetExamsQuery, useGetExamPackageDetailQuery } = examsApi;

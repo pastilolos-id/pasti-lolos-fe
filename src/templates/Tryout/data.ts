@@ -1,21 +1,23 @@
 export type TryoutCategory = "cpns" | "bumn";
 
-export interface TryoutSection {
+export interface TryoutSubExam {
   id: string;
   title: string;
   totalQuestions: number;
-  passingGrade: number;
+  passingGrade: number | string;
 }
 
 export interface TryoutItem {
   id: string;
   title: string;
+  description?: string;
   totalQuestions: number;
   durationMinutes: number;
   price: number;
   specialPrice?: number;
   originalPrice?: number;
-  sections: TryoutSection[];
+  subExams?: TryoutSubExam[];
+  sections?: TryoutSubExam[];
 }
 
 export interface TryoutListContent {

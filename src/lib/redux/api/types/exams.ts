@@ -22,3 +22,28 @@ export interface ExamsListSuccessResponse {
   data: ExamListItem[];
   meta: ExamsListMeta;
 }
+
+export interface ExamPackageDetailSubExam {
+  id: number;
+  name: string;
+  totalSoal: number;
+  passingGrade: string;
+  duration: number;
+}
+
+export interface ExamPackageDetailSuccessResponse {
+  id: number;
+  examName: string;
+  description: string;
+  price: number;
+  totalDuration: number;
+  totalQuestions: number;
+  subject: string;
+  subExams: ExamPackageDetailSubExam[];
+}
+
+export interface ExamApiErrorResponse {
+  message: string;
+  error: string;
+  statusCode: number;
+}

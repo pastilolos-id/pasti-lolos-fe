@@ -2,10 +2,8 @@
 
 /**
  * Daftar tryout memuat data dari GET /exams. Kartu "Lihat Detail" mengarah ke
- * `/tryout/{category}/{id}/preview`. Halaman preview saat ini masih memakai mock
- * `getTryoutById` di `data.ts`, sehingga ID numerik dari API belum terdaftar di mock
- * dan dapat menghasilkan notFound(). Alur `getPurchaseIdFromTryout` juga masih
- * memetakan ID mock ke data pembelian statis.
+ * `/tryout/{category}/{id}/preview`. Halaman preview memuat detail dari
+ * GET `/exams/package-detail/:id` agar konsisten dengan ID numerik dari list API.
  */
 
 import { useGetExamsQuery } from "@/lib/redux/api/examsApi";
