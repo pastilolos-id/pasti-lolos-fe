@@ -48,6 +48,35 @@ export interface ExamApiErrorResponse {
   statusCode: number;
 }
 
+export interface ApplyExamCouponRequest {
+  couponCode: string;
+  examId: number;
+}
+
+export interface ApplyExamCouponSummary {
+  examName: string;
+  originalPrice: number;
+  discount: number;
+  totalPay: number;
+  couponUsed: string;
+}
+
+export interface ApplyExamCouponSuccessResponse {
+  message: string;
+  summary: ApplyExamCouponSummary;
+}
+
+export type ApplyExamCouponFieldErrors = Partial<
+  Record<keyof ApplyExamCouponRequest, string[]>
+>;
+
+export interface ApplyExamCouponErrorResponse {
+  statusCode: number;
+  error: string;
+  message: string;
+  errors?: ApplyExamCouponFieldErrors;
+}
+
 /** GET /exams/checkout-preview/:id & GET /course/checkout-preview/:id — course may mirror this shape until backend differs */
 export interface CheckoutPreviewSuccessResponse {
   examId: number;

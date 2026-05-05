@@ -10,8 +10,16 @@ import { Form, type FormHandle, Icon } from "@/components";
 import type { inputDataType } from "@/components/Form/InputElement/types";
 import { buttonVariants } from "@/components/ui";
 import { useGetCourseCheckoutPreviewQuery } from "@/lib/redux/api/courseApi";
-import { useGetExamCheckoutPreviewQuery } from "@/lib/redux/api/examsApi";
-import type { ExamApiErrorResponse } from "@/lib/redux/api/types/exams";
+import {
+  useApplyExamCouponMutation,
+  useGetExamCheckoutPreviewQuery,
+} from "@/lib/redux/api/examsApi";
+import { applyExamCouponFieldErrors } from "@/lib/redux/api/mapApplyExamCouponApiErrors";
+import { parseApplyExamCouponMutationError } from "@/lib/redux/api/parseApplyExamCouponMutationError";
+import type {
+  ApplyExamCouponSummary,
+  ExamApiErrorResponse,
+} from "@/lib/redux/api/types/exams";
 import { cn, formatToCurrency } from "@/lib/utils";
 
 export type CheckoutProductType = "tryout" | "course";
@@ -72,7 +80,6 @@ const paymentMethods: PaymentMethod[] = [
   },
 ];
 
-const validCouponCodes = new Set(["HEMAT50", "PASTILULUS"]);
 const couponInputData: inputDataType[] = [
   {
     type: "text",
@@ -136,6 +143,10 @@ export default function CheckoutPage({
   const [copyLabel, setCopyLabel] = useState("Copy No. Rekening");
   const [transferProofUrl, setTransferProofUrl] = useState<string | null>(null);
   const [isProofPreviewOpen, setIsProofPreviewOpen] = useState(false);
+  const [couponSummary, setCouponSummary] =
+    useState<ApplyExamCouponSummary | null>(null);
+  const [applyExamCoupon, { isLoading: isApplyingCoupon }] =
+    useApplyExamCouponMutation();
 
   const numericId = /^\d+$/.test(idProduk) ? Number(idProduk) : null;
   const idArg = numericId !== null && numericId > 0 ? numericId : null;
@@ -165,18 +176,49 @@ export default function CheckoutPage({
   const refetch = activeQuery.refetch;
 
   const handleApplyCoupon = async (data: Record<string, unknown>) => {
-    const couponCode = String(data.couponCode ?? "");
-    const normalized = couponCode.trim().toUpperCase();
+    const couponCode = String(data.couponCode ?? "").trim();
 
-    if (!normalized || !validCouponCodes.has(normalized)) {
+    if (!couponCode) {
       couponFormRef.current?.setError("couponCode", {
         type: "manual",
-        message: "Kode diskon yang kamu masukan tidak ada",
+        message: "Kode kupon wajib diisi.",
       });
       return;
     }
 
-    couponFormRef.current?.clearErrors("couponCode");
+    if (productType !== "tryout" || idArg === null) {
+      couponFormRef.current?.setError("couponCode", {
+        type: "manual",
+        message: "Voucher hanya tersedia untuk checkout tryout.",
+      });
+      return;
+    }
+
+    try {
+      const response = await applyExamCoupon({
+        couponCode,
+        examId: idArg,
+      }).unwrap();
+
+      couponFormRef.current?.clearErrors("couponCode");
+      setCouponSummary(response.summary);
+    } catch (error) {
+      const parsed = parseApplyExamCouponMutationError(error);
+
+      if (parsed?.errors && couponFormRef.current) {
+        applyExamCouponFieldErrors(
+          couponFormRef.current.setError,
+          parsed.errors,
+        );
+        return;
+      }
+
+      couponFormRef.current?.setError("couponCode", {
+        type: "server",
+        message:
+          parsed?.message || "Gagal menerapkan voucher. Silakan coba lagi.",
+      });
+    }
   };
 
   const handleCopyAccountNumber = async (accountNumber: string) => {
@@ -221,8 +263,13 @@ export default function CheckoutPage({
     setIsProofPreviewOpen(false);
   };
 
-  const priceAmount = preview ? parseCheckoutAmount(preview.price) : 0;
-  const totalAmount = preview ? parseCheckoutAmount(preview.totalPayment) : 0;
+  const basePriceAmount = preview ? parseCheckoutAmount(preview.price) : 0;
+  const baseTotalAmount = preview
+    ? parseCheckoutAmount(preview.totalPayment)
+    : 0;
+  const priceAmount = couponSummary?.originalPrice ?? basePriceAmount;
+  const discountAmount = couponSummary?.discount ?? 0;
+  const totalAmount = couponSummary?.totalPay ?? baseTotalAmount;
 
   const invalidId = idArg === null;
 
@@ -302,14 +349,24 @@ export default function CheckoutPage({
               >
                 <button
                   type="submit"
+                  disabled={
+                    isApplyingCoupon ||
+                    productType !== "tryout" ||
+                    idArg === null
+                  }
                   className={cn(
                     buttonVariants({ size: "default" }),
-                    "h-fit col-span-12 lg:col-span-4 rounded-full px-10 text-s1 text-neutral-1 lg:justify-self-end",
+                    "h-fit col-span-12 lg:col-span-4 rounded-full px-10 text-s1 text-neutral-1 lg:justify-self-end disabled:cursor-not-allowed disabled:opacity-60",
                   )}
                 >
-                  Gunakan
+                  {isApplyingCoupon ? "Memproses..." : "Gunakan"}
                 </button>
               </Form>
+              {couponSummary?.couponUsed ? (
+                <p className="mt-2 text-c1 text-primary-5">
+                  Voucher aktif: {couponSummary.couponUsed}
+                </p>
+              ) : null}
             </section>
 
             <section className="mt-6">
@@ -410,6 +467,14 @@ export default function CheckoutPage({
                     <span className="text-neutral-5">Biaya Admin</span>
                     <span className="font-semibold text-neutral-6">
                       {formatToCurrency(preview.adminFee)}
+                    </span>
+                  </div>
+                ) : null}
+                {discountAmount > 0 ? (
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-neutral-5">Diskon</span>
+                    <span className="font-semibold text-primary-5">
+                      -{formatToCurrency(discountAmount)}
                     </span>
                   </div>
                 ) : null}

@@ -1,5 +1,7 @@
 import { baseApi } from "./baseApi";
 import type {
+  ApplyExamCouponRequest,
+  ApplyExamCouponSuccessResponse,
   CheckoutPreviewSuccessResponse,
   ExamCategoryParam,
   ExamPackageDetailSuccessResponse,
@@ -31,6 +33,16 @@ export const examsApi = baseApi.injectEndpoints({
         }),
       },
     ),
+    applyExamCoupon: build.mutation<
+      ApplyExamCouponSuccessResponse,
+      ApplyExamCouponRequest
+    >({
+      query: (body) => ({
+        url: "/payments/apply-coupon",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -38,4 +50,5 @@ export const {
   useGetExamsQuery,
   useGetExamPackageDetailQuery,
   useGetExamCheckoutPreviewQuery,
+  useApplyExamCouponMutation,
 } = examsApi;
