@@ -19,6 +19,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
     | "chevron-down-fill"
     | "course"
     | "cross-circle-fill"
+    | "discount"
     | "door"
     | "exam-multiple-choice"
     | "exam-multiple-choice-outline"
@@ -70,6 +71,7 @@ const Icon = ({
     case "arrow-left-circle-bg-blue":
     case "landing-page-bg-ellipse":
     case "cross-circle-fill":
+    case "discount":
     case "checklist-circle-fill":
     case "checklist-circle-fill-green":
     case "fluent-textbox-blue":

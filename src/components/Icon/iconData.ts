@@ -6,6 +6,7 @@ import bumnWrappedTextIcon from "@/assets/icons/bumn-wrapped-text.svg";
 import checklistCircleFillIcon from "@/assets/icons/checklist-circle-fill.svg";
 import checklistCircleFillGreenIcon from "@/assets/icons/checklist-circle-fill-green.svg";
 import crossCircleFillIcon from "@/assets/icons/cross-circle-fill.svg";
+import discountIcon from "@/assets/icons/discount.svg";
 import examMultipleChoiceOutlineIcon from "@/assets/icons/exam-multiple-choice-outline.svg";
 import eyeClosedIcon from "@/assets/icons/eye-closed.svg";
 import fluentTextboxBlueIcon from "@/assets/icons/fluent-textbox-blue.svg";
@@ -51,6 +52,10 @@ const iconImagePath = {
   "cross-circle-fill": {
     src: crossCircleFillIcon,
     alt: "Cross Circle Fill Icon",
+  },
+  discount: {
+    src: discountIcon,
+    alt: "Discount Icon",
   },
   "checklist-circle-fill": {
     src: checklistCircleFillIcon,
