@@ -111,8 +111,6 @@ export default function TryoutPreviewPage({
     );
   }
 
-  console.log({ tryout });
-
   const subExams = mapSubExams(tryout);
   return (
     <section className="space-y-4">
@@ -158,7 +156,7 @@ export default function TryoutPreviewPage({
         </div>
 
         <Link
-          href={`/checkout/${tryout.id}`}
+          href={`/checkout/${tryout.id}?productType=tryout`}
           className={cn(
             buttonVariants({ size: "default" }),
             "w-full rounded-full text-s1 text-white bg-red hover:bg-red/75",

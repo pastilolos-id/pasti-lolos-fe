@@ -47,3 +47,14 @@ export interface ExamApiErrorResponse {
   error: string;
   statusCode: number;
 }
+
+/** GET /exams/checkout-preview/:id & GET /course/checkout-preview/:id — course may mirror this shape until backend differs */
+export interface CheckoutPreviewSuccessResponse {
+  examId: number;
+  examName: string;
+  category: string;
+  price: string;
+  includedSubExams: string[];
+  adminFee: number;
+  totalPayment: string;
+}

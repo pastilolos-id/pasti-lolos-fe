@@ -1,5 +1,6 @@
 import { baseApi } from "./baseApi";
 import type {
+  CheckoutPreviewSuccessResponse,
   ExamCategoryParam,
   ExamPackageDetailSuccessResponse,
   ExamsListSuccessResponse,
@@ -23,7 +24,18 @@ export const examsApi = baseApi.injectEndpoints({
         }),
       },
     ),
+    getExamCheckoutPreview: build.query<CheckoutPreviewSuccessResponse, number>(
+      {
+        query: (id) => ({
+          url: `/exams/checkout-preview/${id}`,
+        }),
+      },
+    ),
   }),
 });
 
-export const { useGetExamsQuery, useGetExamPackageDetailQuery } = examsApi;
+export const {
+  useGetExamsQuery,
+  useGetExamPackageDetailQuery,
+  useGetExamCheckoutPreviewQuery,
+} = examsApi;
