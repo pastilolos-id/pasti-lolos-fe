@@ -263,10 +263,15 @@ const tryoutContentByCategory: Record<TryoutCategory, TryoutListContent> = {
   },
 };
 
-export function getTryoutListContent(
+/** Banner copy untuk halaman daftar tryout (CPNS/BUMN); item daftar diisi dari API GET /exams. */
+export function getTryoutListBanners(
   category: TryoutCategory,
-): TryoutListContent {
-  return tryoutContentByCategory[category];
+): Pick<TryoutListContent, "bannerSubtitle" | "bannerTitle"> {
+  const entry = tryoutContentByCategory[category];
+  return {
+    bannerSubtitle: entry.bannerSubtitle,
+    bannerTitle: entry.bannerTitle,
+  };
 }
 
 export function getTryoutById(
