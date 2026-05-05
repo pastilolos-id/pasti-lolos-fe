@@ -4,6 +4,7 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { skipToken } from "@reduxjs/toolkit/query";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import qrisImage from "@/assets/images/QRIS.jpeg";
 import { Form, type FormHandle, Icon } from "@/components";
@@ -12,13 +13,19 @@ import { buttonVariants } from "@/components/ui";
 import { useGetCourseCheckoutPreviewQuery } from "@/lib/redux/api/courseApi";
 import {
   useApplyExamCouponMutation,
+  useCheckoutExamPaymentMutation,
   useGetExamCheckoutPreviewQuery,
 } from "@/lib/redux/api/examsApi";
 import { applyExamCouponFieldErrors } from "@/lib/redux/api/mapApplyExamCouponApiErrors";
 import { parseApplyExamCouponMutationError } from "@/lib/redux/api/parseApplyExamCouponMutationError";
+import {
+  getCheckoutExamPaymentErrorCategory,
+  getCheckoutExamPaymentErrorMessage,
+} from "@/lib/redux/api/parseCheckoutExamPaymentMutationError";
 import type {
   ApplyExamCouponSummary,
   ExamApiErrorResponse,
+  ExamCheckoutPaymentMethod,
 } from "@/lib/redux/api/types/exams";
 import { cn, formatToCurrency } from "@/lib/utils";
 
@@ -137,16 +144,24 @@ export default function CheckoutPage({
 }: CheckoutPageProps) {
   const couponFormRef = useRef<FormHandle>(null);
   const transferProofInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     PaymentMethod["id"] | null
   >(null);
   const [copyLabel, setCopyLabel] = useState("Copy No. Rekening");
   const [transferProofUrl, setTransferProofUrl] = useState<string | null>(null);
+  const [transferProofFile, setTransferProofFile] = useState<File | null>(null);
+  const [transferProofError, setTransferProofError] = useState<string | null>(
+    null,
+  );
   const [isProofPreviewOpen, setIsProofPreviewOpen] = useState(false);
+  const [latestCouponCode, setLatestCouponCode] = useState<string>("");
   const [couponSummary, setCouponSummary] =
     useState<ApplyExamCouponSummary | null>(null);
   const [applyExamCoupon, { isLoading: isApplyingCoupon }] =
     useApplyExamCouponMutation();
+  const [checkoutExamPayment, { isLoading: isSubmittingPayment }] =
+    useCheckoutExamPaymentMutation();
 
   const numericId = /^\d+$/.test(idProduk) ? Number(idProduk) : null;
   const idArg = numericId !== null && numericId > 0 ? numericId : null;
@@ -177,6 +192,7 @@ export default function CheckoutPage({
 
   const handleApplyCoupon = async (data: Record<string, unknown>) => {
     const couponCode = String(data.couponCode ?? "").trim();
+    setLatestCouponCode(couponCode);
 
     if (!couponCode) {
       couponFormRef.current?.setError("couponCode", {
@@ -260,7 +276,68 @@ export default function CheckoutPage({
 
     const localPreviewUrl = URL.createObjectURL(selectedFile);
     setTransferProofUrl(localPreviewUrl);
+    setTransferProofFile(selectedFile);
+    setTransferProofError(null);
     setIsProofPreviewOpen(false);
+  };
+
+  const selectedPaymentMethod = paymentMethods.find(
+    (method) => method.id === selectedPaymentMethodId,
+  );
+
+  const handleCheckoutPayment = async () => {
+    if (productType !== "tryout" || idArg === null || !preview) {
+      return;
+    }
+
+    couponFormRef.current?.clearErrors("couponCode");
+    setTransferProofError(null);
+
+    if (!selectedPaymentMethod) {
+      window.alert("Silakan pilih metode pembayaran terlebih dahulu.");
+      return;
+    }
+
+    if (!transferProofFile) {
+      setTransferProofError("File bukti transfer wajib diunggah.");
+      return;
+    }
+
+    try {
+      const response = await checkoutExamPayment({
+        examId: idArg,
+        paymentMethod: selectedPaymentMethod.label as ExamCheckoutPaymentMethod,
+        file: transferProofFile,
+        discountCode: (() => {
+          const normalizedDiscountCode = (
+            couponSummary?.couponUsed ?? latestCouponCode
+          ).trim();
+          return normalizedDiscountCode.length > 0
+            ? normalizedDiscountCode
+            : undefined;
+        })(),
+      }).unwrap();
+
+      router.push(`/purchases/${response.orderId}`);
+    } catch (error) {
+      const category = getCheckoutExamPaymentErrorCategory(error);
+      const message = getCheckoutExamPaymentErrorMessage(error);
+
+      if (category === "coupon-related") {
+        couponFormRef.current?.setError("couponCode", {
+          type: "server",
+          message,
+        });
+        return;
+      }
+
+      if (category === "file-related") {
+        setTransferProofError(message);
+        return;
+      }
+
+      window.alert(message);
+    }
   };
 
   const basePriceAmount = preview ? parseCheckoutAmount(preview.price) : 0;
@@ -516,6 +593,9 @@ export default function CheckoutPage({
                     : "Upload Bukti Transfer"}
                 </button>
               </div>
+              {transferProofError ? (
+                <p className="mt-2 text-c1 text-red">{transferProofError}</p>
+              ) : null}
 
               {transferProofUrl ? (
                 <button
@@ -537,12 +617,20 @@ export default function CheckoutPage({
 
             <button
               type="button"
+              onClick={() => void handleCheckoutPayment()}
+              disabled={
+                isSubmittingPayment ||
+                invalidId ||
+                isLoading ||
+                isError ||
+                !preview
+              }
               className={cn(
                 buttonVariants({ size: "default" }),
-                "mt-8 w-full rounded-full text-s1",
+                "mt-8 w-full rounded-full text-s1 disabled:cursor-not-allowed disabled:opacity-60",
               )}
             >
-              Bayar Sekarang
+              {isSubmittingPayment ? "Memproses..." : "Bayar Sekarang"}
             </button>
           </div>
         )}

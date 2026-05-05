@@ -2,6 +2,8 @@ import { baseApi } from "./baseApi";
 import type {
   ApplyExamCouponRequest,
   ApplyExamCouponSuccessResponse,
+  CheckoutExamPaymentRequest,
+  CheckoutExamPaymentSuccessResponse,
   CheckoutPreviewSuccessResponse,
   ExamCategoryParam,
   ExamPackageDetailSuccessResponse,
@@ -43,6 +45,29 @@ export const examsApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    checkoutExamPayment: build.mutation<
+      CheckoutExamPaymentSuccessResponse,
+      CheckoutExamPaymentRequest
+    >({
+      query: ({ examId, paymentMethod, file, discountCode }) => {
+        const formData = new FormData();
+        formData.append("examId", String(examId));
+        formData.append("paymentMethod", paymentMethod);
+        formData.append("file", file);
+        if (discountCode) {
+          formData.append("discountCode", discountCode);
+        }
+
+        return {
+          url: "/payments/checkout/exam",
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        };
+      },
+    }),
   }),
 });
 
@@ -51,4 +76,5 @@ export const {
   useGetExamPackageDetailQuery,
   useGetExamCheckoutPreviewQuery,
   useApplyExamCouponMutation,
+  useCheckoutExamPaymentMutation,
 } = examsApi;

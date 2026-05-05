@@ -77,6 +77,32 @@ export interface ApplyExamCouponErrorResponse {
   errors?: ApplyExamCouponFieldErrors;
 }
 
+export type ExamCheckoutPaymentMethod =
+  | "QRIS"
+  | "Bank BNI"
+  | "Bank Mandiri"
+  | "Bank BRI"
+  | "Bank BCA";
+
+export interface CheckoutExamPaymentRequest {
+  examId: number;
+  paymentMethod: ExamCheckoutPaymentMethod;
+  file: File;
+  discountCode?: string;
+}
+
+export interface CheckoutExamPaymentSuccessResponse {
+  message: string;
+  orderId: number;
+  grandTotal: string;
+}
+
+export interface CheckoutExamPaymentErrorResponse {
+  message: string;
+  error: string;
+  statusCode: number;
+}
+
 /** GET /exams/checkout-preview/:id & GET /course/checkout-preview/:id — course may mirror this shape until backend differs */
 export interface CheckoutPreviewSuccessResponse {
   examId: number;

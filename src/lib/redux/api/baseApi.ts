@@ -10,9 +10,17 @@ export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl,
     credentials: "include",
-    prepareHeaders: (headers) => {
+    prepareHeaders: (headers, { arg }) => {
+      const requestArg =
+        arg && typeof arg === "object" && !Array.isArray(arg)
+          ? (arg as { body?: unknown })
+          : undefined;
+      const hasFormDataBody = requestArg?.body instanceof FormData;
+
       headers.set("Accept", "application/json");
-      headers.set("Content-Type", "application/json");
+      if (!hasFormDataBody && !headers.has("Content-Type")) {
+        headers.set("Content-Type", "application/json");
+      }
       return headers;
     },
   }),
