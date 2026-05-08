@@ -29,6 +29,8 @@ export interface ExamPackageDetailSubExam {
   totalSoal: number;
   passingGrade: string;
   duration: number;
+  userExamId: number | null;
+  status: string;
 }
 
 export interface ExamPackageDetailSuccessResponse {
@@ -36,6 +38,9 @@ export interface ExamPackageDetailSuccessResponse {
   examName: string;
   description: string;
   price: number;
+  isPurchased: boolean;
+  purchaseStatus: "available" | "pending" | "completed";
+  pendingOrderId: number | null;
   totalDuration: number;
   totalQuestions: number;
   subject: string;

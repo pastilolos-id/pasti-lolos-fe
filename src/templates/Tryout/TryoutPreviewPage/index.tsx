@@ -4,7 +4,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import Link from "next/link";
 
 import { Icon } from "@/components";
-import { buttonVariants } from "@/components/ui";
+import { Button, buttonVariants } from "@/components/ui";
 import { useGetExamPackageDetailQuery } from "@/lib/redux/api/examsApi";
 import type { ExamPackageDetailSuccessResponse } from "@/lib/redux/api/types/exams";
 import { cn, formatToCurrency } from "@/lib/utils";
@@ -112,6 +112,12 @@ export default function TryoutPreviewPage({
   }
 
   const subExams = mapSubExams(tryout);
+  const purchaseStatus =
+    tryout.purchaseStatus ?? (tryout.isPurchased ? "completed" : "available");
+  const showBuyButton = purchaseStatus === "available";
+  const showPendingInfo = purchaseStatus === "pending";
+  const showSubExamAction = purchaseStatus === "completed";
+
   return (
     <section className="space-y-4">
       <Link
@@ -155,15 +161,28 @@ export default function TryoutPreviewPage({
           </div>
         </div>
 
-        <Link
-          href={`/checkout/${tryout.id}?productType=tryout`}
-          className={cn(
-            buttonVariants({ size: "default" }),
-            "w-full rounded-full text-s1 text-white bg-red hover:bg-red/75",
-          )}
-        >
-          Beli Sekarang
-        </Link>
+        {showBuyButton ? (
+          <Link
+            href={`/checkout/${tryout.id}?productType=tryout`}
+            className={cn(
+              buttonVariants({ size: "default" }),
+              "w-full rounded-full text-s1 text-white bg-red hover:bg-red/75",
+            )}
+          >
+            Beli Sekarang
+          </Link>
+        ) : null}
+
+        {showPendingInfo ? (
+          <div
+            className={cn(
+              buttonVariants({ size: "default", variant: "secondary" }),
+              "w-full rounded-full text-center cursor-default",
+            )}
+          >
+            Menunggu konfirmasi admin
+          </div>
+        ) : null}
       </div>
 
       <div className="rounded-3xl border-6 border-primary-4 p-6 space-y-3">
@@ -173,19 +192,29 @@ export default function TryoutPreviewPage({
             className="rounded-3xl border border-neutral-3 p-6"
           >
             <h2 className="mb-4 text-h4">{section.title}</h2>
-            <div className="flex items-center gap-4 text-b2">
-              <span className="flex items-center gap-1">
-                <Icon
-                  name="exam-multiple-choice-outline"
-                  size={32}
-                  fill="white"
-                />
-                {section.totalQuestions} Soal
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-yellow text-3xl">★</span>
-                <span>Passing Grade {section.passingGrade}</span>
-              </span>
+            <div className="flex flex-col gap-4 text-b2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1">
+                  <Icon
+                    name="exam-multiple-choice-outline"
+                    size={32}
+                    fill="white"
+                  />
+                  {section.totalQuestions} Soal
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="text-yellow text-3xl">★</span>
+                  <span>Passing Grade {section.passingGrade}</span>
+                </span>
+              </div>
+
+              {showSubExamAction ? (
+                <Button className="rounded-full px-10" asChild>
+                  <Link href={`/tryout/${category}/${section.id}/exam`}>
+                    Kerjakan
+                  </Link>
+                </Button>
+              ) : null}
             </div>
           </article>
         ))}
