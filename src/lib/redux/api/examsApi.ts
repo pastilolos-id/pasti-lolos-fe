@@ -13,6 +13,8 @@ import type {
   ExamDetailSuccessResponse,
   ExamPackageDetailSuccessResponse,
   ExamsListSuccessResponse,
+  FinishExamRequest,
+  FinishExamSuccessResponse,
   StartExamSuccessResponse,
   SubmitExamAnswerRequest,
   SubmitExamAnswerSuccessResponse,
@@ -106,6 +108,13 @@ export const examsApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    finishExam: build.mutation<FinishExamSuccessResponse, FinishExamRequest>({
+      query: (body) => ({
+        url: "/exams/finish",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -118,4 +127,5 @@ export const {
   useCheckoutExamPaymentMutation,
   useStartExamMutation,
   useSubmitExamAnswerMutation,
+  useFinishExamMutation,
 } = examsApi;

@@ -217,3 +217,31 @@ export interface SubmitExamAnswerSuccessResponse {
   message: string;
   data: SubmitExamAnswerResponseData;
 }
+
+/** POST /exams/finish */
+export interface FinishExamRequest {
+  userExamId: number;
+}
+
+export interface FinishExamSummary {
+  totalQuestions: number;
+  correct: number;
+  wrong: number;
+  empty: number;
+}
+
+export interface FinishExamResponseData {
+  userExamId: number;
+  examName: string;
+  finalScore: number;
+  passingScore: number;
+  status: string;
+  summary: FinishExamSummary;
+  submittedAt: string;
+}
+
+export interface FinishExamSuccessResponse {
+  success: true;
+  message: string;
+  data: FinishExamResponseData;
+}

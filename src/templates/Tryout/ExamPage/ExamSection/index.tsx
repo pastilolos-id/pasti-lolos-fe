@@ -48,6 +48,13 @@ function sortAnswersByLabel(answers: ExamAnswerOption[]): ExamAnswerOption[] {
 
 export type ExamAnswers = Record<number, number | null>;
 
+type CompleteReason = "manual" | "timer" | "submit_error";
+
+interface SubmitAnswerOptions {
+  throwOnError?: boolean;
+  triggerFinishOnError?: boolean;
+}
+
 interface ExamSectionProps {
   storageKey: string;
   userExamId: number | null;
@@ -59,11 +66,10 @@ interface ExamSectionProps {
     questionId: number;
     answerId: number;
   }) => Promise<void>;
-  onSubmitError: (errorMessage: string) => void;
-  onFinish: (
-    answers: ExamAnswers,
-    lastQuestionIndex: number,
-  ) => Promise<void> | void;
+  onFinishExam: (params: {
+    answers: ExamAnswers;
+    lastQuestionIndex: number;
+  }) => Promise<void>;
 }
 
 export default function ExamSection({
@@ -73,8 +79,7 @@ export default function ExamSection({
   initialAnswers,
   onAnswersChange,
   onSubmitAnswer,
-  onSubmitError,
-  onFinish,
+  onFinishExam,
 }: ExamSectionProps) {
   const examQuestions = useSelector(
     (state: RootState) => state.examSession.examQuestions,
@@ -89,9 +94,20 @@ export default function ExamSection({
     () => initialAnswers ?? {},
   );
   const [isFinishing, setIsFinishing] = useState(false);
+  const [showCompletionOverlay, setShowCompletionOverlay] = useState(false);
+  const [finishErrorMessage, setFinishErrorMessage] = useState<string | null>(
+    null,
+  );
 
   const answersRef = useRef<ExamAnswers>(initialAnswers ?? {});
   const submittedRef = useRef<Record<number, number>>({});
+  const pendingSubmitsRef = useRef<Promise<unknown>[]>([]);
+  const examEndedRef = useRef(false);
+  const completionInFlightRef = useRef(false);
+  const timerFiredRef = useRef(false);
+  const runCompleteExamFlowRef = useRef<
+    (reason: CompleteReason) => Promise<void>
+  >(async () => {});
 
   useEffect(() => {
     setDeadlineMs(getDeadlineMs(storageKey));
@@ -131,8 +147,29 @@ export default function ExamSection({
 
   const isAnswered = (n: number) => answers[n] != null;
 
+  const trackSubmit = useCallback((operation: () => Promise<void>) => {
+    const p = operation();
+    pendingSubmitsRef.current.push(p);
+    return p.finally(() => {
+      pendingSubmitsRef.current = pendingSubmitsRef.current.filter(
+        (x) => x !== p,
+      );
+    });
+  }, []);
+
+  const waitForPendingSubmits = useCallback(async () => {
+    const snapshot = [...pendingSubmitsRef.current];
+    await Promise.allSettled(snapshot);
+  }, []);
+
   const submitAnswerForIndex = useCallback(
-    async (questionIndex: number, throwOnError = false) => {
+    async (
+      questionIndex: number,
+      options: SubmitAnswerOptions = {},
+    ): Promise<void> => {
+      const throwOnError = options.throwOnError ?? false;
+      const triggerFinishOnError = options.triggerFinishOnError ?? true;
+
       if (userExamId === null) {
         return;
       }
@@ -145,22 +182,66 @@ export default function ExamSection({
       if (submittedRef.current[questionId] === answerId) {
         return;
       }
+
       try {
-        await onSubmitAnswer({ userExamId, questionId, answerId });
-        submittedRef.current[questionId] = answerId;
+        await trackSubmit(async () => {
+          await onSubmitAnswer({ userExamId, questionId, answerId });
+          submittedRef.current[questionId] = answerId;
+        });
       } catch (err) {
-        const errorMessage =
-          err instanceof Error && err.message.trim()
-            ? err.message
-            : "Sesi ujian berakhir karena jawaban gagal disimpan.";
-        onSubmitError(errorMessage);
+        if (triggerFinishOnError) {
+          await runCompleteExamFlowRef.current("submit_error");
+        }
         if (throwOnError) {
-          throw err instanceof Error ? err : new Error(errorMessage);
+          throw err instanceof Error ? err : new Error(String(err));
         }
       }
     },
-    [examQuestions, onSubmitAnswer, onSubmitError, userExamId],
+    [examQuestions, onSubmitAnswer, trackSubmit, userExamId],
   );
+
+  const runCompleteExamFlow = useCallback(
+    async (reason: CompleteReason) => {
+      if (examEndedRef.current || completionInFlightRef.current) {
+        return;
+      }
+      completionInFlightRef.current = true;
+      setShowCompletionOverlay(true);
+      setFinishErrorMessage(null);
+      try {
+        await waitForPendingSubmits();
+        if (reason !== "submit_error") {
+          await submitAnswerForIndex(currentIndex, {
+            throwOnError: false,
+            triggerFinishOnError: false,
+          });
+          await waitForPendingSubmits();
+        }
+        if (examEndedRef.current) {
+          return;
+        }
+        await onFinishExam({
+          answers: answersRef.current,
+          lastQuestionIndex: currentIndex,
+        });
+        examEndedRef.current = true;
+      } catch (err) {
+        const message =
+          err instanceof Error && err.message.trim()
+            ? err.message
+            : "Gagal menyelesaikan ujian. Silakan coba lagi.";
+        setFinishErrorMessage(message);
+      } finally {
+        completionInFlightRef.current = false;
+        setShowCompletionOverlay(false);
+      }
+    },
+    [currentIndex, onFinishExam, submitAnswerForIndex, waitForPendingSubmits],
+  );
+
+  useEffect(() => {
+    runCompleteExamFlowRef.current = runCompleteExamFlow;
+  }, [runCompleteExamFlow]);
 
   const navigateTo = useCallback(
     (targetIndex: number) => {
@@ -185,17 +266,60 @@ export default function ExamSection({
   const isLast = currentIndex === totalQuestions;
 
   const handleFinish = async () => {
-    if (isFinishing) {
+    if (isFinishing || examEndedRef.current) {
       return;
     }
     setIsFinishing(true);
     try {
-      await submitAnswerForIndex(currentIndex, true);
-      await onFinish(answersRef.current, currentIndex);
+      await runCompleteExamFlow("manual");
     } finally {
       setIsFinishing(false);
     }
   };
+
+  const handleRetryFinish = async () => {
+    if (examEndedRef.current || completionInFlightRef.current) {
+      return;
+    }
+    completionInFlightRef.current = true;
+    setShowCompletionOverlay(true);
+    setFinishErrorMessage(null);
+    try {
+      await onFinishExam({
+        answers: answersRef.current,
+        lastQuestionIndex: currentIndex,
+      });
+      examEndedRef.current = true;
+    } catch (err) {
+      const message =
+        err instanceof Error && err.message.trim()
+          ? err.message
+          : "Gagal menyelesaikan ujian. Silakan coba lagi.";
+      setFinishErrorMessage(message);
+    } finally {
+      completionInFlightRef.current = false;
+      setShowCompletionOverlay(false);
+    }
+  };
+
+  useEffect(() => {
+    if (deadlineMs === null || examEndedRef.current) {
+      return;
+    }
+    const tick = () => {
+      if (
+        Date.now() >= deadlineMs &&
+        !timerFiredRef.current &&
+        !examEndedRef.current
+      ) {
+        timerFiredRef.current = true;
+        void runCompleteExamFlow("timer");
+      }
+    };
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [deadlineMs, runCompleteExamFlow]);
 
   if (deadlineMs === null || !currentQuestion) {
     return (
@@ -206,7 +330,46 @@ export default function ExamSection({
   }
 
   return (
-    <section className="flex flex-col gap-6 xl:flex-row xl:items-start">
+    <section className="relative flex flex-col gap-6 xl:flex-row xl:items-start">
+      {(showCompletionOverlay || isFinishing) && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-neutral-6/40 p-6 backdrop-blur-sm"
+          role="alertdialog"
+          aria-modal="true"
+          aria-busy="true"
+          aria-labelledby="exam-completion-status"
+        >
+          <Icon
+            name="spinner"
+            size={40}
+            className="animate-spin text-primary-4"
+            aria-hidden
+          />
+          <p
+            id="exam-completion-status"
+            className="max-w-md text-center text-b2 text-neutral-1"
+          >
+            Menyimpan jawaban yang masih diproses dan menyelesaikan ujian… Mohon
+            tunggu sebentar.
+          </p>
+        </div>
+      )}
+
+      {finishErrorMessage ? (
+        <div className="fixed bottom-6 left-1/2 z-[60] flex max-w-lg -translate-x-1/2 flex-col gap-3 rounded-2xl border border-red/30 bg-neutral-1 p-4 shadow-lg sm:flex-row sm:items-center">
+          <p className="text-b2 text-neutral-6">{finishErrorMessage}</p>
+          <Button
+            type="button"
+            variant="primary"
+            size="default"
+            className="shrink-0 rounded-full px-6 py-3 text-s1"
+            onClick={() => void handleRetryFinish()}
+          >
+            Coba lagi
+          </Button>
+        </div>
+      ) : null}
+
       <div className="min-w-0 min-h-[calc(100vh-75px)] flex-1 flex flex-col justify-between rounded-3xl border border-neutral-3 bg-neutral-1 p-4 sm:p-11">
         <div>
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -280,6 +443,7 @@ export default function ExamSection({
               variant="outline"
               size="default"
               onClick={goPrev}
+              disabled={showCompletionOverlay || isFinishing}
               className="w-full rounded-full border-primary-4/50 px-6 py-3 text-s1 sm:w-auto sm:min-w-41"
             >
               <Icon
@@ -298,6 +462,7 @@ export default function ExamSection({
               variant="outline"
               size="default"
               onClick={goNext}
+              disabled={showCompletionOverlay || isFinishing}
               className={cn(
                 "w-full rounded-full border-primary-4/50 px-6 py-3 text-s1 sm:w-auto sm:min-w-41",
                 !isFirst && "sm:ml-auto",
@@ -317,13 +482,15 @@ export default function ExamSection({
               variant="primary"
               size="default"
               onClick={() => void handleFinish()}
-              disabled={isFinishing}
+              disabled={isFinishing || showCompletionOverlay}
               className={cn(
                 "w-full rounded-full px-6 py-3 text-s1 text-neutral-1 sm:w-auto sm:min-w-41",
                 !isFirst && "sm:ml-auto",
               )}
             >
-              {isFinishing ? "Menyimpan..." : "Selesai"}
+              {isFinishing || showCompletionOverlay
+                ? "Menyimpan..."
+                : "Selesai"}
             </Button>
           )}
         </div>
@@ -343,8 +510,9 @@ export default function ExamSection({
                 type="button"
                 onClick={() => navigateTo(n)}
                 aria-current={isCurrent ? "true" : undefined}
+                disabled={showCompletionOverlay || isFinishing}
                 className={cn(
-                  "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold transition-colors cursor-pointer",
+                  "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
                   isCurrent
                     ? "border-primary-4 bg-primary-5 text-neutral-1"
                     : done

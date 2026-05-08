@@ -10,11 +10,15 @@ import { useSelector } from "react-redux";
 import { Icon } from "@/components";
 import { Button } from "@/components/ui";
 import {
+  useFinishExamMutation,
   useGetExamDetailQuery,
   useStartExamMutation,
   useSubmitExamAnswerMutation,
 } from "@/lib/redux/api/examsApi";
-import type { ExamApiErrorResponse } from "@/lib/redux/api/types/exams";
+import type {
+  ExamApiErrorResponse,
+  FinishExamResponseData,
+} from "@/lib/redux/api/types/exams";
 import type { RootState } from "@/lib/redux/store";
 import type { TryoutCategory } from "../data";
 import ExamSection, { type ExamAnswers } from "./ExamSection";
@@ -50,12 +54,18 @@ export default function ExamPage({ category, id }: ExamPageProps) {
   const examSession = useSelector((state: RootState) => state.examSession);
   const [startExam, { isLoading: isStartingExam }] = useStartExamMutation();
   const [submitExamAnswer] = useSubmitExamAnswerMutation();
+  const [finishExam] = useFinishExamMutation();
 
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
   const [reviewing, setReviewing] = useState(false);
   const [examAnswers, setExamAnswers] = useState<ExamAnswers>({});
   const [resultHighlightQuestion, setResultHighlightQuestion] = useState(0);
+  const [finishExamData, setFinishExamData] =
+    useState<FinishExamResponseData | null>(null);
+  const [finishExamMessage, setFinishExamMessage] = useState<string | null>(
+    null,
+  );
 
   const storageKey = useMemo(
     () => `tryout-exam-deadline-${category}-${id}`,
@@ -142,17 +152,6 @@ export default function ExamPage({ category, id }: ExamPageProps) {
     }
   }, [examSession.examId, numericId, started, storageKey]);
 
-  const endExamBecauseSubmitFailed = useCallback(
-    (_message: string) => {
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem(storageKey);
-      }
-      setReviewing(false);
-      setFinished(true);
-    },
-    [storageKey],
-  );
-
   const submitAnswerOrThrow = useCallback(
     async (payload: {
       userExamId: number;
@@ -178,6 +177,32 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       }
     },
     [submitExamAnswer],
+  );
+
+  const handleFinishExam = useCallback(
+    async ({
+      answers,
+      lastQuestionIndex,
+    }: {
+      answers: ExamAnswers;
+      lastQuestionIndex: number;
+    }) => {
+      const uid = examSession.userExamId;
+      if (uid === null) {
+        throw new Error("Sesi ujian tidak valid.");
+      }
+      const response = await finishExam({ userExamId: uid }).unwrap();
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(storageKey);
+      }
+      setExamAnswers(answers);
+      setResultHighlightQuestion(lastQuestionIndex);
+      setFinishExamData(response.data);
+      setFinishExamMessage(response.message);
+      setReviewing(false);
+      setFinished(true);
+    },
+    [examSession.userExamId, finishExam, storageKey],
   );
 
   const isExamAlreadyFinishedError =
@@ -237,6 +262,7 @@ export default function ExamPage({ category, id }: ExamPageProps) {
           totalQuestions={examSession.totalQuestions}
           answers={examAnswers}
           highlightQuestionNumber={resultHighlightQuestion}
+          finishResult={finishExamData}
           onReviewSoal={() => setReviewing(true)}
         />
       );
@@ -346,6 +372,8 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       totalQuestions={totalQuestions}
       answers={examAnswers}
       highlightQuestionNumber={resultHighlightQuestion || totalQuestions}
+      finishResult={finishExamData}
+      finishMessage={finishExamMessage}
       onReviewSoal={() => setReviewing(true)}
     />
   ) : (
@@ -356,12 +384,7 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       initialAnswers={examAnswers}
       onAnswersChange={setExamAnswers}
       onSubmitAnswer={submitAnswerOrThrow}
-      onSubmitError={endExamBecauseSubmitFailed}
-      onFinish={async (answers, lastQuestionIndex) => {
-        setExamAnswers(answers);
-        setResultHighlightQuestion(lastQuestionIndex);
-        setFinished(true);
-      }}
+      onFinishExam={handleFinishExam}
     />
   );
 }

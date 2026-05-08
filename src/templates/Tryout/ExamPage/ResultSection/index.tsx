@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui";
+import type { FinishExamResponseData } from "@/lib/redux/api/types/exams";
 import { cn } from "@/lib/utils";
 import type { TryoutCategory } from "../../data";
 import type { ExamAnswers } from "../ExamSection";
@@ -12,6 +13,9 @@ interface ResultSectionProps {
   highlightQuestionNumber?: number;
   score?: number;
   feedbackText?: string;
+  /** Hasil dari POST /exams/finish bila tersedia */
+  finishResult?: FinishExamResponseData | null;
+  finishMessage?: string | null;
   onReviewSoal: () => void;
 }
 
@@ -23,23 +27,41 @@ export default function ResultSection({
   highlightQuestionNumber,
   score: scoreProp,
   feedbackText: feedbackProp,
+  finishResult,
+  finishMessage,
   onReviewSoal,
 }: ResultSectionProps) {
   const answeredIds = Object.values(answers).filter((v) => v != null).length;
 
-  const score =
-    scoreProp ??
-    (answeredIds > 0
+  const fallbackScore =
+    answeredIds > 0
       ? Math.min(999, Math.round((answeredIds / totalQuestions) * 334))
-      : 0);
+      : 0;
 
-  const meetsStandar = score >= 300;
+  const score =
+    finishResult !== undefined && finishResult !== null
+      ? finishResult.finalScore
+      : (scoreProp ?? fallbackScore);
+
+  const meetsStandar =
+    finishResult !== undefined && finishResult !== null
+      ? finishResult.finalScore >= finishResult.passingScore
+      : score >= 300;
   const standarLabel = category === "bumn" ? "BUMN" : "CPNS";
   const feedbackText =
-    feedbackProp ??
-    (meetsStandar
-      ? `Nilai kamu sudah termasuk standar ${standarLabel}`
-      : `Nilai kamu masih jauh dari standar ${standarLabel}`);
+    finishResult !== undefined && finishResult !== null
+      ? (finishMessage ??
+        (meetsStandar
+          ? `Nilai kamu sudah termasuk standar ${standarLabel}`
+          : `Nilai kamu masih jauh dari standar ${standarLabel}`))
+      : (feedbackProp ??
+        (meetsStandar
+          ? `Nilai kamu sudah termasuk standar ${standarLabel}`
+          : `Nilai kamu masih jauh dari standar ${standarLabel}`));
+
+  const sidebarTitle = finishResult?.examName?.trim()
+    ? finishResult.examName
+    : "Soal TKD";
 
   const highlight = highlightQuestionNumber ?? totalQuestions;
 
@@ -79,7 +101,9 @@ export default function ResultSection({
       </div>
 
       <aside className="w-full max-h-[calc(100vh-75px)] shrink-0 overflow-auto rounded-3xl border border-neutral-3 bg-neutral-1 p-4 sm:p-6 xl:w-80">
-        <h2 className="mb-4 text-h4 font-semibold text-neutral-6">Soal TKD</h2>
+        <h2 className="mb-4 text-h4 font-semibold text-neutral-6">
+          {sidebarTitle}
+        </h2>
         <div className="grid grid-cols-5 gap-2">
           {Array.from({ length: totalQuestions }, (_, i) => i + 1).map((n) => {
             const isHighlight = n === highlight;
