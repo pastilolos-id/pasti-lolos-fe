@@ -3,7 +3,7 @@
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { skipToken } from "@reduxjs/toolkit/query";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -36,7 +36,9 @@ function getShortExamLabel(examName: string): string {
 
 export default function ExamPage({ category, id }: ExamPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const numericId = /^\d+$/.test(id) ? Number(id) : null;
+  const isResumeFlow = searchParams.get("resume") === "1";
 
   const { isLoading, isError, error, refetch } = useGetExamDetailQuery(
     numericId ?? skipToken,
@@ -115,6 +117,13 @@ export default function ExamPage({ category, id }: ExamPageProps) {
   }, [started, storageKey]);
 
   useEffect(() => {
+    if (!isResumeFlow || started || examSession.examId !== numericId) {
+      return;
+    }
+    setStarted(true);
+  }, [examSession.examId, isResumeFlow, numericId, started]);
+
+  useEffect(() => {
     if (
       started ||
       examSession.examId !== numericId ||
@@ -180,7 +189,8 @@ export default function ExamPage({ category, id }: ExamPageProps) {
     "data" in error &&
     typeof (error as FetchBaseQueryError).data === "object" &&
     (error as FetchBaseQueryError).data !== null &&
-    "message" in ((error as FetchBaseQueryError).data as Record<string, unknown>) &&
+    "message" in
+      ((error as FetchBaseQueryError).data as Record<string, unknown>) &&
     String(
       ((error as FetchBaseQueryError).data as Record<string, unknown>).message,
     ) === "Ujian telah selesai dikerjakan.";

@@ -17,14 +17,19 @@ interface TryoutDetailPageProps {
   tryoutId: string;
 }
 
+type PreviewSubExam = TryoutSubExam & {
+  status: "submitted" | "not_started" | "in_progress";
+};
+
 function mapSubExams(
   payload: ExamPackageDetailSuccessResponse,
-): TryoutSubExam[] {
+): PreviewSubExam[] {
   return payload.subExams.map((subExam) => ({
     id: String(subExam.id),
     title: subExam.name,
     totalQuestions: subExam.totalSoal,
     passingGrade: subExam.passingGrade,
+    status: subExam.status,
   }));
 }
 
@@ -219,8 +224,16 @@ export default function TryoutPreviewPage({
 
               {showSubExamAction ? (
                 <Button className="rounded-full px-10" asChild>
-                  <Link href={`/tryout/${category}/${section.id}/exam`}>
-                    Kerjakan
+                  <Link
+                    href={
+                      section.status === "in_progress"
+                        ? `/tryout/${category}/${section.id}/exam?resume=1`
+                        : `/tryout/${category}/${section.id}/exam`
+                    }
+                  >
+                    {section.status === "submitted"
+                      ? "Lihat Nilai"
+                      : "Kerjakan"}
                   </Link>
                 </Button>
               ) : null}

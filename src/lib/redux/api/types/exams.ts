@@ -30,7 +30,7 @@ export interface ExamPackageDetailSubExam {
   passingGrade: string;
   duration: number;
   userExamId: number | null;
-  status: string;
+  status: "submitted" | "not_started" | "in_progress";
 }
 
 export interface ExamPackageDetailSuccessResponse {
