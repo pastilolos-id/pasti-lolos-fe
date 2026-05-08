@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { baseApi } from "./api/baseApi";
 import "@/lib/redux/api/courseApi";
+import "@/lib/redux/api/ordersApi";
 import examSessionReducer from "./slices/examSessionSlice";
 import userReducer from "./slices/userSlice";
 
