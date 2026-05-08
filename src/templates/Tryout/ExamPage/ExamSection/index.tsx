@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Icon } from "@/components";
@@ -46,21 +46,34 @@ function sortAnswersByLabel(answers: ExamAnswerOption[]): ExamAnswerOption[] {
   });
 }
 
-export type ExamAnswers = Record<number, string | null>;
+export type ExamAnswers = Record<number, number | null>;
 
 interface ExamSectionProps {
   storageKey: string;
+  userExamId: number | null;
   totalQuestions: number;
   initialAnswers?: ExamAnswers;
   onAnswersChange?: (answers: ExamAnswers) => void;
-  onFinish: (answers: ExamAnswers, lastQuestionIndex: number) => void;
+  onSubmitAnswer: (payload: {
+    userExamId: number;
+    questionId: number;
+    answerId: number;
+  }) => Promise<void>;
+  onSubmitError: (errorMessage: string) => void;
+  onFinish: (
+    answers: ExamAnswers,
+    lastQuestionIndex: number,
+  ) => Promise<void> | void;
 }
 
 export default function ExamSection({
   storageKey,
+  userExamId,
   totalQuestions,
   initialAnswers,
   onAnswersChange,
+  onSubmitAnswer,
+  onSubmitError,
   onFinish,
 }: ExamSectionProps) {
   const examQuestions = useSelector(
@@ -75,6 +88,10 @@ export default function ExamSection({
   const [answers, setAnswers] = useState<ExamAnswers>(
     () => initialAnswers ?? {},
   );
+  const [isFinishing, setIsFinishing] = useState(false);
+
+  const answersRef = useRef<ExamAnswers>(initialAnswers ?? {});
+  const submittedRef = useRef<Record<number, number>>({});
 
   useEffect(() => {
     setDeadlineMs(getDeadlineMs(storageKey));
@@ -98,11 +115,15 @@ export default function ExamSection({
     [currentQuestion],
   );
 
-  const selected = answers[currentIndex] ?? null;
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
 
-  const setAnswer = (label: string) => {
+  const selectedAnswerId = answers[currentIndex] ?? null;
+
+  const setAnswer = (answerId: number) => {
     setAnswers((prev) => {
-      const next = { ...prev, [currentIndex]: label };
+      const next = { ...prev, [currentIndex]: answerId };
       onAnswersChange?.(next);
       return next;
     });
@@ -110,20 +131,71 @@ export default function ExamSection({
 
   const isAnswered = (n: number) => answers[n] != null;
 
-  const goNext = () => {
-    if (currentIndex < totalQuestions) {
-      setCurrentIndex((i) => i + 1);
-    }
-  };
+  const submitAnswerForIndex = useCallback(
+    async (questionIndex: number, throwOnError = false) => {
+      if (userExamId === null) {
+        return;
+      }
+      const entry = examQuestions[questionIndex - 1];
+      const questionId = entry?.question?.id;
+      const answerId = answersRef.current[questionIndex];
+      if (!questionId || !answerId) {
+        return;
+      }
+      if (submittedRef.current[questionId] === answerId) {
+        return;
+      }
+      try {
+        await onSubmitAnswer({ userExamId, questionId, answerId });
+        submittedRef.current[questionId] = answerId;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error && err.message.trim()
+            ? err.message
+            : "Sesi ujian berakhir karena jawaban gagal disimpan.";
+        onSubmitError(errorMessage);
+        if (throwOnError) {
+          throw err instanceof Error ? err : new Error(errorMessage);
+        }
+      }
+    },
+    [examQuestions, onSubmitAnswer, onSubmitError, userExamId],
+  );
 
-  const goPrev = () => {
-    if (currentIndex > 1) {
-      setCurrentIndex((i) => i - 1);
-    }
-  };
+  const navigateTo = useCallback(
+    (targetIndex: number) => {
+      if (targetIndex < 1 || targetIndex > totalQuestions) {
+        return;
+      }
+      if (targetIndex === currentIndex) {
+        return;
+      }
+      const fromIndex = currentIndex;
+      setCurrentIndex(targetIndex);
+      void submitAnswerForIndex(fromIndex);
+    },
+    [currentIndex, submitAnswerForIndex, totalQuestions],
+  );
+
+  const goNext = () => navigateTo(currentIndex + 1);
+
+  const goPrev = () => navigateTo(currentIndex - 1);
 
   const isFirst = currentIndex === 1;
   const isLast = currentIndex === totalQuestions;
+
+  const handleFinish = async () => {
+    if (isFinishing) {
+      return;
+    }
+    setIsFinishing(true);
+    try {
+      await submitAnswerForIndex(currentIndex, true);
+      await onFinish(answersRef.current, currentIndex);
+    } finally {
+      setIsFinishing(false);
+    }
+  };
 
   if (deadlineMs === null || !currentQuestion) {
     return (
@@ -164,12 +236,12 @@ export default function ExamSection({
           <div className="space-y-3">
             {orderedAnswers.map((answer, idx) => {
               const label = getAnswerLabel(answer, idx);
-              const isSelected = selected === label;
+              const isSelected = selectedAnswerId === answer.id;
               return (
                 <button
                   key={answer.id}
                   type="button"
-                  onClick={() => setAnswer(label)}
+                  onClick={() => setAnswer(answer.id)}
                   className={cn(
                     "flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-b2 transition-all cursor-pointer",
                     isSelected
@@ -244,13 +316,14 @@ export default function ExamSection({
               type="button"
               variant="primary"
               size="default"
-              onClick={() => onFinish(answers, currentIndex)}
+              onClick={() => void handleFinish()}
+              disabled={isFinishing}
               className={cn(
                 "w-full rounded-full px-6 py-3 text-s1 text-neutral-1 sm:w-auto sm:min-w-41",
                 !isFirst && "sm:ml-auto",
               )}
             >
-              Selesai
+              {isFinishing ? "Menyimpan..." : "Selesai"}
             </Button>
           )}
         </div>
@@ -268,7 +341,7 @@ export default function ExamSection({
               <button
                 key={n}
                 type="button"
-                onClick={() => setCurrentIndex(n)}
+                onClick={() => navigateTo(n)}
                 aria-current={isCurrent ? "true" : undefined}
                 className={cn(
                   "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold transition-colors cursor-pointer",

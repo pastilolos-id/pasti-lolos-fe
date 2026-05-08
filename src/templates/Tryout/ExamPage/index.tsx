@@ -12,6 +12,7 @@ import { Button } from "@/components/ui";
 import {
   useGetExamDetailQuery,
   useStartExamMutation,
+  useSubmitExamAnswerMutation,
 } from "@/lib/redux/api/examsApi";
 import type { ExamApiErrorResponse } from "@/lib/redux/api/types/exams";
 import type { RootState } from "@/lib/redux/store";
@@ -46,6 +47,7 @@ export default function ExamPage({ category, id }: ExamPageProps) {
 
   const examSession = useSelector((state: RootState) => state.examSession);
   const [startExam, { isLoading: isStartingExam }] = useStartExamMutation();
+  const [submitExamAnswer] = useSubmitExamAnswerMutation();
 
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -131,6 +133,58 @@ export default function ExamPage({ category, id }: ExamPageProps) {
     }
   }, [examSession.examId, numericId, started, storageKey]);
 
+  const endExamBecauseSubmitFailed = useCallback(
+    (_message: string) => {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(storageKey);
+      }
+      setReviewing(false);
+      setFinished(true);
+    },
+    [storageKey],
+  );
+
+  const submitAnswerOrThrow = useCallback(
+    async (payload: {
+      userExamId: number;
+      questionId: number;
+      answerId: number;
+    }) => {
+      try {
+        await submitExamAnswer(payload).unwrap();
+      } catch (err) {
+        const apiError = err as FetchBaseQueryError;
+        const defaultMessage =
+          "Sesi ujian berakhir karena jawaban gagal disimpan.";
+        const message =
+          apiError &&
+          typeof apiError === "object" &&
+          "data" in apiError &&
+          apiError.data &&
+          typeof apiError.data === "object" &&
+          "message" in apiError.data
+            ? String((apiError.data as ExamApiErrorResponse).message)
+            : defaultMessage;
+        throw new Error(message || defaultMessage);
+      }
+    },
+    [submitExamAnswer],
+  );
+
+  const isExamAlreadyFinishedError =
+    isError &&
+    error &&
+    typeof error === "object" &&
+    "status" in error &&
+    (error as FetchBaseQueryError).status === 409 &&
+    "data" in error &&
+    typeof (error as FetchBaseQueryError).data === "object" &&
+    (error as FetchBaseQueryError).data !== null &&
+    "message" in ((error as FetchBaseQueryError).data as Record<string, unknown>) &&
+    String(
+      ((error as FetchBaseQueryError).data as Record<string, unknown>).message,
+    ) === "Ujian telah selesai dikerjakan.";
+
   if (numericId === null) {
     return (
       <section className="min-h-[calc(100vh-75px)] rounded-card-medium border border-neutral-3 p-4 sm:p-10">
@@ -165,6 +219,19 @@ export default function ExamPage({ category, id }: ExamPageProps) {
   }
 
   if (isError) {
+    if (isExamAlreadyFinishedError) {
+      return (
+        <ResultSection
+          category={category}
+          id={id}
+          totalQuestions={examSession.totalQuestions}
+          answers={examAnswers}
+          highlightQuestionNumber={resultHighlightQuestion}
+          onReviewSoal={() => setReviewing(true)}
+        />
+      );
+    }
+
     const errorMessage =
       error && typeof error === "object" && "data" in error
         ? ((error as { data?: { message?: string } }).data?.message ??
@@ -274,10 +341,13 @@ export default function ExamPage({ category, id }: ExamPageProps) {
   ) : (
     <ExamSection
       storageKey={storageKey}
+      userExamId={examSession.userExamId}
       totalQuestions={totalQuestions}
       initialAnswers={examAnswers}
       onAnswersChange={setExamAnswers}
-      onFinish={(answers, lastQuestionIndex) => {
+      onSubmitAnswer={submitAnswerOrThrow}
+      onSubmitError={endExamBecauseSubmitFailed}
+      onFinish={async (answers, lastQuestionIndex) => {
         setExamAnswers(answers);
         setResultHighlightQuestion(lastQuestionIndex);
         setFinished(true);

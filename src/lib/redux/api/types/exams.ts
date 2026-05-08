@@ -194,6 +194,26 @@ export interface ExamDetailSuccessResponse {
   durationMinutes: number;
   passingScore: string;
   packageId: number;
+  userExamId: number | null;
   _count: { examQuestions: number };
   examQuestions: ExamQuestionEntry[];
+}
+
+export interface SubmitExamAnswerRequest {
+  userExamId: number;
+  questionId: number;
+  answerId: number;
+}
+
+export interface SubmitExamAnswerResponseData {
+  id: number;
+  questionId: number;
+  selectedAnswerId: number;
+  updatedAt: string;
+}
+
+export interface SubmitExamAnswerSuccessResponse {
+  success: true;
+  message: string;
+  data: SubmitExamAnswerResponseData;
 }

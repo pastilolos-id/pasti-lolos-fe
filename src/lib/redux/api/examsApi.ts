@@ -14,6 +14,8 @@ import type {
   ExamPackageDetailSuccessResponse,
   ExamsListSuccessResponse,
   StartExamSuccessResponse,
+  SubmitExamAnswerRequest,
+  SubmitExamAnswerSuccessResponse,
 } from "./types/exams";
 
 export const examsApi = baseApi.injectEndpoints({
@@ -94,6 +96,16 @@ export const examsApi = baseApi.injectEndpoints({
         method: "POST",
       }),
     }),
+    submitExamAnswer: build.mutation<
+      SubmitExamAnswerSuccessResponse,
+      SubmitExamAnswerRequest
+    >({
+      query: (body) => ({
+        url: "/exams/submit-answer",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -105,4 +117,5 @@ export const {
   useApplyExamCouponMutation,
   useCheckoutExamPaymentMutation,
   useStartExamMutation,
+  useSubmitExamAnswerMutation,
 } = examsApi;

@@ -7,6 +7,7 @@ import type {
 
 export interface ExamSessionState {
   examId: number | null;
+  userExamId: number | null;
   examName: string;
   durationMinutes: number;
   passingScore: string;
@@ -17,6 +18,7 @@ export interface ExamSessionState {
 
 const initialState: ExamSessionState = {
   examId: null,
+  userExamId: null,
   examName: "",
   durationMinutes: 0,
   passingScore: "",
@@ -35,6 +37,7 @@ export const examSessionSlice = createSlice({
         (a, b) => a.orderInExam - b.orderInExam,
       );
       state.examId = payload.id;
+      state.userExamId = payload.userExamId;
       state.examName = payload.examName;
       state.durationMinutes = payload.durationMinutes;
       state.passingScore = payload.passingScore;

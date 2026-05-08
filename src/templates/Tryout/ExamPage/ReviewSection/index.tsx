@@ -32,12 +32,12 @@ function sortAnswersByLabel(answers: ExamAnswerOption[]): ExamAnswerOption[] {
   });
 }
 
-function getCorrectLabel(entry: ExamQuestionEntry | undefined): string | null {
+function getCorrectAnswer(entry: ExamQuestionEntry | undefined) {
   if (!entry) return null;
   const ordered = sortAnswersByLabel(entry.question.answers);
   const idx = ordered.findIndex((a) => a.isCorrect);
   if (idx === -1) return null;
-  return getAnswerLabel(ordered[idx], idx);
+  return { id: ordered[idx].id, label: getAnswerLabel(ordered[idx], idx) };
 }
 
 function buildAnswersPayload(totalQuestions: number, answers: ExamAnswers) {
@@ -91,8 +91,14 @@ export default function ReviewSection({
     () => (currentQuestion ? sortAnswersByLabel(currentQuestion.answers) : []),
     [currentQuestion],
   );
-  const userLabel = answers[currentIndex] ?? null;
-  const correctLabel = getCorrectLabel(currentEntry);
+  const userAnswerId = answers[currentIndex] ?? null;
+  const correctAnswer = getCorrectAnswer(currentEntry);
+  const userAnswer = orderedAnswers.find(
+    (answer) => answer.id === userAnswerId,
+  );
+  const userLabel = userAnswer
+    ? getAnswerLabel(userAnswer, orderedAnswers.indexOf(userAnswer))
+    : null;
 
   const handleSubmit = () => {
     console.log(buildAnswersPayload(totalQuestions, answers));
@@ -184,7 +190,7 @@ export default function ReviewSection({
             <div className="mt-6 space-y-3">
               {orderedAnswers.map((answer, idx) => {
                 const label = getAnswerLabel(answer, idx);
-                const isUserChoice = userLabel === label;
+                const isUserChoice = userAnswerId === answer.id;
                 const isCorrectChoice = answer.isCorrect;
                 return (
                   <div
@@ -226,7 +232,7 @@ export default function ReviewSection({
                     "mt-1 font-semibold",
                     userLabel == null
                       ? "text-neutral-5"
-                      : userLabel === correctLabel
+                      : userAnswerId === correctAnswer?.id
                         ? "text-green"
                         : "text-red",
                   )}
@@ -237,7 +243,7 @@ export default function ReviewSection({
               <div className="rounded-2xl border border-green bg-green/10 px-4 py-3 text-b2 text-neutral-6">
                 <p className="text-c1 text-neutral-5">Jawaban Benar</p>
                 <p className="mt-1 font-semibold text-green">
-                  {correctLabel ?? "—"}
+                  {correctAnswer?.label ?? "—"}
                 </p>
               </div>
               <div className="rounded-2xl border border-neutral-3 bg-neutral-1 px-4 py-3 text-b2 text-neutral-6">
@@ -341,10 +347,11 @@ export default function ReviewSection({
           {Array.from({ length: totalQuestions }, (_, i) => i + 1).map((n) => {
             const entry = examQuestions[n - 1];
             const user = answers[n];
-            const correct = getCorrectLabel(entry);
+            const correct = getCorrectAnswer(entry);
             const isCurrent = n === currentIndex;
             const hasAnswer = user != null;
-            const isCorrect = hasAnswer && correct != null && user === correct;
+            const isCorrect =
+              hasAnswer && correct != null && user === correct.id;
 
             return (
               <button
