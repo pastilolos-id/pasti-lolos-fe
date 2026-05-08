@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Icon } from "@/components";
 import { Button } from "@/components/ui";
+import type { ExamAnswerOption } from "@/lib/redux/api/types/exams";
+import type { RootState } from "@/lib/redux/store";
 import { cn, useCountdown } from "@/lib/utils";
 
-const DUMMY_QUESTION =
-  "“Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”";
-
-const OPTIONS = ["A", "B", "C", "D"] as const;
+const FALLBACK_LABELS = ["A", "B", "C", "D", "E", "F"];
 
 function pad2(n: number) {
   return String(n).padStart(2, "0");
@@ -29,7 +29,23 @@ function getDeadlineMs(storageKey: string): number {
   return fallback;
 }
 
-export type ExamAnswers = Record<number, "A" | "B" | "C" | "D" | null>;
+function getAnswerLabel(answer: ExamAnswerOption, fallbackIndex: number) {
+  const label = answer.metadataJson?.label;
+  if (typeof label === "string" && label.trim()) {
+    return label.trim();
+  }
+  return FALLBACK_LABELS[fallbackIndex] ?? String(fallbackIndex + 1);
+}
+
+function sortAnswersByLabel(answers: ExamAnswerOption[]): ExamAnswerOption[] {
+  return [...answers].sort((a, b) => {
+    const labelA = a.metadataJson?.label ?? "";
+    const labelB = b.metadataJson?.label ?? "";
+    return labelA.localeCompare(labelB);
+  });
+}
+
+export type ExamAnswers = Record<number, string | null>;
 
 interface ExamSectionProps {
   storageKey: string;
@@ -46,6 +62,13 @@ export default function ExamSection({
   onAnswersChange,
   onFinish,
 }: ExamSectionProps) {
+  const examQuestions = useSelector(
+    (state: RootState) => state.examSession.examQuestions,
+  );
+  const examName = useSelector(
+    (state: RootState) => state.examSession.examName,
+  );
+
   const [deadlineMs, setDeadlineMs] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(1);
   const [answers, setAnswers] = useState<ExamAnswers>(
@@ -67,11 +90,18 @@ export default function ExamSection({
       ? `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`
       : "—";
 
+  const currentEntry = examQuestions[currentIndex - 1];
+  const currentQuestion = currentEntry?.question;
+  const orderedAnswers = useMemo(
+    () => (currentQuestion ? sortAnswersByLabel(currentQuestion.answers) : []),
+    [currentQuestion],
+  );
+
   const selected = answers[currentIndex] ?? null;
 
-  const setAnswer = (letter: (typeof OPTIONS)[number]) => {
+  const setAnswer = (label: string) => {
     setAnswers((prev) => {
-      const next = { ...prev, [currentIndex]: letter };
+      const next = { ...prev, [currentIndex]: label };
       onAnswersChange?.(next);
       return next;
     });
@@ -94,7 +124,7 @@ export default function ExamSection({
   const isFirst = currentIndex === 1;
   const isLast = currentIndex === totalQuestions;
 
-  if (deadlineMs === null) {
+  if (deadlineMs === null || !currentQuestion) {
     return (
       <div className="mt-8 text-b2 text-neutral-5" aria-live="polite">
         Memuat…
@@ -117,18 +147,28 @@ export default function ExamSection({
             </div>
           </div>
 
-          {/* Question */}
-          <p className="mb-8 text-b1 text-neutral-5">{DUMMY_QUESTION}</p>
+          <p className="mb-6 text-b1 text-neutral-5">
+            {currentQuestion.questionText}
+          </p>
 
-          {/* ABCD Options */}
+          {currentQuestion.imageUrl ? (
+            // biome-ignore lint/performance/noImgElement: question images come from arbitrary backend URLs
+            <img
+              src={currentQuestion.imageUrl}
+              alt={`Ilustrasi soal nomor ${currentIndex}`}
+              className="mb-8 max-h-80 w-auto rounded-2xl border border-neutral-3 object-contain"
+            />
+          ) : null}
+
           <div className="space-y-3">
-            {OPTIONS.map((letter) => {
-              const isSelected = selected === letter;
+            {orderedAnswers.map((answer, idx) => {
+              const label = getAnswerLabel(answer, idx);
+              const isSelected = selected === label;
               return (
                 <button
-                  key={letter}
+                  key={answer.id}
                   type="button"
-                  onClick={() => setAnswer(letter)}
+                  onClick={() => setAnswer(label)}
                   className={cn(
                     "flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-b2 transition-all cursor-pointer",
                     isSelected
@@ -146,14 +186,15 @@ export default function ExamSection({
                   >
                     {isSelected ? "✓" : ""}
                   </span>
-                  <span>{letter}. Lorem ipsum dolor sit amet</span>
+                  <span>
+                    {label}. {answer.answerText}
+                  </span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Button Footer */}
         <div
           className={cn(
             "mt-10 flex flex-col gap-3 sm:flex-row sm:items-center",
@@ -215,7 +256,9 @@ export default function ExamSection({
       </div>
 
       <aside className="w-full max-h-[calc(100vh-75px)] overflow-auto shrink-0 rounded-3xl border border-neutral-3 bg-neutral-1 p-4 sm:p-6 xl:w-80">
-        <h2 className="mb-4 text-h4 font-semibold text-neutral-6">Soal TKD</h2>
+        <h2 className="mb-4 text-h4 font-semibold text-neutral-6">
+          {examName || "Daftar Soal"}
+        </h2>
         <div className="grid grid-cols-5 gap-2">
           {Array.from({ length: totalQuestions }, (_, i) => i + 1).map((n) => {
             const isCurrent = n === currentIndex;

@@ -1,3 +1,7 @@
+import {
+  clearExamSession,
+  setExamSession,
+} from "@/lib/redux/slices/examSessionSlice";
 import { baseApi } from "./baseApi";
 import type {
   ApplyExamCouponRequest,
@@ -6,6 +10,7 @@ import type {
   CheckoutExamPaymentSuccessResponse,
   CheckoutPreviewSuccessResponse,
   ExamCategoryParam,
+  ExamDetailSuccessResponse,
   ExamPackageDetailSuccessResponse,
   ExamsListSuccessResponse,
 } from "./types/exams";
@@ -35,6 +40,20 @@ export const examsApi = baseApi.injectEndpoints({
         }),
       },
     ),
+    getExamDetail: build.query<ExamDetailSuccessResponse, number>({
+      query: (id) => ({
+        url: `/exams/${id}/get-exams`,
+      }),
+      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+        dispatch(clearExamSession());
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setExamSession(data));
+        } catch {
+          dispatch(clearExamSession());
+        }
+      },
+    }),
     applyExamCoupon: build.mutation<
       ApplyExamCouponSuccessResponse,
       ApplyExamCouponRequest
@@ -75,6 +94,7 @@ export const {
   useGetExamsQuery,
   useGetExamPackageDetailQuery,
   useGetExamCheckoutPreviewQuery,
+  useGetExamDetailQuery,
   useApplyExamCouponMutation,
   useCheckoutExamPaymentMutation,
 } = examsApi;

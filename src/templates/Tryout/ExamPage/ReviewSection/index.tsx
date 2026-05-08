@@ -1,20 +1,43 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Icon } from "@/components";
 import { Button } from "@/components/ui";
+import type {
+  ExamAnswerOption,
+  ExamQuestionEntry,
+} from "@/lib/redux/api/types/exams";
+import type { RootState } from "@/lib/redux/store";
 import { cn, delay } from "@/lib/utils";
 import type { TryoutCategory } from "../../data";
 import type { ExamAnswers } from "../ExamSection";
 
-const REVIEW_QUESTION =
-  '"Kami percaya kelulusan bukan hasil kebetulan. Dengan latihan yang terarah, evaluasi yang tepat, dan konsistensi, peluangmu untuk lolos jadi lebih besar."';
+const FALLBACK_LABELS = ["A", "B", "C", "D", "E", "F"];
 
-const LETTERS = ["A", "B", "C", "D"] as const;
+function getAnswerLabel(answer: ExamAnswerOption, fallbackIndex: number) {
+  const label = answer.metadataJson?.label;
+  if (typeof label === "string" && label.trim()) {
+    return label.trim();
+  }
+  return FALLBACK_LABELS[fallbackIndex] ?? String(fallbackIndex + 1);
+}
 
-function correctAnswerForQuestion(n: number): (typeof LETTERS)[number] {
-  return LETTERS[(n - 1) % 4];
+function sortAnswersByLabel(answers: ExamAnswerOption[]): ExamAnswerOption[] {
+  return [...answers].sort((a, b) => {
+    const labelA = a.metadataJson?.label ?? "";
+    const labelB = b.metadataJson?.label ?? "";
+    return labelA.localeCompare(labelB);
+  });
+}
+
+function getCorrectLabel(entry: ExamQuestionEntry | undefined): string | null {
+  if (!entry) return null;
+  const ordered = sortAnswersByLabel(entry.question.answers);
+  const idx = ordered.findIndex((a) => a.isCorrect);
+  if (idx === -1) return null;
+  return getAnswerLabel(ordered[idx], idx);
 }
 
 function buildAnswersPayload(totalQuestions: number, answers: ExamAnswers) {
@@ -42,9 +65,16 @@ export default function ReviewSection({
 }: ReviewSectionProps) {
   const router = useRouter();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const examQuestions = useSelector(
+    (state: RootState) => state.examSession.examQuestions,
+  );
+  const examName = useSelector(
+    (state: RootState) => state.examSession.examName,
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(1);
-  const [viewMode, setViewMode] = useState<"review" | "answer">("review");
+  const [viewMode, setViewMode] = useState<"review" | "answer">("answer");
 
   const goNext = () => {
     if (currentIndex < totalQuestions) {
@@ -55,6 +85,15 @@ export default function ReviewSection({
   const isFirst = currentIndex === 1;
   const isLast = currentIndex === totalQuestions;
 
+  const currentEntry = examQuestions[currentIndex - 1];
+  const currentQuestion = currentEntry?.question;
+  const orderedAnswers = useMemo(
+    () => (currentQuestion ? sortAnswersByLabel(currentQuestion.answers) : []),
+    [currentQuestion],
+  );
+  const userLabel = answers[currentIndex] ?? null;
+  const correctLabel = getCorrectLabel(currentEntry);
+
   const handleSubmit = () => {
     console.log(buildAnswersPayload(totalQuestions, answers));
 
@@ -64,6 +103,14 @@ export default function ReviewSection({
       setIsLoading(false);
     });
   };
+
+  if (!currentQuestion) {
+    return (
+      <section className="rounded-3xl border border-neutral-3 bg-neutral-1 p-6 text-b2 text-neutral-5">
+        Memuat ulasan...
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-col gap-6 xl:flex-row xl:items-start">
@@ -84,7 +131,7 @@ export default function ReviewSection({
                 }
               }}
               className={cn(
-                "flex-1 rounded-full py-3 text-center text-s1 font-semibold text-primary-4 cursor-pointer",
+                "flex-1 rounded-full py-3 text-center text-s1 font-semibold cursor-pointer",
                 viewMode === "answer"
                   ? "bg-primary-4 text-neutral-1"
                   : "bg-neutral-1 text-primary-4 border border-primary-4",
@@ -106,7 +153,7 @@ export default function ReviewSection({
                 }
               }}
               className={cn(
-                "flex-1 rounded-full bg-primary-4 py-3 text-center text-s1 font-semibold text-neutral-1 cursor-pointer",
+                "flex-1 rounded-full py-3 text-center text-s1 font-semibold cursor-pointer",
                 viewMode === "review"
                   ? "bg-primary-4 text-neutral-1"
                   : "bg-neutral-1 text-primary-4 border border-primary-4",
@@ -120,7 +167,88 @@ export default function ReviewSection({
             {viewMode === "answer" ? "Soal Ke-" : "Review Soal Ke-"}
             {currentIndex} dari {totalQuestions} soal
           </p>
-          <p className="mt-6 text-b1 text-neutral-5">{REVIEW_QUESTION}</p>
+          <p className="mt-6 text-b1 text-neutral-5">
+            {currentQuestion.questionText}
+          </p>
+
+          {currentQuestion.imageUrl ? (
+            // biome-ignore lint/performance/noImgElement: question images come from arbitrary backend URLs
+            <img
+              src={currentQuestion.imageUrl}
+              alt={`Ilustrasi soal nomor ${currentIndex}`}
+              className="mt-6 max-h-80 w-auto rounded-2xl border border-neutral-3 object-contain"
+            />
+          ) : null}
+
+          {viewMode === "answer" ? (
+            <div className="mt-6 space-y-3">
+              {orderedAnswers.map((answer, idx) => {
+                const label = getAnswerLabel(answer, idx);
+                const isUserChoice = userLabel === label;
+                const isCorrectChoice = answer.isCorrect;
+                return (
+                  <div
+                    key={answer.id}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-b2",
+                      isCorrectChoice
+                        ? "border-green bg-green/10 text-neutral-6"
+                        : isUserChoice
+                          ? "border-red bg-red/10 text-neutral-6"
+                          : "border-neutral-3 bg-neutral-1 text-neutral-6",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex size-5 shrink-0 items-center justify-center rounded-full border text-c1",
+                        isCorrectChoice
+                          ? "border-green bg-green text-neutral-1"
+                          : isUserChoice
+                            ? "border-red bg-red text-neutral-1"
+                            : "border-neutral-4 bg-neutral-1 text-neutral-5",
+                      )}
+                    >
+                      {isCorrectChoice ? "✓" : isUserChoice ? "✕" : ""}
+                    </span>
+                    <span>
+                      {label}. {answer.answerText}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-6 space-y-4">
+              <div className="rounded-2xl border border-neutral-3 bg-neutral-1 px-4 py-3 text-b2 text-neutral-6">
+                <p className="text-c1 text-neutral-5">Jawaban Kamu</p>
+                <p
+                  className={cn(
+                    "mt-1 font-semibold",
+                    userLabel == null
+                      ? "text-neutral-5"
+                      : userLabel === correctLabel
+                        ? "text-green"
+                        : "text-red",
+                  )}
+                >
+                  {userLabel ?? "Tidak dijawab"}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-green bg-green/10 px-4 py-3 text-b2 text-neutral-6">
+                <p className="text-c1 text-neutral-5">Jawaban Benar</p>
+                <p className="mt-1 font-semibold text-green">
+                  {correctLabel ?? "—"}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-neutral-3 bg-neutral-1 px-4 py-3 text-b2 text-neutral-6">
+                <p className="text-c1 text-neutral-5">Pembahasan</p>
+                <p className="mt-1 text-neutral-6">
+                  {currentQuestion.explanationText ??
+                    "Pembahasan belum tersedia."}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div
@@ -192,7 +320,9 @@ export default function ReviewSection({
       </div>
 
       <aside className="w-full max-h-[calc(100vh-75px)] shrink-0 overflow-auto rounded-3xl border border-neutral-3 bg-neutral-1 p-4 sm:p-6 xl:w-80">
-        <h2 className="mb-4 text-h4 font-semibold text-neutral-6">Soal TKD</h2>
+        <h2 className="mb-4 text-h4 font-semibold text-neutral-6">
+          {examName || "Daftar Soal"}
+        </h2>
         <div className="mb-4 flex flex-wrap items-center gap-4 text-c1 text-neutral-6">
           <span className="inline-flex items-center gap-2">
             <span className="flex size-6 items-center justify-center rounded-full bg-green text-neutral-1">
@@ -209,12 +339,12 @@ export default function ReviewSection({
         </div>
         <div className="grid grid-cols-5 gap-2">
           {Array.from({ length: totalQuestions }, (_, i) => i + 1).map((n) => {
+            const entry = examQuestions[n - 1];
             const user = answers[n];
-            const correct = correctAnswerForQuestion(n);
+            const correct = getCorrectLabel(entry);
             const isCurrent = n === currentIndex;
             const hasAnswer = user != null;
-
-            const isCorrect = hasAnswer && user === correct;
+            const isCorrect = hasAnswer && correct != null && user === correct;
 
             return (
               <button

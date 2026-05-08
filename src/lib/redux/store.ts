@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { baseApi } from "./api/baseApi";
 import "@/lib/redux/api/courseApi";
+import examSessionReducer from "./slices/examSessionSlice";
 import userReducer from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    examSession: examSessionReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -118,3 +118,44 @@ export interface CheckoutPreviewSuccessResponse {
   adminFee: number;
   totalPayment: string;
 }
+
+export type ExamQuestionType = "multiple_choice" | (string & {});
+
+export interface ExamAnswerOptionMetadata {
+  label?: string;
+  [key: string]: unknown;
+}
+
+export interface ExamAnswerOption {
+  id: number;
+  answerText: string;
+  isCorrect: boolean;
+  pointsIfSelected: number;
+  metadataJson: ExamAnswerOptionMetadata | null;
+}
+
+export interface ExamQuestion {
+  id: number;
+  questionText: string;
+  questionType: ExamQuestionType;
+  explanationText: string | null;
+  imageUrl: string | null;
+  answers: ExamAnswerOption[];
+}
+
+export interface ExamQuestionEntry {
+  orderInExam: number;
+  pointsForQuestion: string;
+  question: ExamQuestion;
+}
+
+/** GET /exams/:id/get-exams */
+export interface ExamDetailSuccessResponse {
+  id: number;
+  examName: string;
+  durationMinutes: number;
+  passingScore: string;
+  packageId: number;
+  _count: { examQuestions: number };
+  examQuestions: ExamQuestionEntry[];
+}
