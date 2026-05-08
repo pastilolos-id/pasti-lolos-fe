@@ -12,6 +12,7 @@ import { Button } from "@/components/ui";
 import {
   useFinishExamMutation,
   useGetExamDetailQuery,
+  useGetExamScoreQuery,
   useStartExamMutation,
   useSubmitExamAnswerMutation,
 } from "@/lib/redux/api/examsApi";
@@ -220,6 +221,19 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       ((error as FetchBaseQueryError).data as Record<string, unknown>).message,
     ) === "Ujian telah selesai dikerjakan.";
 
+  const shouldFetchExamScore =
+    numericId !== null && (finished || isExamAlreadyFinishedError);
+  const {
+    data: examScoreResponse,
+    isLoading: isLoadingExamScore,
+    isFetching: isFetchingExamScore,
+    isError: isExamScoreError,
+    error: examScoreError,
+    refetch: refetchExamScore,
+  } = useGetExamScoreQuery(shouldFetchExamScore ? numericId : skipToken, {
+    refetchOnMountOrArgChange: true,
+  });
+
   if (numericId === null) {
     return (
       <section className="min-h-[calc(100vh-75px)] rounded-card-medium border border-neutral-3 p-4 sm:p-10">
@@ -262,6 +276,12 @@ export default function ExamPage({ category, id }: ExamPageProps) {
           totalQuestions={examSession.totalQuestions}
           answers={examAnswers}
           highlightQuestionNumber={resultHighlightQuestion}
+          getScoreResult={examScoreResponse?.data ?? null}
+          isLoadingScore={isLoadingExamScore || isFetchingExamScore}
+          scoreError={
+            isExamScoreError ? (examScoreError as FetchBaseQueryError) : null
+          }
+          onRetryLoadScore={() => void refetchExamScore()}
           finishResult={finishExamData}
           onReviewSoal={() => setReviewing(true)}
         />
@@ -372,6 +392,10 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       totalQuestions={totalQuestions}
       answers={examAnswers}
       highlightQuestionNumber={resultHighlightQuestion || totalQuestions}
+      getScoreResult={examScoreResponse?.data ?? null}
+      isLoadingScore={isLoadingExamScore || isFetchingExamScore}
+      scoreError={isExamScoreError ? (examScoreError as FetchBaseQueryError) : null}
+      onRetryLoadScore={() => void refetchExamScore()}
       finishResult={finishExamData}
       finishMessage={finishExamMessage}
       onReviewSoal={() => setReviewing(true)}

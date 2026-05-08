@@ -15,6 +15,7 @@ import type {
   ExamsListSuccessResponse,
   FinishExamRequest,
   FinishExamSuccessResponse,
+  GetExamScoreSuccessResponse,
   StartExamSuccessResponse,
   SubmitExamAnswerRequest,
   SubmitExamAnswerSuccessResponse,
@@ -58,6 +59,11 @@ export const examsApi = baseApi.injectEndpoints({
           dispatch(clearExamSession());
         }
       },
+    }),
+    getExamScore: build.query<GetExamScoreSuccessResponse, number>({
+      query: (id) => ({
+        url: `/exams/${id}/get-score`,
+      }),
     }),
     applyExamCoupon: build.mutation<
       ApplyExamCouponSuccessResponse,
@@ -123,6 +129,7 @@ export const {
   useGetExamPackageDetailQuery,
   useGetExamCheckoutPreviewQuery,
   useGetExamDetailQuery,
+  useGetExamScoreQuery,
   useApplyExamCouponMutation,
   useCheckoutExamPaymentMutation,
   useStartExamMutation,

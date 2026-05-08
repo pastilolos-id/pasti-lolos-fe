@@ -245,3 +245,34 @@ export interface FinishExamSuccessResponse {
   message: string;
   data: FinishExamResponseData;
 }
+
+/** GET /exams/:id/get-score */
+export interface GetExamScoreStatistics {
+  totalQuestions: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  unanswered: number;
+}
+
+export interface GetExamScoreDetail {
+  isCorrect: boolean;
+  questionId: number;
+  selectedAnswerId: number | null;
+}
+
+export interface GetExamScoreResponseData {
+  userExamId: number;
+  examName: string;
+  finalScore: number;
+  passingScore: number;
+  status: string;
+  statistics: GetExamScoreStatistics;
+  submittedAt: string;
+  details: GetExamScoreDetail[];
+}
+
+export interface GetExamScoreSuccessResponse {
+  success: true;
+  message: string;
+  data: GetExamScoreResponseData;
+}
