@@ -13,6 +13,7 @@ import type {
   ExamDetailSuccessResponse,
   ExamPackageDetailSuccessResponse,
   ExamsListSuccessResponse,
+  StartExamSuccessResponse,
 } from "./types/exams";
 
 export const examsApi = baseApi.injectEndpoints({
@@ -87,6 +88,12 @@ export const examsApi = baseApi.injectEndpoints({
         };
       },
     }),
+    startExam: build.mutation<StartExamSuccessResponse, number>({
+      query: (id) => ({
+        url: `/exams/start/${id}`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -97,4 +104,5 @@ export const {
   useGetExamDetailQuery,
   useApplyExamCouponMutation,
   useCheckoutExamPaymentMutation,
+  useStartExamMutation,
 } = examsApi;

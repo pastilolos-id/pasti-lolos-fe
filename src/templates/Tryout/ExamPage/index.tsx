@@ -1,13 +1,19 @@
 "use client";
 
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { skipToken } from "@reduxjs/toolkit/query";
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Icon } from "@/components";
 import { Button } from "@/components/ui";
-import { useGetExamDetailQuery } from "@/lib/redux/api/examsApi";
+import {
+  useGetExamDetailQuery,
+  useStartExamMutation,
+} from "@/lib/redux/api/examsApi";
+import type { ExamApiErrorResponse } from "@/lib/redux/api/types/exams";
 import type { RootState } from "@/lib/redux/store";
 import type { TryoutCategory } from "../data";
 import ExamSection, { type ExamAnswers } from "./ExamSection";
@@ -28,6 +34,7 @@ function getShortExamLabel(examName: string): string {
 }
 
 export default function ExamPage({ category, id }: ExamPageProps) {
+  const router = useRouter();
   const numericId = /^\d+$/.test(id) ? Number(id) : null;
 
   const { isLoading, isError, error, refetch } = useGetExamDetailQuery(
@@ -38,6 +45,7 @@ export default function ExamPage({ category, id }: ExamPageProps) {
   );
 
   const examSession = useSelector((state: RootState) => state.examSession);
+  const [startExam, { isLoading: isStartingExam }] = useStartExamMutation();
 
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -50,14 +58,78 @@ export default function ExamPage({ category, id }: ExamPageProps) {
     [category, id],
   );
 
-  const handleMulai = useCallback(() => {
-    const endAt =
-      Date.now() + Math.max(examSession.durationMinutes, 1) * 60 * 1000;
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(storageKey, String(endAt));
+  const getPreviewHref = useCallback(() => {
+    return examSession.packageId !== null
+      ? `/tryout/${category}/${examSession.packageId}/preview`
+      : `/tryout/${category}`;
+  }, [category, examSession.packageId]);
+
+  const handleMulai = useCallback(async () => {
+    if (numericId === null) {
+      return;
     }
-    setStarted(true);
-  }, [storageKey, examSession.durationMinutes]);
+    try {
+      const response = await startExam(numericId).unwrap();
+      const endAt = new Date(response.endTime).getTime();
+      if (!Number.isFinite(endAt) || endAt <= Date.now()) {
+        throw new Error("Waktu ujian tidak valid.");
+      }
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(storageKey, String(endAt));
+      }
+      setStarted(true);
+    } catch (err) {
+      const apiError = err as FetchBaseQueryError;
+      const statusCode =
+        typeof apiError?.status === "number" ? apiError.status : null;
+      const errorMessage =
+        statusCode === 403 &&
+        apiError &&
+        "data" in apiError &&
+        apiError.data &&
+        typeof apiError.data === "object" &&
+        "message" in apiError.data
+          ? String((apiError.data as ExamApiErrorResponse).message)
+          : "Gagal memulai ujian. Silakan coba lagi.";
+
+      if (statusCode === 403) {
+        const redirectUrl = new URL(getPreviewHref(), window.location.origin);
+        redirectUrl.searchParams.set("error", errorMessage);
+        router.push(`${redirectUrl.pathname}${redirectUrl.search}`);
+      }
+    }
+  }, [getPreviewHref, numericId, router, startExam, storageKey]);
+
+  useEffect(() => {
+    if (!started || typeof window === "undefined") {
+      return;
+    }
+    const raw = window.localStorage.getItem(storageKey);
+    const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+    if (!Number.isFinite(parsed) || parsed <= Date.now()) {
+      window.localStorage.removeItem(storageKey);
+      setStarted(false);
+    }
+  }, [started, storageKey]);
+
+  useEffect(() => {
+    if (
+      started ||
+      examSession.examId !== numericId ||
+      typeof window === "undefined"
+    ) {
+      return;
+    }
+    const raw = window.localStorage.getItem(storageKey);
+    const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+    if (Number.isFinite(parsed) && parsed > Date.now()) {
+      setStarted(true);
+      return;
+    }
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(storageKey);
+    }
+  }, [examSession.examId, numericId, started, storageKey]);
 
   if (numericId === null) {
     return (
@@ -175,9 +247,10 @@ export default function ExamPage({ category, id }: ExamPageProps) {
           variant="primary"
           size="default"
           onClick={handleMulai}
+          disabled={isStartingExam}
           className="w-full rounded-full px-6 py-3 text-s1 text-neutral-1 sm:w-41 sm:justify-between"
         >
-          Mulai
+          {isStartingExam ? "Memulai..." : "Mulai"}
           <Icon name="arrow-left-circle" size={24} className="rotate-180" />
         </Button>
       </div>

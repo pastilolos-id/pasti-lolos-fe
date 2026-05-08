@@ -108,6 +108,44 @@ export interface CheckoutExamPaymentErrorResponse {
   statusCode: number;
 }
 
+export interface StartExamInitialSuccessResponse {
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+}
+
+export interface StartExamExistingSessionSuccessResponse {
+  id: number;
+  userId: number;
+  examId: number;
+  startTime: string;
+  endTime: string;
+  score: number | null;
+  isCompleted: boolean;
+  submissionTime: string | null;
+  attemptsCount: number;
+  status: string;
+  notes: string | null;
+  ipAddress: string | null;
+  deviceInfo: string | null;
+  timeTakenSeconds: number | null;
+  passingStatus: string | null;
+  certificateIssued: boolean;
+  proctoringStatus: string | null;
+  finalGrade: string | null;
+  examVersionTaken: string | null;
+  externalSessionId: string | null;
+  metadataJson: Record<string, unknown> | null;
+  internalRemarks: string | null;
+  createdAt: string;
+  updatedAt: string;
+  durationMinutes: number;
+}
+
+export type StartExamSuccessResponse =
+  | StartExamInitialSuccessResponse
+  | StartExamExistingSessionSuccessResponse;
+
 /** GET /exams/checkout-preview/:id & GET /course/checkout-preview/:id — course may mirror this shape until backend differs */
 export interface CheckoutPreviewSuccessResponse {
   examId: number;

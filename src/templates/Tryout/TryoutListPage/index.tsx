@@ -6,6 +6,8 @@
  * GET `/exams/package-detail/:id` agar konsisten dengan ID numerik dari list API.
  */
 
+import { useSearchParams } from "next/navigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useGetExamsQuery } from "@/lib/redux/api/examsApi";
 import { getTryoutListBanners, type TryoutCategory } from "../data";
 import {
@@ -20,6 +22,8 @@ export interface TryoutListPageProps {
 }
 
 export default function TryoutListPage({ category }: TryoutListPageProps) {
+  const searchParams = useSearchParams();
+  const startError = searchParams.get("error");
   const banners = getTryoutListBanners(category);
   const apiCategory = toExamCategoryParam(category);
 
@@ -53,13 +57,20 @@ export default function TryoutListPage({ category }: TryoutListPageProps) {
   }
 
   return (
-    <TryoutLayout
-      category={category}
-      bannerTitle={banners.bannerTitle}
-      bannerSubtitle={banners.bannerSubtitle}
-      cards={cards}
-      gridStatus={gridStatus}
-      onRetryLoadCards={isError ? () => void refetch() : undefined}
-    />
+    <div className="space-y-4">
+      {startError ? (
+        <Alert variant="destructive">
+          <AlertDescription>{startError}</AlertDescription>
+        </Alert>
+      ) : null}
+      <TryoutLayout
+        category={category}
+        bannerTitle={banners.bannerTitle}
+        bannerSubtitle={banners.bannerSubtitle}
+        cards={cards}
+        gridStatus={gridStatus}
+        onRetryLoadCards={isError ? () => void refetch() : undefined}
+      />
+    </div>
   );
 }

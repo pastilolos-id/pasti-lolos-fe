@@ -2,9 +2,11 @@
 
 import { skipToken } from "@reduxjs/toolkit/query";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import { Icon } from "@/components";
 import { Button, buttonVariants } from "@/components/ui";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useGetExamPackageDetailQuery } from "@/lib/redux/api/examsApi";
 import type { ExamPackageDetailSuccessResponse } from "@/lib/redux/api/types/exams";
 import { cn, formatToCurrency } from "@/lib/utils";
@@ -30,6 +32,8 @@ export default function TryoutPreviewPage({
   category,
   tryoutId,
 }: TryoutDetailPageProps) {
+  const searchParams = useSearchParams();
+  const startError = searchParams.get("error");
   const numericId = /^\d+$/.test(tryoutId) ? Number(tryoutId) : null;
   const {
     data: tryout,
@@ -120,6 +124,11 @@ export default function TryoutPreviewPage({
 
   return (
     <section className="space-y-4">
+      {startError ? (
+        <Alert variant="destructive">
+          <AlertDescription>{startError}</AlertDescription>
+        </Alert>
+      ) : null}
       <Link
         href={`/tryout/${category}`}
         className="group inline-flex items-center gap-2 mt-3 ml-3 text-s1 text-neutral-6"

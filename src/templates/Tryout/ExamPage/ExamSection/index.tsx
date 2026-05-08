@@ -15,18 +15,19 @@ function pad2(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function getDeadlineMs(storageKey: string): number {
+function getDeadlineMs(storageKey: string): number | null {
   if (typeof window === "undefined") {
-    return Date.now() + 3 * 60 * 60 * 1000;
+    return null;
   }
   const raw = window.localStorage.getItem(storageKey);
   const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
   if (Number.isFinite(parsed) && parsed > Date.now()) {
     return parsed;
   }
-  const fallback = Date.now() + 3 * 60 * 60 * 1000;
-  window.localStorage.setItem(storageKey, String(fallback));
-  return fallback;
+  if (raw) {
+    window.localStorage.removeItem(storageKey);
+  }
+  return null;
 }
 
 function getAnswerLabel(answer: ExamAnswerOption, fallbackIndex: number) {
