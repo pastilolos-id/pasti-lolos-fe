@@ -1,5 +1,7 @@
 import type { FilterType } from "@/components";
+import { getPaymentMethodConfigByLabel } from "@/lib/constants/paymentMethods";
 import type {
+  OrderHistoryDetailSuccessResponse,
   OrderHistoryEntry,
   OrderHistoryPaymentMethod,
 } from "@/lib/redux/api/types/orders";
@@ -21,6 +23,23 @@ export interface PurchaseListViewModel {
   providerKey: ProviderKey | null;
   paymentMethodLabel: string;
   filterType: Exclude<FilterType, "semua">;
+}
+
+export interface PurchaseDetailViewModel {
+  id: string;
+  title: string;
+  transactionCode: string;
+  transactionTime: string;
+  statusKey: Exclude<PurchaseStatusKey, "kadaluarsa">;
+  paymentMethodLabel: string;
+  providerKey: ProviderKey | null;
+  providerDisplayName: string;
+  accountName: string;
+  accountNumber: string;
+  price: number;
+  originalPrice: number;
+  discount: number;
+  receiptUrl: string | null;
 }
 
 const paymentMethodToProviderKey: Record<
@@ -70,12 +89,37 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   year: "numeric",
 });
 
+const dateTimeFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
 export function formatOrderDate(dateIso: string): string {
   const date = new Date(dateIso);
   if (Number.isNaN(date.getTime())) {
     return dateIso;
   }
   return dateFormatter.format(date);
+}
+
+export function formatOrderDateTimeLabel(dateIso: string): string {
+  const date = new Date(dateIso);
+  if (Number.isNaN(date.getTime())) {
+    return dateIso;
+  }
+
+  const parts = dateTimeFormatter.formatToParts(date);
+  const day = parts.find((part) => part.type === "day")?.value ?? "";
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+  const year = parts.find((part) => part.type === "year")?.value ?? "";
+  const hour = parts.find((part) => part.type === "hour")?.value ?? "";
+  const minute = parts.find((part) => part.type === "minute")?.value ?? "";
+
+  return `Tgl : ${day} ${month} ${year}, Jam ${hour}:${minute}`;
 }
 
 export function parsePriceValue(value: string | number): number {
@@ -96,5 +140,31 @@ export function mapOrderHistoryEntryToUi(
     providerKey: getProviderKeyFromPaymentMethod(entry.paymentMethod),
     paymentMethodLabel: entry.paymentMethod,
     filterType: mapItemTypeToFilter(firstItem?.itemType ?? ""),
+  };
+}
+
+export function mapOrderHistoryDetailToUi(
+  response: OrderHistoryDetailSuccessResponse,
+): PurchaseDetailViewModel {
+  const entry = response.data;
+  const firstItem = entry.items[0];
+  const paymentMethodLabel = entry.paymentMethod ?? "-";
+  const paymentMethodConfig = getPaymentMethodConfigByLabel(paymentMethodLabel);
+
+  return {
+    id: String(entry.orderId ?? entry.id ?? ""),
+    title: firstItem?.itemName ?? "-",
+    transactionCode: entry.transactionCode ?? "-",
+    transactionTime: formatOrderDateTimeLabel(entry.createdAt ?? ""),
+    statusKey: mapOrderStatus(entry.status),
+    paymentMethodLabel,
+    providerKey: getProviderKeyFromPaymentMethod(paymentMethodLabel),
+    providerDisplayName: paymentMethodLabel.replace(/^Bank\s+/i, ""),
+    accountName: paymentMethodConfig?.accountName ?? "-",
+    accountNumber: paymentMethodConfig?.accountNumber ?? "-",
+    price: parsePriceValue(entry.grandTotal),
+    originalPrice: parsePriceValue(entry.totalAmount ?? 0),
+    discount: parsePriceValue(entry.discount ?? 0),
+    receiptUrl: entry.paymentInfo?.receiptUrl ?? null,
   };
 }

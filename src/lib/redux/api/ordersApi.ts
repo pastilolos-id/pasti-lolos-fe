@@ -1,5 +1,8 @@
 import { baseApi } from "./baseApi";
-import type { OrdersHistorySuccessResponse } from "./types/orders";
+import type {
+  OrderHistoryDetailSuccessResponse,
+  OrdersHistorySuccessResponse,
+} from "./types/orders";
 
 export const ordersApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -8,7 +11,13 @@ export const ordersApi = baseApi.injectEndpoints({
         url: "/orders/history",
       }),
     }),
+    getOrderHistoryDetail: build.query<OrderHistoryDetailSuccessResponse, number>({
+      query: (id) => ({
+        url: `/orders/history/${id}`,
+      }),
+    }),
   }),
 });
 
-export const { useGetOrdersHistoryQuery } = ordersApi;
+export const { useGetOrdersHistoryQuery, useGetOrderHistoryDetailQuery } =
+  ordersApi;
