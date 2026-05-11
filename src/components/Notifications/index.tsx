@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
+import { useGetNotificationsQuery } from "@/lib/redux/api/notificationsApi";
 import { cn } from "@/lib/utils";
-import { notifications } from "@/mock-data/notifications";
+import { mapNotificationsToViewModel } from "@/templates/Notifications/mapNotificationFromApi";
 import Icon from "../Icon";
 
 interface NotificationsProps {
@@ -16,6 +18,21 @@ export default function Notifications({
   onItemClick,
   onSeeAllClick,
 }: NotificationsProps) {
+  const { data, isLoading, isFetching, isError } = useGetNotificationsQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
+  );
+
+  const notifications = useMemo(
+    () => mapNotificationsToViewModel(data?.data ?? []).slice(0, 3),
+    [data],
+  );
+  const isInitialLoading = isLoading || (isFetching && !data);
+
   return (
     <section
       className={cn(
@@ -34,28 +51,38 @@ export default function Notifications({
       </div>
 
       <div className="rounded-3xl bg-neutral-2/30 px-3 py-2">
-        {notifications.slice(0, 3).map((item, index) => (
-          <Link
-            key={item.id}
-            href={`/notifications?id=${item.id}`}
-            onClick={onItemClick}
-            className={cn(
-              "block py-3",
-              index < 2 && "border-b border-neutral-3",
-              index === 0 && "rounded-2xl bg-neutral-1 px-2",
-            )}
-          >
-            <p
+        {isInitialLoading ? (
+          <p className="py-3 text-c1 text-neutral-4">Memuat notifikasi...</p>
+        ) : isError ? (
+          <p className="py-3 text-c1 text-neutral-4">
+            Gagal memuat notifikasi.
+          </p>
+        ) : notifications.length === 0 ? (
+          <p className="py-3 text-c1 text-neutral-4">Belum ada notifikasi.</p>
+        ) : (
+          notifications.map((item, index) => (
+            <Link
+              key={item.id}
+              href={`/notifications?id=${item.id}`}
+              onClick={onItemClick}
               className={cn(
-                "line-clamp-2 text-b1 text-neutral-6",
-                index === 0 && "font-semibold",
+                "block py-3",
+                index < notifications.length - 1 && "border-b border-neutral-3",
+                index === 0 && "rounded-2xl bg-neutral-1 px-2",
               )}
             >
-              {item.title}
-            </p>
-            <p className="mt-1 text-c1 text-neutral-4">{item.time}</p>
-          </Link>
-        ))}
+              <p
+                className={cn(
+                  "line-clamp-2 text-b1 text-neutral-6",
+                  index === 0 && "font-semibold",
+                )}
+              >
+                {item.title}
+              </p>
+              <p className="mt-1 text-c1 text-neutral-4">{item.timeLabel}</p>
+            </Link>
+          ))
+        )}
       </div>
 
       <div className="mt-4 flex items-center justify-center">
