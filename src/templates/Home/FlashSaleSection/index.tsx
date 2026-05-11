@@ -1,32 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { cn, useCountdown } from "@/lib/utils";
-import { flashSaleItems } from "./data";
+import type { HomeFlashSaleViewModel } from "../mapHomeFromApi";
 import ItemCard from "./ItemCard";
 
-export default function FlashSaleSection() {
-  const [targetDate, setTargetDate] = useState<Date>(new Date());
+interface FlashSaleSectionProps {
+  flashSale: HomeFlashSaleViewModel | null;
+}
 
-  useEffect(() => {
-    const storageKey = "flashSaleEndTime";
-    const stored = localStorage.getItem(storageKey);
-    if (stored) {
-      const endTime = parseInt(stored, 10);
-      if (endTime > Date.now()) {
-        setTargetDate(new Date(endTime));
-        return;
-      }
-    }
-    // If not set or expired, set new 24h from now
-    const newEndTime = Date.now() + 24 * 60 * 60 * 1000;
-    localStorage.setItem(storageKey, newEndTime.toString());
-    setTargetDate(new Date(newEndTime));
-  }, []);
-
+export default function FlashSaleSection({ flashSale }: FlashSaleSectionProps) {
+  const targetDate = useMemo(
+    () => new Date(flashSale?.endsAtMs ?? Date.now()),
+    [flashSale?.endsAtMs],
+  );
   const { hours, minutes, seconds } = useCountdown(targetDate);
 
   const formatTime = (num: number) => num.toString().padStart(2, "0");
+  const isExpired = (flashSale?.endsAtMs ?? 0) <= Date.now();
+  const items = flashSale?.items ?? [];
 
   return (
     <section
@@ -38,18 +30,23 @@ export default function FlashSaleSection() {
     >
       <div className="flex flex-wrap gap-6 justify-center md:justify-between mb-6">
         <h2 className="text-2xl font-bold tracking-tight text-white text-center">
-          ⚡⚡⚡ Flash Sale
+          ⚡⚡⚡ {flashSale?.title ?? "Flash Sale"}
         </h2>
         <p className="w-full lg:w-fit py-2 px-4 rounded-full text-center text-sm font-bold text-red bg-white">
-          Berakhir Dalam {formatTime(hours)}:{formatTime(minutes)}:
-          {formatTime(seconds)}
+          {isExpired
+            ? "Promo berakhir"
+            : `Berakhir Dalam ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`}
         </p>
       </div>
 
       <div className="flex flex-wrap gap-2 p-2 text-neutral-6 bg-neutral-2 rounded-3xl">
-        {flashSaleItems.map((item) => (
-          <ItemCard key={item.title} {...item} />
-        ))}
+        {items.length > 0 ? (
+          items.map((item) => <ItemCard key={item.id} {...item} />)
+        ) : (
+          <p className="w-full rounded-2xl bg-white p-4 text-center text-b2 text-neutral-5">
+            Belum ada penawaran flash sale saat ini.
+          </p>
+        )}
       </div>
     </section>
   );
