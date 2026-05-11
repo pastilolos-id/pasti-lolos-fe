@@ -25,7 +25,8 @@ interface ResultSectionProps {
   /** Hasil dari POST /exams/finish bila tersedia */
   finishResult?: FinishExamResponseData | null;
   finishMessage?: string | null;
-  onReviewSoal: () => void;
+  /** Buka halaman review soal (URL `?review=1`). Tidak ditampilkan di halaman review itu sendiri. */
+  onReviewSoal?: () => void;
 }
 
 export default function ResultSection({
@@ -44,7 +45,9 @@ export default function ResultSection({
   finishMessage,
   onReviewSoal,
 }: ResultSectionProps) {
-  const answeredIdsFromLocal = Object.values(answers).filter((v) => v != null).length;
+  const answeredIdsFromLocal = Object.values(answers).filter(
+    (v) => v != null,
+  ).length;
   const scoreData = getScoreResult ?? finishResult ?? null;
 
   const answeredIdsFromScoreData =
@@ -103,7 +106,9 @@ export default function ResultSection({
   }
 
   const isAnswered = (n: number) =>
-    getScoreResult?.details ? answeredQuestionByNumber.has(n) : answers[n] != null;
+    getScoreResult?.details
+      ? answeredQuestionByNumber.has(n)
+      : answers[n] != null;
 
   return (
     <section className="flex flex-col gap-6 xl:flex-row xl:items-start">
@@ -142,24 +147,27 @@ export default function ResultSection({
                   meetsStandar ? "bg-primary-4" : "bg-red",
                 )}
               >
-                <span className="text-h1 font-bold text-neutral-1">{score}</span>
+                <span className="text-h1 font-bold text-neutral-1">
+                  {score}
+                </span>
               </div>
 
               <p className="mt-6 text-b2 text-neutral-6">{feedbackText}</p>
             </>
           )}
-
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="default"
-          onClick={onReviewSoal}
-          className="mt-10 w-full rounded-full border-primary-4/50 px-6 py-3 text-s1 font-semibold text-neutral-6 sm:mt-14"
-        >
-          Review Soal
-        </Button>
+        {onReviewSoal && !isLoadingScore && !scoreError ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="default"
+            onClick={onReviewSoal}
+            className="mt-10 w-full rounded-full border-primary-4/50 px-6 py-3 text-s1 font-semibold text-neutral-6 sm:mt-14"
+          >
+            Review Soal
+          </Button>
+        ) : null}
       </div>
 
       <aside className="w-full max-h-[calc(100vh-75px)] shrink-0 overflow-auto rounded-3xl border border-neutral-3 bg-neutral-1 p-4 sm:p-6 xl:w-80">
@@ -167,25 +175,27 @@ export default function ResultSection({
           {sidebarTitle}
         </h2>
         <div className="grid grid-cols-5 gap-2">
-          {Array.from({ length: totalQuestionsFromData }, (_, i) => i + 1).map((n) => {
-            const isHighlight = n === highlight;
-            const done = isAnswered(n) && !isHighlight;
-            return (
-              <div
-                key={n}
-                className={cn(
-                  "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold",
-                  isHighlight
-                    ? "border-primary-4 bg-primary-5 text-neutral-1"
-                    : done
-                      ? "border-neutral-3 bg-neutral-4/50 text-neutral-6"
-                      : "border-neutral-3 bg-neutral-1 text-neutral-6",
-                )}
-              >
-                {n}
-              </div>
-            );
-          })}
+          {Array.from({ length: totalQuestionsFromData }, (_, i) => i + 1).map(
+            (n) => {
+              const isHighlight = n === highlight;
+              const done = isAnswered(n) && !isHighlight;
+              return (
+                <div
+                  key={n}
+                  className={cn(
+                    "max-w-14 flex aspect-square items-center justify-center rounded-full border text-c1 font-semibold",
+                    isHighlight
+                      ? "border-primary-4 bg-primary-5 text-neutral-1"
+                      : done
+                        ? "border-neutral-3 bg-neutral-4/50 text-neutral-6"
+                        : "border-neutral-3 bg-neutral-1 text-neutral-6",
+                  )}
+                >
+                  {n}
+                </div>
+              );
+            },
+          )}
         </div>
       </aside>
     </section>

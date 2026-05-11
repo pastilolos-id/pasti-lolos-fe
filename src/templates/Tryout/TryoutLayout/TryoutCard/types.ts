@@ -7,6 +7,8 @@ export interface TryoutCardData {
   specialPrice?: number;
   originalPrice?: number;
   detailHref: string;
+  isPurchased?: boolean;
+  totalPassingScore?: number;
 }
 
 export interface TryoutCardProps {

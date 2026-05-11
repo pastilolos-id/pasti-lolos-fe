@@ -12,6 +12,7 @@ import type {
   ExamCategoryParam,
   ExamDetailSuccessResponse,
   ExamPackageDetailSuccessResponse,
+  ExamReviewSuccessResponse,
   ExamsListSuccessResponse,
   FinishExamRequest,
   FinishExamSuccessResponse,
@@ -64,6 +65,24 @@ export const examsApi = baseApi.injectEndpoints({
       query: (id) => ({
         url: `/exams/${id}/get-score`,
       }),
+    }),
+    getExamReviewByExam: build.query<ExamReviewSuccessResponse, number>({
+      query: (examId) => ({
+        url: `/exams/review/by-exam/${examId}`,
+      }),
+      transformResponse(raw: unknown): ExamReviewSuccessResponse {
+        if (
+          raw &&
+          typeof raw === "object" &&
+          "data" in raw &&
+          raw.data &&
+          typeof raw.data === "object" &&
+          Array.isArray((raw.data as ExamReviewSuccessResponse).questions)
+        ) {
+          return raw.data as ExamReviewSuccessResponse;
+        }
+        return raw as ExamReviewSuccessResponse;
+      },
     }),
     applyExamCoupon: build.mutation<
       ApplyExamCouponSuccessResponse,
@@ -130,6 +149,7 @@ export const {
   useGetExamCheckoutPreviewQuery,
   useGetExamDetailQuery,
   useGetExamScoreQuery,
+  useGetExamReviewByExamQuery,
   useApplyExamCouponMutation,
   useCheckoutExamPaymentMutation,
   useStartExamMutation,

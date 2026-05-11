@@ -7,6 +7,9 @@ export interface ExamListItem {
   examType: string;
   price: number;
   durationMinutes: number;
+  /** Total soal paket (backend); prefer over _count saat aggregate */
+  totalQuestions?: number;
+  jumlahSoal?: number;
   subject: { subjectName: string };
   _count: { examQuestions: number };
 }
@@ -31,6 +34,7 @@ export interface ExamPackageDetailSubExam {
   duration: number;
   userExamId: number | null;
   status: "submitted" | "not_started" | "in_progress";
+  score?: number;
 }
 
 export interface ExamPackageDetailSuccessResponse {
@@ -45,6 +49,7 @@ export interface ExamPackageDetailSuccessResponse {
   totalQuestions: number;
   subject: string;
   subExams: ExamPackageDetailSubExam[];
+  totalPassingScore?: number;
 }
 
 export interface ExamApiErrorResponse {
@@ -275,4 +280,34 @@ export interface GetExamScoreSuccessResponse {
   success: true;
   message: string;
   data: GetExamScoreResponseData;
+}
+
+/** GET /exams/review/by-exam/:examId */
+export interface ExamReviewOption {
+  id: number;
+  text: string;
+  isCorrect: boolean;
+}
+
+export interface ExamReviewQuestion {
+  order: number;
+  questionId: number;
+  questionText: string;
+  explanation: string;
+  pointsForQuestion: number;
+  pointsEarned: number | null;
+  isCorrect: boolean | null;
+  selectedAnswerId: number | null;
+  userAnswerText: string | null;
+  options: ExamReviewOption[];
+}
+
+export interface ExamReviewSuccessResponse {
+  examId: number;
+  examName: string;
+  userExamId: number;
+  score: number;
+  isCompleted: boolean;
+  submittedAt: string;
+  questions: ExamReviewQuestion[];
 }

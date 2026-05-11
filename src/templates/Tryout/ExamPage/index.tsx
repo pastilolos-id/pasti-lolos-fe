@@ -44,6 +44,7 @@ export default function ExamPage({ category, id }: ExamPageProps) {
   const searchParams = useSearchParams();
   const numericId = /^\d+$/.test(id) ? Number(id) : null;
   const isResumeFlow = searchParams.get("resume") === "1";
+  const wantsReview = searchParams.get("review") === "1";
 
   const { isLoading, isError, error, refetch } = useGetExamDetailQuery(
     numericId ?? skipToken,
@@ -59,7 +60,6 @@ export default function ExamPage({ category, id }: ExamPageProps) {
 
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
-  const [reviewing, setReviewing] = useState(false);
   const [examAnswers, setExamAnswers] = useState<ExamAnswers>({});
   const [resultHighlightQuestion, setResultHighlightQuestion] = useState(0);
   const [finishExamData, setFinishExamData] =
@@ -200,11 +200,14 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       setResultHighlightQuestion(lastQuestionIndex);
       setFinishExamData(response.data);
       setFinishExamMessage(response.message);
-      setReviewing(false);
       setFinished(true);
     },
     [examSession.userExamId, finishExam, storageKey],
   );
+
+  const goToReviewSoal = useCallback(() => {
+    router.push(`/tryout/${category}/${id}/exam?review=1`);
+  }, [router, category, id]);
 
   const isExamAlreadyFinishedError =
     isError &&
@@ -269,6 +272,9 @@ export default function ExamPage({ category, id }: ExamPageProps) {
 
   if (isError) {
     if (isExamAlreadyFinishedError) {
+      if (wantsReview) {
+        return <ReviewSection category={category} id={id} />;
+      }
       return (
         <ResultSection
           category={category}
@@ -283,7 +289,7 @@ export default function ExamPage({ category, id }: ExamPageProps) {
           }
           onRetryLoadScore={() => void refetchExamScore()}
           finishResult={finishExamData}
-          onReviewSoal={() => setReviewing(true)}
+          onReviewSoal={goToReviewSoal}
         />
       );
     }
@@ -378,13 +384,8 @@ export default function ExamPage({ category, id }: ExamPageProps) {
         </Button>
       </div>
     </section>
-  ) : finished && reviewing ? (
-    <ReviewSection
-      category={category}
-      id={id}
-      totalQuestions={totalQuestions}
-      answers={examAnswers}
-    />
+  ) : finished && wantsReview ? (
+    <ReviewSection category={category} id={id} />
   ) : finished ? (
     <ResultSection
       category={category}
@@ -394,11 +395,13 @@ export default function ExamPage({ category, id }: ExamPageProps) {
       highlightQuestionNumber={resultHighlightQuestion || totalQuestions}
       getScoreResult={examScoreResponse?.data ?? null}
       isLoadingScore={isLoadingExamScore || isFetchingExamScore}
-      scoreError={isExamScoreError ? (examScoreError as FetchBaseQueryError) : null}
+      scoreError={
+        isExamScoreError ? (examScoreError as FetchBaseQueryError) : null
+      }
       onRetryLoadScore={() => void refetchExamScore()}
       finishResult={finishExamData}
       finishMessage={finishExamMessage}
-      onReviewSoal={() => setReviewing(true)}
+      onReviewSoal={goToReviewSoal}
     />
   ) : (
     <ExamSection

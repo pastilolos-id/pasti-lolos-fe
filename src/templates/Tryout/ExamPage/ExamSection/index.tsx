@@ -88,6 +88,11 @@ export default function ExamSection({
     (state: RootState) => state.examSession.examName,
   );
 
+  const effectiveTotal = useMemo(
+    () => Math.max(totalQuestions, examQuestions.length),
+    [totalQuestions, examQuestions.length],
+  );
+
   const [deadlineMs, setDeadlineMs] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(1);
   const [answers, setAnswers] = useState<ExamAnswers>(
@@ -245,7 +250,7 @@ export default function ExamSection({
 
   const navigateTo = useCallback(
     (targetIndex: number) => {
-      if (targetIndex < 1 || targetIndex > totalQuestions) {
+      if (targetIndex < 1 || targetIndex > effectiveTotal) {
         return;
       }
       if (targetIndex === currentIndex) {
@@ -255,7 +260,7 @@ export default function ExamSection({
       setCurrentIndex(targetIndex);
       void submitAnswerForIndex(fromIndex);
     },
-    [currentIndex, submitAnswerForIndex, totalQuestions],
+    [currentIndex, submitAnswerForIndex, effectiveTotal],
   );
 
   const goNext = () => navigateTo(currentIndex + 1);
@@ -263,7 +268,7 @@ export default function ExamSection({
   const goPrev = () => navigateTo(currentIndex - 1);
 
   const isFirst = currentIndex === 1;
-  const isLast = currentIndex === totalQuestions;
+  const isLast = currentIndex === effectiveTotal;
 
   const handleFinish = async () => {
     if (isFinishing || examEndedRef.current) {
@@ -374,7 +379,7 @@ export default function ExamSection({
         <div>
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-h4 font-semibold text-neutral-6">
-              Soal Ke-{currentIndex} dari {totalQuestions} soal
+              Soal Ke-{currentIndex} dari {effectiveTotal} soal
             </p>
             <div className="inline-flex w-fit rounded-full bg-red/10 px-4 py-2">
               <span className="text-s1 font-semibold text-red">
@@ -501,7 +506,7 @@ export default function ExamSection({
           {examName || "Daftar Soal"}
         </h2>
         <div className="grid grid-cols-5 gap-2">
-          {Array.from({ length: totalQuestions }, (_, i) => i + 1).map((n) => {
+          {Array.from({ length: effectiveTotal }, (_, i) => i + 1).map((n) => {
             const isCurrent = n === currentIndex;
             const done = isAnswered(n) && !isCurrent;
             return (
