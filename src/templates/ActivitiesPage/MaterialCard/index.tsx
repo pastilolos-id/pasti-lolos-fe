@@ -12,11 +12,19 @@ interface MaterialCardProps {
 export default function MaterialCard({ activity }: MaterialCardProps) {
   const isCompleted = activity.status === "selesai";
   const isExpired = activity.status === "kadaluarsa";
+  const isPendingStart = activity.status === "belum_dimulai";
+  const isPartial = activity.status === "sebagian_selesai";
   const statusLabel = isCompleted
     ? "Selesai"
     : isExpired
       ? "Kadaluarsa"
-      : undefined;
+      : isPartial
+        ? "Sebagian selesai"
+        : isPendingStart
+          ? "Belum dimulai"
+          : undefined;
+
+  const showCompletionDate = isCompleted || isPartial;
 
   return (
     <Card className="flex flex-row flex-wrap sm:flex-nowrap items-center gap-6 rounded-3xl border border-neutral-3 bg-white p-6 shadow-none sm:items-center">
@@ -45,7 +53,9 @@ export default function MaterialCard({ activity }: MaterialCardProps) {
               className={`w-full text-center rounded-full px-3 py-1 text-c1 font-semibold ${
                 isCompleted
                   ? "bg-green text-white"
-                  : "bg-neutral-3 text-neutral-6"
+                  : isPartial
+                    ? "bg-yellow text-neutral-6"
+                    : "bg-neutral-3 text-neutral-6"
               }`}
             >
               {statusLabel}
@@ -54,11 +64,13 @@ export default function MaterialCard({ activity }: MaterialCardProps) {
         </div>
 
         <div className="space-y-1">
-          {isCompleted ? (
+          {showCompletionDate ? (
             <p className="text-s1 text-neutral-6">{activity.date}</p>
           ) : isExpired ? null : (
             <>
-              <p className="text-c1 text-neutral-5">Tanggal Kadaluarsa</p>
+              <p className="text-c1 text-neutral-5">
+                {isPendingStart ? "Tanggal" : "Tanggal Kadaluarsa"}
+              </p>
               <p className="text-s1 text-neutral-6">{activity.date}</p>
             </>
           )}
