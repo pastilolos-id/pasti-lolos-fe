@@ -125,7 +125,7 @@ export default function TryoutPreviewPage({
               {/* Info Skor Keseluruhan - Tampil hanya jika sudah lunas */}
               {showSubExamAction && (
                 <div className="space-y-1 border-l pl-8 border-neutral-3">
-                  <p className="text-b2 text-neutral-5">Total Skor Paket</p>
+                  <p className="text-b2 text-neutral-5">Total_Skor Paket</p>
                   <div className="flex items-baseline gap-1">
                     <p className="text-h3 text-primary-500 font-bold">
                       {totalPackagePoints}

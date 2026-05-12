@@ -140,14 +140,14 @@ export default function ExamSection({
     answersRef.current = answers;
   }, [answers]);
 
+  useEffect(() => {
+    onAnswersChange?.(answers);
+  }, [answers, onAnswersChange]);
+
   const selectedAnswerId = answers[currentIndex] ?? null;
 
   const setAnswer = (answerId: number) => {
-    setAnswers((prev) => {
-      const next = { ...prev, [currentIndex]: answerId };
-      onAnswersChange?.(next);
-      return next;
-    });
+    setAnswers((prev) => ({ ...prev, [currentIndex]: answerId }));
   };
 
   const isAnswered = (n: number) => answers[n] != null;
