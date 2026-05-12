@@ -1,3 +1,5 @@
+import type { TryoutCategory } from "@/templates/Tryout/data";
+
 export type ActivityType = "tryout" | "tryout_package" | "materi";
 export type ActivityStatus =
   | "kadaluarsa"
@@ -30,11 +32,19 @@ export interface TryoutPackageChildRow {
   date: string;
   score?: number;
   color: TryoutActivity["color"];
+  userExamId: number;
+  /** Status mentah dari API (untuk resume, review, dll.). */
+  rawStatus: string;
+  /** ID ujian untuk path `/tryout/:category/:examId/exam` bila diketahui dari API. */
+  examId?: number;
 }
 
 /** Paket tryout dengan satu atau lebih sub-ujian. */
 export interface TryoutPackageActivity extends ActivityBase {
   type: "tryout_package";
+  /** ID paket untuk `GET /exams/package-detail/:id` (sama dengan `StudentActivityItem.id`). */
+  packageId: number;
+  tryoutCategory: TryoutCategory;
   children: TryoutPackageChildRow[];
   maxScore: number;
   /** Nilai ringkasan baris induk (mis. myScore) untuk kolom "Nilai". */

@@ -1,15 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+
 import { Icon } from "@/components";
+import { Button } from "@/components/ui";
+import { Card } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+
 import type { TryoutPackageActivity, TryoutPackageChildRow } from "../types";
+import { useSubExamRouteExamId } from "../useSubExamRouteExamId";
 
 interface TryoutPackageCardProps {
   activity: TryoutPackageActivity;
@@ -22,12 +27,28 @@ function statusBadgeClasses(status: TryoutPackageChildRow["status"]): string {
   return "bg-neutral-3 text-neutral-6";
 }
 
-function statusLabel(status: TryoutPackageChildRow["status"]): string | undefined {
+function statusLabel(
+  status: TryoutPackageChildRow["status"],
+): string | undefined {
   if (status === "selesai") return "Selesai";
   if (status === "sebagian_selesai") return "Sebagian selesai";
   if (status === "kadaluarsa") return "Kadaluarsa";
   if (status === "belum_dimulai") return "Belum dimulai";
   return undefined;
+}
+
+function subRowStatusBadgeClasses(child: TryoutPackageChildRow): string {
+  const raw = child.rawStatus.trim().toLowerCase();
+  if (raw === "in_progress" || raw === "in progress") {
+    return "bg-yellow text-neutral-6";
+  }
+  return statusBadgeClasses(child.status);
+}
+
+function subRowStatusLabel(child: TryoutPackageChildRow): string | undefined {
+  const raw = child.rawStatus.trim().toLowerCase();
+  if (raw === "in_progress" || raw === "in progress") return "Berlangsung";
+  return statusLabel(child.status);
 }
 
 function ScorePill({
@@ -59,7 +80,137 @@ function ScorePill({
   );
 }
 
-export default function TryoutPackageCard({ activity }: TryoutPackageCardProps) {
+function TryoutPackageSubExamRow({
+  activity,
+  child,
+}: {
+  activity: TryoutPackageActivity;
+  child: TryoutPackageChildRow;
+}) {
+  const { examId, isResolving, resolveFailed, isError } = useSubExamRouteExamId(
+    activity.packageId,
+    child,
+  );
+
+  const raw = child.rawStatus.trim().toLowerCase();
+  const inProgress = raw === "in_progress" || raw === "in progress";
+  const isChildCompleted = child.status === "selesai";
+  const isChildExpired = child.status === "kadaluarsa";
+  const parentExpired = activity.status === "kadaluarsa";
+
+  const label = subRowStatusLabel(child);
+  const isChildPending = child.status === "belum_dimulai" && !inProgress;
+
+  const base = `/tryout/${activity.tryoutCategory}`;
+
+  const canShowAttempt =
+    !isChildCompleted && !isChildExpired && !parentExpired && examId != null;
+
+  const examHref =
+    examId != null
+      ? inProgress
+        ? `${base}/${examId}/exam?resume=1`
+        : `${base}/${examId}/exam`
+      : null;
+
+  const reviewHref = examId != null ? `${base}/${examId}/exam?review=1` : null;
+
+  const rightColumn = (() => {
+    if (isChildCompleted) {
+      return (
+        <div className="flex w-full flex-col gap-2 sm:w-27">
+          <ScorePill score={child.score} color={child.color} />
+          {reviewHref ? (
+            <Button className="rounded-full px-6" asChild>
+              <Link href={reviewHref}>Review</Link>
+            </Button>
+          ) : isResolving ? (
+            <p className="text-center text-c1 text-neutral-5">Memuat…</p>
+          ) : null}
+        </div>
+      );
+    }
+
+    if (isChildExpired || parentExpired) {
+      return (
+        <div className="flex w-full flex-col gap-2 sm:w-27">
+          <ScorePill score="-" color="gray" />
+        </div>
+      );
+    }
+
+    if (isResolving) {
+      return (
+        <div className="flex w-full items-center justify-center sm:w-27 sm:min-h-27">
+          <p className="text-c1 text-neutral-5">Memuat…</p>
+        </div>
+      );
+    }
+
+    if (canShowAttempt && examHref) {
+      return (
+        <div className="flex w-full flex-col gap-2 sm:w-27">
+          <Button className="rounded-full px-6" asChild>
+            <Link href={examHref}>Kerjakan</Link>
+          </Button>
+        </div>
+      );
+    }
+
+    if (resolveFailed || isError) {
+      return (
+        <div className="flex w-full items-center justify-center sm:w-27 sm:min-h-27">
+          <p className="text-center text-c1 text-neutral-5">—</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex w-full flex-col gap-2 sm:w-27">
+        <ScorePill score="-" color="gray" />
+      </div>
+    );
+  })();
+
+  return (
+    <div className="flex flex-row flex-wrap sm:flex-nowrap gap-4 rounded-2xl border border-neutral-3 bg-[#F6F6F6] p-4 sm:items-center">
+      <div className="min-w-0 sm:flex-1">
+        <h4 className="text-h4 font-semibold text-neutral-6">
+          {child.examName}
+        </h4>
+        <div className="mt-3 flex w-22 flex-wrap items-center gap-2">
+          {label ? (
+            <p
+              className={cn(
+                "w-full rounded-full px-3 py-1 text-center text-c1 font-semibold",
+                subRowStatusBadgeClasses(child),
+              )}
+            >
+              {label}
+            </p>
+          ) : null}
+        </div>
+        <div className="mt-1 space-y-1">
+          {isChildCompleted ? (
+            <p className="text-s1 text-neutral-6">{child.date}</p>
+          ) : (
+            <>
+              <p className="text-c1 text-neutral-5">
+                {isChildPending ? "Tanggal" : "Tanggal Kadaluarsa"}
+              </p>
+              <p className="text-s1 text-neutral-6">{child.date}</p>
+            </>
+          )}
+        </div>
+      </div>
+      {rightColumn}
+    </div>
+  );
+}
+
+export default function TryoutPackageCard({
+  activity,
+}: TryoutPackageCardProps) {
   const [open, setOpen] = useState(false);
 
   const isCompleted = activity.status === "selesai";
@@ -81,8 +232,8 @@ export default function TryoutPackageCard({ activity }: TryoutPackageCardProps) 
   const hasSubExams = activity.children.length > 0;
 
   const headerInner = (
-    <div className="flex w-full flex-row flex-wrap sm:flex-nowrap gap-6 sm:items-center">
-      <div className="shrink-0 h-27 w-27 rounded-3xl border border-neutral-3 flex items-center justify-center">
+    <div className="flex w-full flex-row flex-wrap gap-6 sm:flex-nowrap sm:items-center">
+      <div className="flex h-27 w-27 shrink-0 items-center justify-center rounded-3xl border border-neutral-3">
         {isExpired ? (
           <Icon
             name="text-box-edit"
@@ -95,10 +246,10 @@ export default function TryoutPackageCard({ activity }: TryoutPackageCardProps) 
         )}
       </div>
 
-      <div className="sm:flex-1 min-w-0">
+      <div className="min-w-0 sm:flex-1">
         <p className="text-c1 font-semibold text-neutral-6">Paket Tryout</p>
         <div className="mt-1 flex items-start gap-2">
-          <h3 className="text-h4 font-semibold text-neutral-6 flex-1 min-w-0">
+          <h3 className="min-w-0 flex-1 text-h4 font-semibold text-neutral-6">
             {activity.title}
           </h3>
           {hasSubExams ? (
@@ -107,18 +258,18 @@ export default function TryoutPackageCard({ activity }: TryoutPackageCardProps) 
               size={20}
               viewBox="0 0 16 16"
               className={cn(
-                "shrink-0 mt-1 text-neutral-6 transition-transform duration-200",
+                "mt-1 shrink-0 text-neutral-6 transition-transform duration-200",
                 open && "rotate-180",
               )}
             />
           ) : null}
         </div>
 
-        <div className="w-22 mt-4 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex w-22 flex-wrap items-center gap-2">
           {headerStatusLabel ? (
             <p
               className={cn(
-                "w-full text-center rounded-full px-3 py-1 text-c1 font-semibold",
+                "w-full rounded-full px-3 py-1 text-center text-c1 font-semibold",
                 isCompleted
                   ? "bg-green text-white"
                   : isPartial
@@ -131,7 +282,7 @@ export default function TryoutPackageCard({ activity }: TryoutPackageCardProps) 
           ) : null}
         </div>
 
-        <div className="space-y-1 mt-1">
+        <div className="mt-1 space-y-1">
           {showParentDateAsCompleted ? (
             <p className="text-s1 text-neutral-6">{activity.date}</p>
           ) : isExpired ? null : (
@@ -156,67 +307,29 @@ export default function TryoutPackageCard({ activity }: TryoutPackageCardProps) 
 
   const subExamList = (
     <div className="flex flex-col gap-3">
-      {activity.children.map((child) => {
-        const label = statusLabel(child.status);
-        const isChildCompleted = child.status === "selesai";
-        const isChildPending = child.status === "belum_dimulai";
-
-        return (
-          <div
-            key={child.id}
-            className="flex flex-row flex-wrap sm:flex-nowrap gap-4 rounded-2xl border border-neutral-3 bg-[#F6F6F6] p-4 sm:items-center"
-          >
-            <div className="sm:flex-1 min-w-0">
-              <h4 className="text-h4 font-semibold text-neutral-6">
-                {child.examName}
-              </h4>
-              <div className="w-22 mt-3 flex flex-wrap items-center gap-2">
-                {label ? (
-                  <p
-                    className={cn(
-                      "w-full text-center rounded-full px-3 py-1 text-c1 font-semibold",
-                      statusBadgeClasses(child.status),
-                    )}
-                  >
-                    {label}
-                  </p>
-                ) : null}
-              </div>
-              <div className="space-y-1 mt-1">
-                {isChildCompleted ? (
-                  <p className="text-s1 text-neutral-6">{child.date}</p>
-                ) : (
-                  <>
-                    <p className="text-c1 text-neutral-5">
-                      {isChildPending ? "Tanggal" : "Tanggal Kadaluarsa"}
-                    </p>
-                    <p className="text-s1 text-neutral-6">{child.date}</p>
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="w-full sm:w-27">
-              <ScorePill score={child.score} color={child.color} />
-            </div>
-          </div>
-        );
-      })}
+      {activity.children.map((child) => (
+        <TryoutPackageSubExamRow
+          key={child.id}
+          activity={activity}
+          child={child}
+        />
+      ))}
     </div>
   );
 
   return (
-    <Card className="rounded-3xl border border-neutral-3 bg-white p-0 shadow-none overflow-hidden">
+    <Card className="overflow-hidden rounded-3xl border border-neutral-3 bg-white p-0 shadow-none">
       {hasSubExams ? (
         <Collapsible open={open} onOpenChange={setOpen}>
           <CollapsibleTrigger
             type="button"
-            className="w-full p-6 text-left rounded-3xl outline-none transition-colors hover:bg-neutral-2/40 focus-visible:ring-2 focus-visible:ring-primary-5 focus-visible:ring-offset-2"
+            className="w-full rounded-3xl p-6 text-left outline-none transition-colors hover:bg-neutral-2/40 focus-visible:ring-2 focus-visible:ring-primary-5 focus-visible:ring-offset-2"
           >
             {headerInner}
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="border-t border-neutral-3 px-6 pb-6 pt-2">
-              <p className="text-c1 font-semibold text-neutral-5 mb-3">
+              <p className="mb-3 text-c1 font-semibold text-neutral-5">
                 Sub-ujian
               </p>
               {subExamList}

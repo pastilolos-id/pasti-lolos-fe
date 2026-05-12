@@ -11,6 +11,8 @@ export interface StudentSubExam {
   score: number | null;
   status: string;
   finishedAt: string | null;
+  /** ID ujian (sub-exam) untuk rute `/tryout/.../:examId/exam`; opsional, bisa diisi backend. */
+  examId?: number;
 }
 
 /** Sub-ujian / bentuk lama `children`. */
@@ -20,6 +22,7 @@ export interface StudentActivityChild {
   score: string | number | null;
   status: string;
   finishedAt: string | null;
+  examId?: number;
 }
 
 /**
@@ -29,6 +32,8 @@ export interface StudentActivityChild {
 export interface StudentActivityItem {
   id: number;
   userExamId?: number;
+  /** Mis. `CPNS` | `BUMN` jika backend mengirim eksplisit. */
+  category?: string;
   examName?: string;
   description?: string;
   examType?: string;

@@ -3,6 +3,7 @@ import type {
   StudentActivityItem,
   StudentSubExam,
 } from "@/lib/redux/api/types/activity";
+import type { TryoutCategory } from "@/templates/Tryout/data";
 import type {
   Activity,
   ActivityStatus,
@@ -51,7 +52,23 @@ function subExamToChild(sub: StudentSubExam): StudentActivityChild {
     score: sub.score,
     status: sub.status,
     finishedAt: sub.finishedAt,
+    examId: sub.examId,
   };
+}
+
+function tryoutCategoryFromItem(item: StudentActivityItem): TryoutCategory {
+  const parts: string[] = [];
+  if (item.category) parts.push(item.category);
+  if (item.examType) parts.push(item.examType);
+  if (item.type) parts.push(String(item.type));
+  if (item.subject?.subjectName) parts.push(item.subject.subjectName);
+
+  for (const p of parts) {
+    const u = p.trim().toUpperCase();
+    if (u.includes("BUMN")) return "bumn";
+    if (u.includes("CPNS")) return "cpns";
+  }
+  return "cpns";
 }
 
 function getChildrenList(item: StudentActivityItem): StudentActivityChild[] {
@@ -72,9 +89,7 @@ export function sortStudentActivitiesByDateDesc(
   });
 }
 
-function parseScore(
-  raw: string | number | null | undefined,
-): number | null {
+function parseScore(raw: string | number | null | undefined): number | null {
   if (raw == null || raw === "") return null;
   const n = typeof raw === "number" ? raw : Number.parseFloat(String(raw));
   return Number.isFinite(n) ? n : null;
@@ -83,6 +98,9 @@ function parseScore(
 function mapApiStatusToUi(status: string): ActivityStatus {
   const n = status.trim().toLowerCase();
   if (n === "completed_partial" || n === "partial") {
+    return "sebagian_selesai";
+  }
+  if (n === "in_progress" || n === "in progress") {
     return "sebagian_selesai";
   }
   if (n === "submitted" || n === "completed" || n === "selesai") {
@@ -159,7 +177,9 @@ function mapTryoutItem(item: StudentActivityItem): TryoutActivity {
   };
 }
 
-function mapChildToPackageRow(child: StudentActivityChild): TryoutPackageChildRow {
+function mapChildToPackageRow(
+  child: StudentActivityChild,
+): TryoutPackageChildRow {
   const uiStatus = mapApiStatusToUi(child.status);
   const scoreNum = parseScore(child.score);
   const displayScore =
@@ -176,10 +196,15 @@ function mapChildToPackageRow(child: StudentActivityChild): TryoutPackageChildRo
     date,
     score: displayScore,
     color: tryoutColorFromScoreAndStatus(uiStatus, scoreNum),
+    userExamId: child.userExamId,
+    rawStatus: child.status,
+    examId: child.examId,
   };
 }
 
-function mapTryoutPackageItem(item: StudentActivityItem): TryoutPackageActivity {
+function mapTryoutPackageItem(
+  item: StudentActivityItem,
+): TryoutPackageActivity {
   const uiStatus = mapApiStatusToUi(getStatusRaw(item));
   const scoreNum = parseScore(getScoreRaw(item));
   const children = getChildrenList(item).map(mapChildToPackageRow);
@@ -199,6 +224,8 @@ function mapTryoutPackageItem(item: StudentActivityItem): TryoutPackageActivity 
     title: getTitle(item),
     status: uiStatus,
     date: item.formattedDate ?? formatActivityDisplayDate(item.date),
+    packageId: item.id,
+    tryoutCategory: tryoutCategoryFromItem(item),
     maxScore: DEFAULT_TRYOUT_MAX_SCORE,
     summaryScore,
     color: summaryColor,
