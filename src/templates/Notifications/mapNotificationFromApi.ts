@@ -5,6 +5,51 @@ export interface NotificationViewModel {
   title: string;
   message: string;
   timeLabel: string;
+  link: string | null;
+  type: string;
+  isRead: boolean;
+}
+
+/** Safe in-app path for Next.js `Link`: relative in-app paths only; blocks external and unsafe schemes. */
+export function resolveNotificationHref(
+  link: string | null,
+  id: number,
+): string {
+  const fallback = `/notifications?id=${id}`;
+  if (link == null || typeof link !== "string") {
+    return fallback;
+  }
+  const trimmed = link.trim();
+  if (!trimmed) {
+    return fallback;
+  }
+  if (
+    trimmed.startsWith("//") ||
+    /^(https?:|javascript:|data:)/i.test(trimmed)
+  ) {
+    return fallback;
+  }
+  if (!trimmed.startsWith("/")) {
+    return fallback;
+  }
+  return trimmed;
+}
+
+export function notificationTypeAccentClass(type: string): string {
+  const t = type.toLowerCase();
+  if (t === "warning") {
+    return "border-l-[3px] border-amber-500 pl-2";
+  }
+  if (t === "error" || t === "danger") {
+    return "border-l-[3px] border-red pl-2";
+  }
+  if (t === "success") {
+    return "border-l-[3px] border-emerald-600 pl-2";
+  }
+  if (t === "info") {
+    return "border-l-[3px] border-primary-4 pl-2";
+  }
+  return "border-l-[3px] border-transparent pl-2";
 }
 
 const relativeTimeFormatter = new Intl.RelativeTimeFormat("id-ID", {
@@ -51,6 +96,9 @@ export function mapNotificationApiItemToViewModel(
     title: item.title,
     message: item.message,
     timeLabel: getRelativeTimeLabel(item.createdAt),
+    link: item.link,
+    type: item.type,
+    isRead: item.isRead,
   };
 }
 

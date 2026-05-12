@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { useGetNotificationsQuery } from "@/lib/redux/api/notificationsApi";
+import {
+  NOTIFICATIONS_PREVIEW_LIMIT,
+  useGetNotificationsQuery,
+} from "@/lib/redux/api/notificationsApi";
 import { cn } from "@/lib/utils";
-import { mapNotificationsToViewModel } from "@/templates/Notifications/mapNotificationFromApi";
+import {
+  mapNotificationsToViewModel,
+  notificationTypeAccentClass,
+  resolveNotificationHref,
+} from "@/templates/Notifications/mapNotificationFromApi";
 import Icon from "../Icon";
 
 interface NotificationsProps {
@@ -19,7 +26,11 @@ export default function Notifications({
   onSeeAllClick,
 }: NotificationsProps) {
   const { data, isLoading, isFetching, isError } = useGetNotificationsQuery(
-    undefined,
+    {
+      page: 1,
+      limit: NOTIFICATIONS_PREVIEW_LIMIT,
+      unreadOnly: false,
+    },
     {
       refetchOnMountOrArgChange: true,
       refetchOnFocus: true,
@@ -28,7 +39,7 @@ export default function Notifications({
   );
 
   const notifications = useMemo(
-    () => mapNotificationsToViewModel(data?.data ?? []).slice(0, 3),
+    () => mapNotificationsToViewModel(data?.data ?? []),
     [data],
   );
   const isInitialLoading = isLoading || (isFetching && !data);
@@ -60,28 +71,47 @@ export default function Notifications({
         ) : notifications.length === 0 ? (
           <p className="py-3 text-c1 text-neutral-4">Belum ada notifikasi.</p>
         ) : (
-          notifications.map((item, index) => (
-            <Link
-              key={item.id}
-              href={`/notifications?id=${item.id}`}
-              onClick={onItemClick}
-              className={cn(
-                "block py-3",
-                index < notifications.length - 1 && "border-b border-neutral-3",
-                index === 0 && "rounded-2xl bg-neutral-1 px-2",
-              )}
-            >
-              <p
+          notifications.map((item, index) => {
+            const href = resolveNotificationHref(item.link, item.id);
+            const unread = !item.isRead;
+            return (
+              <Link
+                key={item.id}
+                href={href}
+                onClick={onItemClick}
                 className={cn(
-                  "line-clamp-2 text-b1 text-neutral-6",
-                  index === 0 && "font-semibold",
+                  "block py-3",
+                  notificationTypeAccentClass(item.type),
+                  index < notifications.length - 1 &&
+                    "border-b border-neutral-3",
+                  index === 0 && "rounded-2xl bg-neutral-1 px-2",
                 )}
               >
-                {item.title}
-              </p>
-              <p className="mt-1 text-c1 text-neutral-4">{item.timeLabel}</p>
-            </Link>
-          ))
+                <div className="flex gap-2">
+                  <span
+                    className={cn(
+                      "mt-1.5 size-2 shrink-0 rounded-full",
+                      unread ? "bg-primary-4" : "invisible",
+                    )}
+                    aria-hidden
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className={cn(
+                        "line-clamp-2 text-b1 text-neutral-6",
+                        unread && "font-semibold",
+                      )}
+                    >
+                      {item.title}
+                    </p>
+                    <p className="mt-1 text-c1 text-neutral-4">
+                      {item.timeLabel}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })
         )}
       </div>
 

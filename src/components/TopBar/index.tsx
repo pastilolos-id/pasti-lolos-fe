@@ -2,12 +2,24 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Icon, Notifications } from "@/components";
+import NotificationIconBadge from "@/components/Notifications/NotificationIconBadge";
 import { Card, CardContent } from "@/components/ui";
+import { useGetNotificationsUnreadCountQuery } from "@/lib/redux/api/notificationsApi";
+import type { RootState } from "@/lib/redux/store";
 
 export default function TopBar({ ...props }: React.ComponentProps<"div">) {
   const [isNotificationsOpen, setIsNotificationsOpen] =
     useState<boolean>(false);
+  const isAuthenticated = useSelector((s: RootState) => s.user.isAuthenticated);
+  const { data: unreadData } = useGetNotificationsUnreadCountQuery(undefined, {
+    skip: !isAuthenticated,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const unreadCount = unreadData?.count ?? 0;
+
   return (
     <div
       className="fixed z-50 mx-auto lg:hidden w-[calc(100%-1.5rem)] sm:w-[calc(100%-3rem)]"
@@ -44,7 +56,7 @@ export default function TopBar({ ...props }: React.ComponentProps<"div">) {
                     setIsNotificationsOpen((prev) => !prev);
                   }
                 }}
-                className="p-3 border border-primary-4/50 rounded-full cursor-pointer"
+                className="relative p-3 border border-primary-4/50 rounded-full cursor-pointer"
               >
                 <Icon
                   viewBox="0 0 24 24"
@@ -52,6 +64,7 @@ export default function TopBar({ ...props }: React.ComponentProps<"div">) {
                   pathClassName="fill-primary-5"
                   size={20}
                 />
+                <NotificationIconBadge count={unreadCount} />
               </button>
             </div>
           </div>
