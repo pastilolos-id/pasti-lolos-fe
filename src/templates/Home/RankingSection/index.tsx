@@ -18,6 +18,12 @@ function toCategoryKey(tab: string) {
   return tab.trim().toLowerCase();
 }
 
+/** Samakan label kolom (mis. "TOTAL SKOR") dengan kunci di `scores` API (mis. `TOTAL_SKOR`). */
+function scoreColumnLabelToScoresAccessorKey(columnLabel: string): string {
+  const key = columnLabel.trim().replace(/\s+/g, "_").toUpperCase();
+  return `scores.${key}`;
+}
+
 function buildColumns(
   rows: HomeRankingRowViewModel[],
   scoreColumns: string[],
@@ -41,7 +47,7 @@ function buildColumns(
   }));
 
   for (const scoreColumn of scoreColumns) {
-    const accessorKey = `scores.${scoreColumn}`;
+    const accessorKey = scoreColumnLabelToScoresAccessorKey(scoreColumn);
     columns.push({
       accessorKey,
       title: scoreColumn,
