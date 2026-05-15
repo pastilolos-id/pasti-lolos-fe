@@ -4,20 +4,22 @@ import { useMemo, useState } from "react";
 import { FilterSelect, type FilterType } from "@/components";
 import { Card } from "@/components/ui/card";
 import { useGetStudentActivitiesQuery } from "@/lib/redux/api/studentsActivityApi";
-import { mapStudentActivitiesResponseToActivities } from "./mapActivityFromApi";
 import MaterialCard from "./MaterialCard";
+import { mapStudentActivitiesResponseToActivities } from "./mapActivityFromApi";
 import TryoutCard from "./TryoutCard";
 import TryoutPackageCard from "./TryoutPackageCard";
 
 export default function ActivitiesPage() {
   const [filter, setFilter] = useState<FilterType>("semua");
 
-  const { data, isLoading, isFetching, isError } =
-    useGetStudentActivitiesQuery(undefined, {
+  const { data, isLoading, isFetching, isError } = useGetStudentActivitiesQuery(
+    undefined,
+    {
       refetchOnMountOrArgChange: true,
       refetchOnFocus: true,
       refetchOnReconnect: true,
-    });
+    },
+  );
 
   const activities = useMemo(
     () => mapStudentActivitiesResponseToActivities(data?.data ?? []),
@@ -30,9 +32,7 @@ export default function ActivitiesPage() {
     }
     return activities.filter((activity) => {
       if (filter === "tryout") {
-        return (
-          activity.type === "tryout" || activity.type === "tryout_package"
-        );
+        return activity.type === "tryout" || activity.type === "tryout_package";
       }
       if (filter === "materi") return activity.type === "materi";
       return true;
@@ -73,9 +73,7 @@ export default function ActivitiesPage() {
     if (filteredActivities.length === 0) {
       return (
         <div className="flex items-center justify-center py-12">
-          <p className="text-gray-500">
-            Tidak ada aktivitas untuk filter ini
-          </p>
+          <p className="text-gray-500">Tidak ada aktivitas untuk filter ini</p>
         </div>
       );
     }
