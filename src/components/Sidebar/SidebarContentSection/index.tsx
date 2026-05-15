@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Icon } from "@/components";
 import Notifications from "@/components/Notifications";
+import NotificationIconBadge from "@/components/Notifications/NotificationIconBadge";
 import {
   Accordion,
   Popover,
@@ -17,11 +19,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui";
+import { useGetNotificationsUnreadCountQuery } from "@/lib/redux/api/notificationsApi";
+import type { RootState } from "@/lib/redux/store";
 import MenuItemWithSubMenu from "./../MenuItemWithSubMenu";
 import { middleMenuItems, topMenuItems } from "./../sidebarData";
 
 export default function SidebarContentSection() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const isAuthenticated = useSelector((s: RootState) => s.user.isAuthenticated);
+  const { data: unreadData } = useGetNotificationsUnreadCountQuery(undefined, {
+    skip: !isAuthenticated,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const unreadCount = unreadData?.count ?? 0;
 
   return (
     <SidebarContent className="grid grid-rows-3">
@@ -61,8 +72,15 @@ export default function SidebarContentSection() {
                     onOpenChange={setIsNotificationsOpen}
                   >
                     <PopoverTrigger asChild>
-                      <SidebarMenuButton tooltip={menu.title}>
+                      <SidebarMenuButton
+                        tooltip={menu.title}
+                        className="relative overflow-visible"
+                      >
                         <Icon size={24} viewBox="0 0 24 24" name={menu.icon} />
+                        <NotificationIconBadge
+                          count={unreadCount}
+                          className="right-1 top-1"
+                        />
                         <p>{menu.title}</p>
                       </SidebarMenuButton>
                     </PopoverTrigger>

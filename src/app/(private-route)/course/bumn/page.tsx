@@ -1,3 +1,5 @@
-export default function CourseBUMN() {
-  return <div>CourseBUMN</div>;
+import CourseComingSoonPage from "@/templates/Course/CourseComingSoonPage";
+
+export default function CourseBUMNPage() {
+  return <CourseComingSoonPage />;
 }

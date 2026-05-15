@@ -134,7 +134,7 @@ export function mapOrderHistoryEntryToUi(
   return {
     id: String(entry.id),
     title: firstItem?.itemName ?? "-",
-    dateLabel: formatOrderDate(entry.date),
+    dateLabel: formatOrderDate(entry.date ?? entry.createdAt ?? ""),
     statusKey: mapOrderStatus(entry.status),
     grandTotal: parsePriceValue(entry.grandTotal),
     providerKey: getProviderKeyFromPaymentMethod(entry.paymentMethod),
@@ -156,7 +156,10 @@ export function mapOrderHistoryDetailToUi(
     title: firstItem?.itemName ?? "-",
     transactionCode: entry.transactionCode ?? "-",
     transactionTime: formatOrderDateTimeLabel(entry.createdAt ?? ""),
-    statusKey: mapOrderStatus(entry.status),
+    statusKey: mapOrderStatus(entry.status) as Exclude<
+      PurchaseStatusKey,
+      "kadaluarsa"
+    >,
     paymentMethodLabel,
     providerKey: getProviderKeyFromPaymentMethod(paymentMethodLabel),
     providerDisplayName: paymentMethodLabel.replace(/^Bank\s+/i, ""),

@@ -44,6 +44,19 @@ export type ApiUser = {
   userRoleId: number;
   fullName: string | null;
   profilePictureUrl: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  status?: string | null;
+  phoneNumber?: string | null;
+  address?: string | null;
+  city?: string | null;
+  province?: string | null;
+  country?: string | null;
+  postalCode?: string | null;
+  dateOfBirth?: string | null;
+  gender?: string | null;
+  roleName?: string | null;
+  userRoles?: { roleName?: string | null } | null;
 };
 
 /**
@@ -55,9 +68,19 @@ export type MyProfileResponse = {
   username: string;
   firstName: string;
   lastName: string;
+  phoneNumber?: string | null;
+  address?: string | null;
+  city?: string | null;
+  province?: string | null;
+  country?: string | null;
+  postalCode?: string | null;
+  dateOfBirth?: string | null;
+  gender?: string | null;
   profilePictureUrl: string | null;
   userRoleId: number;
+  userRoles?: { roleName?: string | null } | null;
   status: string;
+  roleName?: string | null;
   fullName: string | null;
 };
 

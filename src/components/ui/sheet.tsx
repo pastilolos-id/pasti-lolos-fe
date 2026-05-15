@@ -51,7 +51,7 @@ function SheetContent({
   showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
-  side?: "top" | "right" | "bottom" | "left";
+  side?: "top" | "right" | "bottom" | "left" | "center";
   showCloseButton?: boolean;
 }) {
   return (
@@ -69,6 +69,8 @@ function SheetContent({
             "inset-x-0 top-0 h-auto border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
           side === "bottom" &&
             "inset-x-0 bottom-0 h-auto border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+          side === "center" &&
+            "top-1/2 left-1/2 h-auto w-[calc(100%-1.5rem)] max-h-[90vh] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-3xl border data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:w-[90vw]",
           className,
         )}
         {...props}

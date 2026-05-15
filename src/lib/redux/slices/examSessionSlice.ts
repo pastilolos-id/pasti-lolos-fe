@@ -42,8 +42,11 @@ export const examSessionSlice = createSlice({
       state.durationMinutes = payload.durationMinutes;
       state.passingScore = payload.passingScore;
       state.packageId = payload.packageId;
-      state.totalQuestions =
-        payload._count?.examQuestions ?? sortedQuestions.length;
+      const countFromPayload =
+        typeof payload._count?.examQuestions === "number"
+          ? payload._count.examQuestions
+          : 0;
+      state.totalQuestions = Math.max(sortedQuestions.length, countFromPayload);
       state.examQuestions = sortedQuestions;
     },
     clearExamSession() {

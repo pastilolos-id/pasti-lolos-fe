@@ -1,4 +1,5 @@
 import { BottomNavBar, Sidebar, TokenValidator, TopBar } from "@/components";
+import NotificationsRealtimeBridge from "@/components/Notifications/NotificationsRealtimeBridge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui";
 
 export default function PrivateRouteLayout({
@@ -9,6 +10,7 @@ export default function PrivateRouteLayout({
   return (
     <SidebarProvider className="bg-primary-5 relative">
       <TokenValidator />
+      <NotificationsRealtimeBridge />
       <Sidebar />
       <div className="w-full min-h-screen h-full py-4 pr-4 lg:pl-0 sm:p-6 p-3">
         <div className="fixed h-screen items-center z-50 hidden lg:flex">

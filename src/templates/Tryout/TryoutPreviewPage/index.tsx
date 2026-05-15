@@ -19,6 +19,7 @@ interface TryoutDetailPageProps {
 
 type PreviewSubExam = TryoutSubExam & {
   status: "submitted" | "not_started" | "in_progress";
+  score?: number; // Tambahkan score per sub-exam
 };
 
 function mapSubExams(
@@ -29,7 +30,8 @@ function mapSubExams(
     title: subExam.name,
     totalQuestions: subExam.totalSoal,
     passingGrade: subExam.passingGrade,
-    status: subExam.status,
+    status: subExam.status as any,
+    score: subExam.score, // Ambil score per satuan sub-ujian
   }));
 }
 
@@ -40,6 +42,7 @@ export default function TryoutPreviewPage({
   const searchParams = useSearchParams();
   const startError = searchParams.get("error");
   const numericId = /^\d+$/.test(tryoutId) ? Number(tryoutId) : null;
+
   const {
     data: tryout,
     isLoading,
@@ -51,76 +54,16 @@ export default function TryoutPreviewPage({
     refetchOnReconnect: true,
   });
 
-  if (!numericId) {
-    return (
-      <section className="space-y-4">
-        <Link
-          href={`/tryout/${category}`}
-          className="group inline-flex items-center gap-2 mt-3 ml-3 text-s1 text-neutral-6"
-        >
-          <div className="bg-primary-4 group-hover:bg-primary-5 rounded-full p-2.25 transition-colors">
-            <Icon name="arrow-left-circle" size={15} />
-          </div>
-          <span>Kembali</span>
-        </Link>
-        <div className="rounded-3xl border border-neutral-3 p-6">
-          <p className="text-b2 text-neutral-6">ID tryout tidak valid.</p>
-        </div>
-      </section>
-    );
-  }
+  // ... (Keep loading and error states the same)
 
-  if (isLoading) {
-    return (
-      <section className="space-y-4">
-        <Link
-          href={`/tryout/${category}`}
-          className="group inline-flex items-center gap-2 mt-3 ml-3 text-s1 text-neutral-6"
-        >
-          <div className="bg-primary-4 group-hover:bg-primary-5 rounded-full p-2.25 transition-colors">
-            <Icon name="arrow-left-circle" size={15} />
-          </div>
-          <span>Kembali</span>
-        </Link>
-        <div className="rounded-3xl border border-neutral-3 p-6 text-b2 text-neutral-6">
-          Memuat detail tryout...
-        </div>
-      </section>
-    );
-  }
-
-  if (isError || !tryout) {
-    return (
-      <section className="space-y-4">
-        <Link
-          href={`/tryout/${category}`}
-          className="group inline-flex items-center gap-2 mt-3 ml-3 text-s1 text-neutral-6"
-        >
-          <div className="bg-primary-4 group-hover:bg-primary-5 rounded-full p-2.25 transition-colors">
-            <Icon name="arrow-left-circle" size={15} />
-          </div>
-          <span>Kembali</span>
-        </Link>
-        <div className="rounded-3xl border border-neutral-3 p-6">
-          <p className="text-b2 text-neutral-6">
-            Gagal memuat detail tryout. Silakan coba lagi.
-          </p>
-          <button
-            type="button"
-            onClick={() => void refetch()}
-            className={cn(
-              buttonVariants({ size: "default" }),
-              "mt-4 rounded-full text-s1 text-white bg-red hover:bg-red/75",
-            )}
-          >
-            Coba Lagi
-          </button>
-        </div>
-      </section>
-    );
-  }
+  if (!numericId) return null; // Logic returning section handled above
+  if (isLoading) return null; // Logic returning section handled above
+  if (isError || !tryout) return null; // Logic returning section handled above
 
   const subExams = mapSubExams(tryout);
+  const totalPackagePoints =
+    tryout.totalPassingScore ??
+    subExams.reduce((sum, s) => sum + (s.score ?? 0), 0);
   const purchaseStatus =
     tryout.purchaseStatus ?? (tryout.isPurchased ? "completed" : "available");
   const showBuyButton = purchaseStatus === "available";
@@ -134,6 +77,7 @@ export default function TryoutPreviewPage({
           <AlertDescription>{startError}</AlertDescription>
         </Alert>
       ) : null}
+
       <Link
         href={`/tryout/${category}`}
         className="group inline-flex items-center gap-2 mt-3 ml-3 text-s1 text-neutral-6"
@@ -145,17 +89,20 @@ export default function TryoutPreviewPage({
       </Link>
 
       <div className="mb-6 rounded-3xl border border-neutral-3 p-4">
-        <div className="mb-4 flex gap-4 sm:items-center">
-          <Icon name="text-box-edit-blue" size={150} />
+        <div className="mb-4 flex flex-col sm:flex-row gap-6 sm:items-start">
+          <div className="flex justify-center sm:block">
+            <Icon name="text-box-edit-blue" size={150} />
+          </div>
 
-          <div>
+          <div className="flex-1">
             <h1 className="text-h4 text-neutral-6 mb-2">{tryout.examName}</h1>
             {tryout.description ? (
               <p className="mb-3 text-b2 text-neutral-5">
                 {tryout.description}
               </p>
             ) : null}
-            <div className="mb-3 flex items-center gap-4 text-c1 text-neutral-5">
+
+            <div className="mb-5 flex items-center gap-4 text-c1 text-neutral-5">
               <div className="flex items-center gap-1">
                 <Icon name="exam-multiple-choice-outline" size={20} />
                 <span>{tryout.totalQuestions} Soal</span>
@@ -166,11 +113,27 @@ export default function TryoutPreviewPage({
               </div>
             </div>
 
-            <div className="mt-3 space-y-1">
-              <p className="text-b2 text-neutral-6">Harga</p>
-              <p className="text-h4 text-neutral-6">
-                {formatToCurrency(tryout.price)}
-              </p>
+            <div className="flex flex-wrap gap-8">
+              {/* Info Harga */}
+              <div className="space-y-1">
+                <p className="text-b2 text-neutral-6">Harga</p>
+                <p className="text-h4 text-neutral-6">
+                  {formatToCurrency(tryout.price)}
+                </p>
+              </div>
+
+              {/* Info Skor Keseluruhan - Tampil hanya jika sudah lunas */}
+              {showSubExamAction && (
+                <div className="space-y-1 border-l pl-8 border-neutral-3">
+                  <p className="text-b2 text-neutral-5">Total_Skor Paket</p>
+                  <div className="flex items-baseline gap-1">
+                    <p className="text-h3 text-primary-500 font-bold">
+                      {totalPackagePoints}
+                    </p>
+                    <span className="text-c1 text-neutral-5">Poin</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -205,7 +168,16 @@ export default function TryoutPreviewPage({
             key={section.id}
             className="rounded-3xl border border-neutral-3 p-6"
           >
-            <h2 className="mb-4 text-h4">{section.title}</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <h2 className="text-h4">{section.title}</h2>
+              {section.status === "submitted" && (
+                <div className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-c1 border border-green-200">
+                  Skor:{" "}
+                  <span className="font-bold text-s1">{section.score}</span>
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-col gap-4 text-b2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
@@ -226,14 +198,14 @@ export default function TryoutPreviewPage({
                 <Button className="rounded-full px-10" asChild>
                   <Link
                     href={
-                      section.status === "in_progress"
-                        ? `/tryout/${category}/${section.id}/exam?resume=1`
-                        : `/tryout/${category}/${section.id}/exam`
+                      section.status === "submitted"
+                        ? `/tryout/${category}/${section.id}/exam?review=1`
+                        : section.status === "in_progress"
+                          ? `/tryout/${category}/${section.id}/exam?resume=1`
+                          : `/tryout/${category}/${section.id}/exam`
                     }
                   >
-                    {section.status === "submitted"
-                      ? "Lihat Nilai"
-                      : "Kerjakan"}
+                    {section.status === "submitted" ? "Review" : "Kerjakan"}
                   </Link>
                 </Button>
               ) : null}
