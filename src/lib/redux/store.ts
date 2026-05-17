@@ -9,12 +9,14 @@ import "@/lib/redux/api/ordersApi";
 import "@/lib/redux/api/profileApi";
 import "@/lib/redux/api/studentsActivityApi";
 import examSessionReducer from "./slices/examSessionSlice";
+import sessionReducer from "./slices/sessionSlice";
 import userReducer from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     examSession: examSessionReducer,
+    session: sessionReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -7,17 +7,23 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Form, type FormHandle } from "@/components";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import { getAdminAppUrl } from "@/lib/auth/admin-app-url";
 import { startGoogleOAuthRedirect } from "@/lib/auth/googleAuth";
-import { useLoginMutation } from "@/lib/redux/api/authApi";
+import { STUDENT_ROLE_ID } from "@/lib/auth/types";
+import { removeToken } from "@/lib/cookies/tokenCookies";
+import { useLoginMutation, useLogoutMutation } from "@/lib/redux/api/authApi";
 import {
   applyLoginFieldErrors,
   mapApiUserToStateUser,
   normalizeLoginPayload,
 } from "@/lib/redux/api/mapLoginApiErrors";
 import { parseLoginMutationError } from "@/lib/redux/api/parseLoginMutationError";
-import { setUser } from "@/lib/redux/slices/userSlice";
+import { clearUser, setUser } from "@/lib/redux/slices/userSlice";
 import AuthLeftSection from "../LeftSection";
 import { loginInputData } from "./inputData";
+
+const NOT_STUDENT_MESSAGE =
+  "Anda bukan pengguna student. Halaman ini hanya untuk peserta tryout.";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,6 +33,9 @@ export default function LoginPage() {
   const [globalMessage, setGlobalMessage] = useState<string | null>(null);
 
   const [loginUser, { isLoading }] = useLoginMutation();
+  const [logoutUser] = useLogoutMutation();
+
+  const adminAppUrl = getAdminAppUrl();
 
   useEffect(() => {
     const errorFromQuery = searchParams.get("error");
@@ -56,6 +65,19 @@ export default function LoginPage() {
 
     try {
       const res = await loginUser(body).unwrap();
+
+      if (res.user.userRoleId !== STUDENT_ROLE_ID) {
+        try {
+          await logoutUser().unwrap();
+        } catch {
+          // Session cleanup best-effort
+        }
+        dispatch(clearUser());
+        removeToken();
+        setGlobalMessage(NOT_STUDENT_MESSAGE);
+        return;
+      }
+
       dispatch(setUser(mapApiUserToStateUser(res.user)));
       router.push("/home");
     } catch (err) {
@@ -90,7 +112,20 @@ export default function LoginPage() {
         <Alert variant="destructive" className="col-span-12 mb-4">
           <AlertCircle className="col-start-1 row-start-1" aria-hidden />
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{globalMessage}</AlertDescription>
+          <AlertDescription>
+            {globalMessage}
+            {globalMessage === NOT_STUDENT_MESSAGE && adminAppUrl ? (
+              <>
+                {" "}
+                <Link
+                  href={adminAppUrl}
+                  className="font-semibold underline underline-offset-2"
+                >
+                  Ke Website Admin
+                </Link>
+              </>
+            ) : null}
+          </AlertDescription>
         </Alert>
       ) : null}
 

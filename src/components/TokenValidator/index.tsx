@@ -1,20 +1,34 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { redirectStaffToAdminApp } from "@/lib/auth/admin-app-url";
+import { handleSessionExpired } from "@/lib/auth/session-lifecycle";
+import { STUDENT_ROLE_ID } from "@/lib/auth/types";
 import { useLazyGetMyProfileQuery } from "@/lib/redux/api/authApi";
 import { mapMyProfileToStateUser } from "@/lib/redux/api/mapLoginApiErrors";
-import { clearUser, setUser } from "@/lib/redux/slices/userSlice";
+import { setUser } from "@/lib/redux/slices/userSlice";
+
+function isUnauthorizedError(error: unknown): error is FetchBaseQueryError {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    error.status === 401
+  );
+}
 
 export default function TokenValidator() {
   const pathname = usePathname();
-  const router = useRouter();
   const dispatch = useDispatch();
   const hasValidatedOnce = useRef(false);
   const [getMyProfile, { isFetching }] = useLazyGetMyProfileQuery();
 
   useEffect(() => {
+    let cancelled = false;
+
     async function validateSession() {
       if (!pathname) {
         return;
@@ -22,17 +36,37 @@ export default function TokenValidator() {
 
       try {
         const profile = await getMyProfile().unwrap();
+
+        if (cancelled) {
+          return;
+        }
+
+        if (profile.userRoleId !== STUDENT_ROLE_ID) {
+          redirectStaffToAdminApp();
+          return;
+        }
+
         dispatch(setUser(mapMyProfileToStateUser(profile)));
-      } catch {
-        dispatch(clearUser());
-        router.replace("/login");
+      } catch (err) {
+        if (cancelled) {
+          return;
+        }
+        if (isUnauthorizedError(err)) {
+          void handleSessionExpired();
+        }
       } finally {
-        hasValidatedOnce.current = true;
+        if (!cancelled) {
+          hasValidatedOnce.current = true;
+        }
       }
     }
 
-    validateSession();
-  }, [pathname, getMyProfile, dispatch, router]);
+    void validateSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname, getMyProfile, dispatch]);
 
   if (!hasValidatedOnce.current || isFetching) {
     return (
