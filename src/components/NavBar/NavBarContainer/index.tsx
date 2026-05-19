@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Icon } from "@/components";
+import { BrandWordmark, Icon } from "@/components";
 import { Button, Collapsible, CollapsibleTrigger } from "@/components/ui";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -33,13 +33,13 @@ export default function NavbarContainer({
         data-state={dataState ? "open" : "closed"}
         className="p-3 data-[state=open]:rounded-3xl md:data-[state=open]:rounded-full rounded-full bg-white"
       >
-        <Collapsible className="ml-1">
-          <div className="flex justify-between items-center">
-            <Link
-              href="/"
-              className="text-2xl sm:text-[2rem] sm:ml-7 font-bold text-primary-4 -tracking-widest"
-            >
-              pastilolos
+        <Collapsible>
+          <div className="flex items-center justify-between">
+            <Link href="/" className="inline-flex shrink-0 items-center">
+              <BrandWordmark
+                variant="biru"
+                textClassName="text-[2rem] font-bold leading-none text-primary-4 -tracking-widest"
+              />
             </Link>
 
             {desktopMenu}

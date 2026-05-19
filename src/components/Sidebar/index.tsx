@@ -10,8 +10,8 @@ export default function Sidebar() {
   return (
     <SidebarContainer collapsible="icon" className="py-4 hidden lg:flex">
       <SidebarHeader>
-        <Link href="/">
-          <Logo className="text-center" />
+        <Link href="/" className="flex w-full justify-center">
+          <Logo />
         </Link>
       </SidebarHeader>
 
