@@ -53,6 +53,11 @@ const topMenuItems: menuItemsType[] = [
       },
     ],
   },
+  {
+    title: "QuestionBank",
+    href: "/question-bank",
+    icon: "exam-multiple-choice",
+  },
 ];
 
 const middleMenuItems: menuItemsType[] = [

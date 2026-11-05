@@ -1,17 +1,23 @@
 import BrandMark from "@/components/BrandMark";
 import { cn } from "@/lib/utils";
 
-export default function Logo(props: React.ComponentProps<"div">) {
+export default function Logo(props: React.ComponentProps<"div">) {[cite: 1]
   return (
     <div
       {...props}
-      className={cn("flex w-full items-center justify-center", props.className)}
+      className={cn(
+        "flex items-center justify-center gap-2 text-white",
+        props.className
+      )}
     >
-      <div className="flex items-center gap-2 text-2xl font-bold -tracking-widest sm:text-[2rem] group-data-[collapsible=icon]:contents">
-        <BrandMark variant="putih" className="shrink-0" />
-        <span className="whitespace-nowrap transition-all duration-300 group-data-[collapsible=icon]:hidden">
-          <span>P</span>astilolos
-        </span>
+      <BrandMark variant="putih" className="shrink-0" />
+      <div
+        className={cn(
+          "text-2xl font-bold tracking-widest sm:text-[2rem]",
+          "transition-all duration-300 group-data-[collapsible=icon]:hidden"
+        )}
+      >
+        <span>P</span>astilolos
       </div>
     </div>
   );

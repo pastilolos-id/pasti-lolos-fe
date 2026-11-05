@@ -54,6 +54,11 @@ const menuItems: menuItemsType[] = [
     ],
   },
   {
+    title: "QuestionBank",
+    href: "/question-bank",
+    icon: "exam-multiple-choice",
+  },
+  {
     title: "Pembelian",
     href: "/purchases",
     icon: "card",

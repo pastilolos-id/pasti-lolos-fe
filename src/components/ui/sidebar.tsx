@@ -3,11 +3,10 @@
 
 import { cva, type VariantProps } from "class-variance-authority";
 import Cookies from "js-cookie";
+import { ChevronLeft } from "lucide-react";
 import { Slot } from "radix-ui";
 import * as React from "react";
-import { Icon } from "@/components";
 import {
-  Button,
   Input,
   Separator,
   Sheet,
@@ -231,7 +230,7 @@ function SidebarContainer({
       <div
         data-slot="sidebar-container"
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+          "relative fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -259,34 +258,35 @@ function SidebarTrigger({
   className,
   onClick,
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: React.ComponentProps<"button">) {
   const { toggleSidebar, open } = useSidebar();
 
   return (
-    <Button
+    <button
+      type="button"
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      variant="ghost"
       className={cn(
-        "bg-primary-5 hover:bg-primary-5 rounded rounded-r-full p-2",
+        "flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/35 bg-primary-5 text-white shadow-[0_2px_8px_rgba(0,0,0,0.18)] transition-[background-color,transform] hover:bg-primary-4 hover:shadow-[0_3px_10px_rgba(0,0,0,0.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-5 active:scale-95",
         className,
       )}
+      aria-expanded={open}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      <Icon
-        aria-expanded={open}
+      <ChevronLeft
+        aria-hidden
+        strokeWidth={3}
         className={cn(
-          "transition-transform duration-300 delay-500",
+          "size-3 text-white transition-transform duration-300 ease-out",
           !open && "rotate-180",
         )}
-        name="arrow-left-circle"
       />
       <span className="sr-only">Toggle Sidebar</span>
-    </Button>
+    </button>
   );
 }
 
