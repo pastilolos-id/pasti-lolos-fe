@@ -7,6 +7,7 @@ import "@/lib/redux/api/homeApi";
 import "@/lib/redux/api/notificationsApi";
 import "@/lib/redux/api/ordersApi";
 import "@/lib/redux/api/profileApi";
+import "@/lib/redux/api/questionBankApi";
 import "@/lib/redux/api/studentsActivityApi";
 import examSessionReducer from "./slices/examSessionSlice";
 import userReducer from "./slices/userSlice";
