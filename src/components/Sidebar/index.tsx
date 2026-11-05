@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { Logo } from "@/components";[cite: 2]
+import { Logo } from "@/components";
 import {
   SidebarContainer,
   SidebarHeader,
   SidebarTrigger,
-} from "@/components/ui";[cite: 2]
-import SidebarContentSection from "./SidebarContentSection";[cite: 2]
-import SidebarFooterSection from "./SidebarFooterSection";[cite: 2]
+} from "@/components/ui";
+import SidebarContentSection from "./SidebarContentSection";
+import SidebarFooterSection from "./SidebarFooterSection";
 
-export default function Sidebar() {[cite: 2]
+export default function Sidebar() {
   return (
-    <SidebarContainer collapsible="icon" className="py-4 hidden lg:flex">[cite: 2]
+    <SidebarContainer collapsible="icon" className="py-4 hidden lg:flex">
       <SidebarHeader>
         <Link
           href="/home"

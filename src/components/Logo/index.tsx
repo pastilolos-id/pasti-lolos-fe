@@ -1,7 +1,7 @@
 import BrandMark from "@/components/BrandMark";
 import { cn } from "@/lib/utils";
 
-export default function Logo(props: React.ComponentProps<"div">) {[cite: 1]
+export default function Logo(props: React.ComponentProps<"div">) {
   return (
     <div
       {...props}
