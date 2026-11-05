@@ -47,22 +47,22 @@ export default function TopBar({ ...props }: React.ComponentProps<"div">) {
             </Link>
 
             <button
-                type="button"
-                onClick={() => setIsNotificationsOpen((prev) => !prev)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setIsNotificationsOpen((prev) => !prev);
-                  }
-                }}
-                className="relative p-3 border border-primary-4/50 rounded-full cursor-pointer"
-              >
-                <Icon
-                  viewBox="0 0 24 24"
-                  name="notification"
-                  pathClassName="fill-primary-5"
-                  size={20}
-                />
+              type="button"
+              onClick={() => setIsNotificationsOpen((prev) => !prev)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsNotificationsOpen((prev) => !prev);
+                }
+              }}
+              className="relative p-3 border border-primary-4/50 rounded-full cursor-pointer"
+            >
+              <Icon
+                viewBox="0 0 24 24"
+                name="notification"
+                pathClassName="fill-primary-5"
+                size={20}
+              />
               <NotificationIconBadge count={unreadCount} />
             </button>
           </div>

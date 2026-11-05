@@ -17,7 +17,9 @@ export default function BrandWordmark({
   return (
     <span className={cn("inline-flex shrink-0 items-center gap-2", className)}>
       <BrandMark variant={variant} size={size} className="size-10 shrink-0" />
-      <span className={cn("shrink-0 leading-none", textClassName)}>Pastilolos</span>
+      <span className={cn("shrink-0 leading-none", textClassName)}>
+        Pastilolos
+      </span>
     </span>
   );
 }
