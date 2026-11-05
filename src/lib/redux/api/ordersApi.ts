@@ -11,7 +11,10 @@ export const ordersApi = baseApi.injectEndpoints({
         url: "/orders/history",
       }),
     }),
-    getOrderHistoryDetail: build.query<OrderHistoryDetailSuccessResponse, number>({
+    getOrderHistoryDetail: build.query<
+      OrderHistoryDetailSuccessResponse,
+      number
+    >({
       query: (id) => ({
         url: `/orders/history/${id}`,
       }),

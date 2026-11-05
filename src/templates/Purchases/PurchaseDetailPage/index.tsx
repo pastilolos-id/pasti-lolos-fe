@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import qrisImage from "@/assets/images/QRIS.jpeg";
 import { Icon } from "@/components";
 import { useGetOrderHistoryDetailQuery } from "@/lib/redux/api/ordersApi";
 import type { OrdersHistoryErrorResponse } from "@/lib/redux/api/types/orders";
@@ -58,16 +57,10 @@ export default function PurchaseDetailPage() {
   const numericId = Number(id);
   const isValidId = Number.isInteger(numericId) && numericId > 0;
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isError,
-    error,
-    refetch,
-  } = useGetOrderHistoryDetailQuery(numericId, {
-    skip: !isValidId,
-  });
+  const { data, isLoading, isFetching, isError, error, refetch } =
+    useGetOrderHistoryDetailQuery(numericId, {
+      skip: !isValidId,
+    });
 
   const isInitialLoading = isLoading || (isFetching && !data);
   const purchase = data ? mapOrderHistoryDetailToUi(data) : null;
@@ -99,7 +92,9 @@ export default function PurchaseDetailPage() {
           </div>
         ) : isError || !purchase || !status ? (
           <div className="rounded-3xl border border-neutral-3 p-6">
-            <p className="text-b2 text-neutral-6">{getBackendErrorMessage(error)}</p>
+            <p className="text-b2 text-neutral-6">
+              {getBackendErrorMessage(error)}
+            </p>
             <button
               type="button"
               onClick={() => void refetch()}
@@ -113,7 +108,9 @@ export default function PurchaseDetailPage() {
             <div className="space-y-6">
               <section>
                 <h2 className="mb-2 text-s1 text-neutral-6">Nama Item</h2>
-                <p className="max-w-4xl text-b3 text-neutral-5">{purchase.title}</p>
+                <p className="max-w-4xl text-b3 text-neutral-5">
+                  {purchase.title}
+                </p>
               </section>
 
               <section>
@@ -130,12 +127,15 @@ export default function PurchaseDetailPage() {
 
               <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-2">
                 <section>
-                  <h2 className="mb-3 text-s1 text-neutral-6">Metode Pembayaran</h2>
+                  <h2 className="mb-3 text-s1 text-neutral-6">
+                    Metode Pembayaran
+                  </h2>
                   <div className="flex max-w-sm items-center gap-4 rounded-2xl border border-neutral-3 p-4">
                     <div
                       className={cn(
                         "text-s1 font-semibold",
-                        providerStyles[purchase.providerDisplayName] ?? "text-neutral-6",
+                        providerStyles[purchase.providerDisplayName] ??
+                          "text-neutral-6",
                       )}
                     >
                       {purchase.providerDisplayName}
@@ -145,13 +145,17 @@ export default function PurchaseDetailPage() {
                         {purchase.paymentMethodLabel}
                       </p>
                       {isQrisMethod ? (
-                        <p className="text-b2 text-neutral-5">Pembayaran via QRIS</p>
+                        <p className="text-b2 text-neutral-5">
+                          Pembayaran via QRIS
+                        </p>
                       ) : (
                         <>
                           <p className="text-b2 font-semibold text-neutral-6">
                             {purchase.accountNumber}
                           </p>
-                          <p className="text-b2 text-neutral-5">{purchase.accountName}</p>
+                          <p className="text-b2 text-neutral-5">
+                            {purchase.accountName}
+                          </p>
                         </>
                       )}
                     </div>
@@ -162,8 +166,12 @@ export default function PurchaseDetailPage() {
                 </section>
 
                 <section>
-                  <h2 className="mb-3 text-s1 text-neutral-6">Waktu Transaksi</h2>
-                  <p className="text-b2 text-neutral-5">{purchase.transactionTime}</p>
+                  <h2 className="mb-3 text-s1 text-neutral-6">
+                    Waktu Transaksi
+                  </h2>
+                  <p className="text-b2 text-neutral-5">
+                    {purchase.transactionTime}
+                  </p>
                 </section>
 
                 <section>
@@ -188,7 +196,7 @@ export default function PurchaseDetailPage() {
                       onClick={() => setIsProofPreviewOpen(true)}
                       className="rounded-xl border border-neutral-3 bg-white p-1.5"
                     >
-                      <div className="relative h-[100px] w-[78px] overflow-hidden rounded-md bg-neutral-2">
+                      <div className="relative h-25 w-19.5 overflow-hidden rounded-md bg-neutral-2">
                         <Image
                           src={purchase.receiptUrl}
                           alt="Bukti pembayaran"
@@ -202,7 +210,9 @@ export default function PurchaseDetailPage() {
                   ) : (
                     <div className="flex min-h-28 items-center gap-4">
                       <div className="flex h-24 w-40 items-center justify-center rounded-2xl border border-dashed border-neutral-4 bg-neutral-2 text-neutral-4">
-                        <span className="text-c1">Bukti pembayaran tidak tersedia</span>
+                        <span className="text-c1">
+                          Bukti pembayaran tidak tersedia
+                        </span>
                       </div>
                     </div>
                   )}
@@ -210,7 +220,9 @@ export default function PurchaseDetailPage() {
               </section>
 
               <section className="pb-4">
-                <h2 className="mb-3 text-s1 text-neutral-6">Ringkasan Pesanan</h2>
+                <h2 className="mb-3 text-s1 text-neutral-6">
+                  Ringkasan Pesanan
+                </h2>
                 <div className="space-y-2 border-b border-neutral-3 pb-4 text-b2">
                   <div className="flex items-center justify-between gap-4">
                     <span className="text-neutral-5">Harga Paket</span>
@@ -226,7 +238,9 @@ export default function PurchaseDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-4 py-4 border-b border-neutral-3">
-                  <span className="text-s1 text-neutral-6">Total Pembayaran</span>
+                  <span className="text-s1 text-neutral-6">
+                    Total Pembayaran
+                  </span>
                   <span className="text-h4 text-red">
                     {formatToCurrency(purchase.price)}
                   </span>

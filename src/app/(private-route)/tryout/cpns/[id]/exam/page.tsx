@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import ExamPage from "@/templates/Tryout/ExamPage";
 
 interface CpnsExamPageProps {
@@ -7,5 +8,9 @@ interface CpnsExamPageProps {
 export default async function CpnsExamPage({ params }: CpnsExamPageProps) {
   const { id } = await params;
 
-  return <ExamPage category="cpns" id={id} />;
+  return (
+    <Suspense fallback={null}>
+      <ExamPage category="cpns" id={id} />
+    </Suspense>
+  );
 }

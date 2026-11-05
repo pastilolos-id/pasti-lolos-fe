@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { Provider } from "react-redux";
+import { SessionProvider } from "@/providers/session-provider";
 import { store } from "./store";
 
 interface Props {
@@ -9,5 +10,9 @@ interface Props {
 }
 
 export function ReduxProvider({ children }: Props) {
-  return <Provider store={store}>{children}</Provider>;
+  return (
+    <Provider store={store}>
+      <SessionProvider>{children}</SessionProvider>
+    </Provider>
+  );
 }

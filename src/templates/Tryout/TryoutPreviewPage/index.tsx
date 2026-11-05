@@ -30,7 +30,7 @@ function mapSubExams(
     title: subExam.name,
     totalQuestions: subExam.totalSoal,
     passingGrade: subExam.passingGrade,
-    status: subExam.status as any,
+    status: subExam.status,
     score: subExam.score, // Ambil score per satuan sub-ujian
   }));
 }
@@ -47,7 +47,6 @@ export default function TryoutPreviewPage({
     data: tryout,
     isLoading,
     isError,
-    refetch,
   } = useGetExamPackageDetailQuery(numericId ?? skipToken, {
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,

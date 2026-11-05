@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Icon, Notifications } from "@/components";
+import { BrandWordmark, Icon, Notifications } from "@/components";
 import NotificationIconBadge from "@/components/Notifications/NotificationIconBadge";
 import { Card, CardContent } from "@/components/ui";
 import { useGetNotificationsUnreadCountQuery } from "@/lib/redux/api/notificationsApi";
@@ -38,16 +38,15 @@ export default function TopBar({ ...props }: React.ComponentProps<"div">) {
           data-state={isNotificationsOpen ? "open" : "closed"}
           className="p-3 rounded-full bg-white"
         >
-          <div className="ml-1">
-            <div className="flex justify-between items-center">
-              <Link
-                href="/"
-                className="text-2xl sm:text-[2rem] sm:ml-7 font-bold text-primary-4 -tracking-widest"
-              >
-                pastilolos
-              </Link>
+          <div className="flex items-center justify-between">
+            <Link href="/" className="inline-flex shrink-0 items-center">
+              <BrandWordmark
+                variant="biru"
+                textClassName="text-[2rem] font-bold leading-none text-primary-4 -tracking-widest"
+              />
+            </Link>
 
-              <button
+            <button
                 type="button"
                 onClick={() => setIsNotificationsOpen((prev) => !prev)}
                 onKeyDown={(e) => {
@@ -64,9 +63,8 @@ export default function TopBar({ ...props }: React.ComponentProps<"div">) {
                   pathClassName="fill-primary-5"
                   size={20}
                 />
-                <NotificationIconBadge count={unreadCount} />
-              </button>
-            </div>
+              <NotificationIconBadge count={unreadCount} />
+            </button>
           </div>
         </CardContent>
       </Card>

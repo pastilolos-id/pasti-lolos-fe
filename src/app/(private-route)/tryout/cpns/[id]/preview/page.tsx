@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import TryoutPreviewPage from "@/templates/Tryout/TryoutPreviewPage";
 
 interface TryoutCpnsDetailRouteProps {
@@ -8,5 +9,9 @@ export default async function TryoutCpnsDetailRoute({
   params,
 }: TryoutCpnsDetailRouteProps) {
   const { id } = await params;
-  return <TryoutPreviewPage category="cpns" tryoutId={id} />;
+  return (
+    <Suspense fallback={null}>
+      <TryoutPreviewPage category="cpns" tryoutId={id} />
+    </Suspense>
+  );
 }

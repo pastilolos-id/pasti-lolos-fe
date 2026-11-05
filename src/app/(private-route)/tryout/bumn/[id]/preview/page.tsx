@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import TryoutPreviewPage from "@/templates/Tryout/TryoutPreviewPage";
 
 interface TryoutBumnDetailRouteProps {
@@ -8,5 +9,9 @@ export default async function TryoutBumnDetailRoute({
   params,
 }: TryoutBumnDetailRouteProps) {
   const { id } = await params;
-  return <TryoutPreviewPage category="bumn" tryoutId={id} />;
+  return (
+    <Suspense fallback={null}>
+      <TryoutPreviewPage category="bumn" tryoutId={id} />
+    </Suspense>
+  );
 }

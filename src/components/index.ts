@@ -3,6 +3,8 @@ export { default as FilterSelect } from "./FilterSelect";
 export type { FilterType } from "./FilterSelect/types";
 export type { FormHandle } from "./Form";
 export { default as Form } from "./Form";
+export { default as BrandMark } from "./BrandMark";
+export { default as BrandWordmark } from "./BrandWordmark";
 export { default as Icon } from "./Icon";
 export { default as Logo } from "./Logo";
 export { default as Navbar } from "./NavBar";
