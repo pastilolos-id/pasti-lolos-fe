@@ -10,6 +10,7 @@ import {
 } from "@/components/ui";
 import { cn, formatToCurrency } from "@/lib/utils";
 import { planData } from "./pricingData";
+import Link from "next/link";
 
 export default function Pricing() {
   return (
@@ -26,27 +27,26 @@ export default function Pricing() {
           <Card
             key={plan.id}
             className={cn(
-              "max-w-136 rounded-card-medium p-8 gap-0", // Class dasar
+              "w-max shrink-0 rounded-card-medium p-8 gap-0",
               plan.isRecommended
                 ? "bg-gradient-pricing-card-recommended shadow-pricing-card-recommended text-white lg:rotate-1 lg:translate-y-1"
                 : "bg-inherit text-neutral-6",
             )}
-            // className={`max-w-136 rounded-card-medium p-8 gap-0 ${plan.isRecommended ? "bg-gradient-pricing-card-recommended shadow-pricing-card-recommended inset-shadow-pricing-card-recommended text-white lg:rotate-1 lg:translate-y-1" : "bg-inherit text-neutral-6"}`}
           >
-            <CardHeader className="mb-6.5 p-0">
-              <CardTitle className="mb-3 gap-0 font-extrabold text-2xl leading-1.4 tracking-normal">
+            <CardHeader className="mb-6.5 min-w-max p-0 @container-normal">
+              <CardTitle className="mb-3 gap-0 whitespace-nowrap font-extrabold text-2xl leading-1.4 tracking-normal">
                 {plan.title}
               </CardTitle>
-              <CardDescription className="font-extrabold text-h2">
+              <CardDescription className="whitespace-nowrap font-extrabold text-h2">
                 {formatToCurrency(plan.price)}
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="flex flex-col gap-4 mb-13 p-0 ">
+            <CardContent className="mb-13 flex w-full flex-col gap-4 p-0">
               {plan.benefitList.map((benefit) => (
                 <div
                   key={benefit.order}
-                  className={`rounded-full p-4 flex items-center gap-3 border border-[#E3E3E3] inset-shadow-secondary-button ${benefit.isInclude ? "bg-white text-neutral-6" : "bg-red text-white"}`}
+                  className={`flex w-full items-center gap-3 rounded-full border border-[#E3E3E3] p-4 inset-shadow-secondary-button ${benefit.isInclude ? "bg-white text-neutral-6" : "bg-red text-white"}`}
                 >
                   <Icon
                     name={
@@ -62,18 +62,22 @@ export default function Pricing() {
 
             <CardFooter className="p-0">
               {plan.isRecommended ? (
-                <Button
+              <Button
                   variant="primary"
                   className="w-full rounded-full text-2xl border border-white"
                 >
-                  Beli Sekarang
+                  <Link href="/login">
+                    Beli Sekarang
+                  </Link>
                 </Button>
               ) : (
                 <Button
                   variant="secondary"
                   className="w-full rounded-full text-2xl border border-[#80B0FF80]"
                 >
-                  Beli Sekarang
+                  <Link href="/login">
+                    Beli Sekarang
+                  </Link>
                 </Button>
               )}
             </CardFooter>

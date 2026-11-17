@@ -9,6 +9,10 @@ import { Form, type FormHandle } from "@/components";
 import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
 import { getAdminAppUrl } from "@/lib/auth/admin-app-url";
 import { startGoogleOAuthRedirect } from "@/lib/auth/googleAuth";
+import {
+  beginVoluntaryLogout,
+  endVoluntaryLogout,
+} from "@/lib/auth/session-lifecycle";
 import { STUDENT_ROLE_ID } from "@/lib/auth/types";
 import { removeToken } from "@/lib/cookies/tokenCookies";
 import { useLoginMutation, useLogoutMutation } from "@/lib/redux/api/authApi";
@@ -67,6 +71,7 @@ export default function LoginPage() {
       const res = await loginUser(body).unwrap();
 
       if (res.user.userRoleId !== STUDENT_ROLE_ID) {
+        beginVoluntaryLogout();
         try {
           await logoutUser().unwrap();
         } catch {
@@ -78,6 +83,7 @@ export default function LoginPage() {
         return;
       }
 
+      endVoluntaryLogout();
       dispatch(setUser(mapApiUserToStateUser(res.user)));
       router.push("/home");
     } catch (err) {

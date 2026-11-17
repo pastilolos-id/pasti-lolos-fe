@@ -5,12 +5,13 @@ import {
   closeSessionExpiredModal,
   openSessionExpiredModal,
   setHandlingSessionExpiry,
+  setVoluntaryLogout,
 } from "@/lib/redux/slices/sessionSlice";
 import { clearUser } from "@/lib/redux/slices/userSlice";
 import { store } from "@/lib/redux/store";
 
 export const SESSION_EXPIRED_MESSAGE =
-  "Sesi anda telah habis, silakan logout kembali";
+  "Sesi anda telah habis, silakan login kembali";
 
 export const SESSION_EXPIRED_REDIRECT_MS = 2500;
 
@@ -39,6 +40,14 @@ export function setSessionExpiredRedirect(redirect: () => void): void {
   sessionExpiredRedirect = redirect;
 }
 
+export function beginVoluntaryLogout(): void {
+  store.dispatch(setVoluntaryLogout(true));
+}
+
+export function endVoluntaryLogout(): void {
+  store.dispatch(setVoluntaryLogout(false));
+}
+
 function redirectToLogin(): void {
   if (sessionExpiredRedirect) {
     sessionExpiredRedirect();
@@ -53,7 +62,7 @@ export { shouldTriggerSessionExpired } from "@/lib/auth/session-guards";
 
 export async function handleSessionExpired(): Promise<void> {
   const { session } = store.getState();
-  if (session.isHandlingSessionExpiry) {
+  if (session.isHandlingSessionExpiry || session.isVoluntaryLogout) {
     return;
   }
 

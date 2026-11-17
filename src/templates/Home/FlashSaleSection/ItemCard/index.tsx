@@ -27,9 +27,12 @@ export default function ItemCard({
 
   return (
     <div className="flex flex-col gap-6 flex-1 bg-white rounded-3xl p-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold">{title}</h3>
-        <p className="text-[40px]">⚡</p>
+      <div>
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold">{title}</h3>
+          <p className="text-[40px]">⚡</p>
+        </div>
+        <p className="text-sm text-gray-500">Termasuk TIU, TWK, dan TKP</p>
       </div>
 
       <div className="text-sm">

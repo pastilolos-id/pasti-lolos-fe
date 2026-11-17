@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { redirectStaffToAdminApp } from "@/lib/auth/admin-app-url";
-import { handleSessionExpired } from "@/lib/auth/session-lifecycle";
+import {
+  endVoluntaryLogout,
+  handleSessionExpired,
+} from "@/lib/auth/session-lifecycle";
 import { STUDENT_ROLE_ID } from "@/lib/auth/types";
 import { useLazyGetMyProfileQuery } from "@/lib/redux/api/authApi";
 import { mapMyProfileToStateUser } from "@/lib/redux/api/mapLoginApiErrors";
@@ -46,6 +49,7 @@ export default function TokenValidator() {
           return;
         }
 
+        endVoluntaryLogout();
         dispatch(setUser(mapMyProfileToStateUser(profile)));
       } catch (err) {
         if (cancelled) {

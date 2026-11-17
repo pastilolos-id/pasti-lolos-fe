@@ -15,68 +15,68 @@ type planDataType = {
 const planData: planDataType[] = [
   {
     id: 1,
-    title: "Paket Tryout Basic",
-    price: 250000,
+    title: "Tryout CPNS 2026 - Paket 1",
+    price: 13000,
     isRecommended: false,
     benefitList: [
       {
         order: 1,
         isInclude: true,
-        name: "Soal-soal Tryout",
+        name: "TWK: Tes Wawasan Kebangsaan",
       },
       {
         order: 2,
         isInclude: true,
-        name: "Lifetime acces",
+        name: "TKP: Tes Karakteristik Pribadi",
       },
       {
         order: 3,
         isInclude: true,
-        name: "Pembahasan soal",
+        name: "TIU: Tes Intelegensi Umum",
       },
-      {
-        order: 4,
-        isInclude: true,
-        name: "Bisa diakses kapan saja, di mana saja",
-      },
-      {
-        order: 5,
-        isInclude: false,
-        name: "Tidak termasuk materi",
-      },
+      // {
+      //   order: 4,
+      //   isInclude: true,
+      //   name: "Bisa diakses kapan saja, di mana saja",
+      // },
+      // {
+      //   order: 5,
+      //   isInclude: false,
+      //   name: "Tidak termasuk materi",
+      // },
     ],
   },
   {
     id: 2,
-    title: "Paket Tryout Intensif",
-    price: 350000,
+    title: "Tryout CPNS 2026 - Paket 2",
+    price: 13000,
     isRecommended: true,
     benefitList: [
       {
         order: 1,
         isInclude: true,
-        name: "Soal-soal Tryout",
+        name: "TWK: Tes Wawasan Kebangsaan",
       },
       {
         order: 2,
         isInclude: true,
-        name: "Lifetime acces",
+        name: "TKP: Tes Karakteristik Pribadi",
       },
       {
         order: 3,
         isInclude: true,
-        name: "Pembahasan soal",
+        name: "TIU: Tes Intelegensi Umum",
       },
-      {
-        order: 4,
-        isInclude: true,
-        name: "Bisa diakses kapan saja, di mana saja",
-      },
-      {
-        order: 5,
-        isInclude: true,
-        name: "Termasuk materi",
-      },
+      // {
+      //   order: 4,
+      //   isInclude: true,
+      //   name: "Bisa diakses kapan saja, di mana saja",
+      // },
+      // {
+      //   order: 5,
+      //   isInclude: true,
+      //   name: "Termasuk materi",
+      // },
     ],
   },
 ];

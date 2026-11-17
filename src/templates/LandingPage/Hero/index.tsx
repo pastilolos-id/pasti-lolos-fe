@@ -27,12 +27,12 @@ export default function Hero() {
 
       <div className="relative z-0 md:-mt-54 lg:-mt-140">
         <Image
-          className="ml-auto md:hidden lg:block"
+          className="ml-auto md:hidden"
           src={HeroImageMobile}
           alt="landing page hero"
         />
         <Image
-          className="md:block lg:hidden hidden w-full"
+          className="md:block hidden w-full pl-50"
           src={HeroImageTablet}
           alt="landing page hero"
         />

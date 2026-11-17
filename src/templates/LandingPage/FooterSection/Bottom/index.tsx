@@ -1,4 +1,5 @@
 import { Icon } from "@/components";
+import Link from "next/link";
 
 export default function Bottom() {
   return (
@@ -7,8 +8,10 @@ export default function Bottom() {
         © 2026 Pastilolos. All Rights Reserved
       </p>
       <div className="flex">
-        <Icon name="linkedin-fill" size={43} />
-        <Icon name="instagram-fill" size={43} />
+        {/* <Icon name="linkedin-fill" size={43} /> */}
+        <Link target="_blank" href="https://www.instagram.com/pastilolos.id/"> 
+          <Icon name="instagram-fill" size={43} />
+        </Link>
       </div>
     </div>
   );
