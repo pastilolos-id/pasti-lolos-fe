@@ -35,7 +35,7 @@ export default function SidebarContentSection() {
   const unreadCount = unreadData?.count ?? 0;
 
   return (
-    <SidebarContent className="grid grid-rows-3">
+    <SidebarContent>
       <SidebarGroup>
         <SidebarMenu>
           <Accordion type="single" collapsible>
@@ -59,7 +59,7 @@ export default function SidebarContentSection() {
         </SidebarMenu>
       </SidebarGroup>
 
-      <SidebarGroup className="mt-3">
+      <SidebarGroup>
         <Separator className="data-[orientation=horizontal]:w-auto mx-4 bg-primary-4 mb-6" />
         <SidebarGroupLabel>Lainnya</SidebarGroupLabel>
         <SidebarMenu>
