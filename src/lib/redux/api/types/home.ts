@@ -15,6 +15,7 @@ export interface HomeFlashSaleApiItem {
   id: number;
   title: string;
   label: string;
+  subjects?: string[] | null;
   originalPrice: number;
   salePrice: number;
   ctaText: string;

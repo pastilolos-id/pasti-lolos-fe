@@ -11,6 +11,7 @@ export default function ItemCard({
   checkoutHref,
   ctaText,
   title,
+  subjects,
   originalPrice,
   salePrice,
 }: HomeFlashSaleItemViewModel) {
@@ -25,6 +26,11 @@ export default function ItemCard({
   const href = purchased ? `/tryout/${category}/${id}/preview` : checkoutHref;
   const label = purchased ? "Lihat Paket" : ctaText;
 
+  const subjectsText =
+    subjects.length <= 1
+      ? subjects[0] ?? ""
+      : `${subjects.slice(0, -1).join(", ")}, dan ${subjects.at(-1)}`;
+
   return (
     <div className="flex flex-col gap-6 flex-1 bg-white rounded-3xl p-4">
       <div>
@@ -32,7 +38,9 @@ export default function ItemCard({
           <h3 className="font-bold">{title}</h3>
           <p className="text-[40px]">⚡</p>
         </div>
-        <p className="text-sm text-gray-500">Termasuk TIU, TWK, dan TKP</p>
+        <p className="text-sm text-gray-500">
+          Termasuk {subjectsText}
+        </p>
       </div>
 
       <div className="text-sm">

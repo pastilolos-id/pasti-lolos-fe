@@ -17,6 +17,7 @@ export interface HomeFlashSaleItemViewModel {
   id: number;
   title: string;
   label: string;
+  subjects: string[];
   originalPrice: number;
   salePrice: number;
   ctaText: string;
@@ -84,6 +85,7 @@ function mapFlashSaleItem(
     id: item.id,
     title: item.title,
     label,
+    subjects: item.subjects ?? [],
     originalPrice: item.originalPrice,
     salePrice: item.salePrice,
     ctaText: item.ctaText || "Beli Sekarang",
