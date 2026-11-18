@@ -62,22 +62,18 @@ export default function Pricing() {
 
             <CardFooter className="p-0">
               {plan.isRecommended ? (
-              <Button
+                <Button
                   variant="primary"
                   className="w-full rounded-full text-2xl border border-white"
                 >
-                  <Link href="/login">
-                    Beli Sekarang
-                  </Link>
+                  <Link href="/login">Beli Sekarang</Link>
                 </Button>
               ) : (
                 <Button
                   variant="secondary"
                   className="w-full rounded-full text-2xl border border-[#80B0FF80]"
                 >
-                  <Link href="/login">
-                    Beli Sekarang
-                  </Link>
+                  <Link href="/login">Beli Sekarang</Link>
                 </Button>
               )}
             </CardFooter>

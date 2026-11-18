@@ -9,7 +9,7 @@ export default function Bottom() {
       </p>
       <div className="flex">
         {/* <Icon name="linkedin-fill" size={43} /> */}
-        <Link target="_blank" href="https://www.instagram.com/pastilolos.id/"> 
+        <Link target="_blank" href="https://www.instagram.com/pastilolos.id/">
           <Icon name="instagram-fill" size={43} />
         </Link>
       </div>

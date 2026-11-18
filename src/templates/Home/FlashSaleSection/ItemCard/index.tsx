@@ -28,7 +28,7 @@ export default function ItemCard({
 
   const subjectsText =
     subjects.length <= 1
-      ? subjects[0] ?? ""
+      ? (subjects[0] ?? "")
       : `${subjects.slice(0, -1).join(", ")}, dan ${subjects.at(-1)}`;
 
   return (
@@ -38,9 +38,7 @@ export default function ItemCard({
           <h3 className="font-bold">{title}</h3>
           <p className="text-[40px]">⚡</p>
         </div>
-        <p className="text-sm text-gray-500">
-          Termasuk {subjectsText}
-        </p>
+        <p className="text-sm text-gray-500">Termasuk {subjectsText}</p>
       </div>
 
       <div className="text-sm">

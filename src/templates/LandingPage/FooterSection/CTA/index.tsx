@@ -12,9 +12,7 @@ export default function CTA() {
         <p> Mulai latihan sekarang dan tingkatkan peluang kelulusanmu.</p>
       </div>
       <Button className="mb-8.5 border border-white inset-shadow-primary-button text-base px-8">
-        <Link href="/login">
-          Belajar Sekarang
-        </Link>
+        <Link href="/login">Belajar Sekarang</Link>
       </Button>
     </div>
   );
