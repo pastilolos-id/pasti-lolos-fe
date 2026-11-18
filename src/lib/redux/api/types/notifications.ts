@@ -45,7 +45,7 @@ export interface NotificationsListQueryArg {
 export const NOTIFICATIONS_PAGE_SIZE_DEFAULT = 20;
 export const NOTIFICATIONS_PREVIEW_LIMIT = 5;
 
-/** GET /notifications/unread-count — adjust field names if BE differs. */
+/** Normalized unread badge count (BE: `{ unreadCount }`). */
 export interface NotificationsUnreadCountResponse {
   count: number;
 }

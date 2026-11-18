@@ -234,12 +234,16 @@ function normalizeUnreadCountResponse(
     }
     return null;
   };
-  const c0 = asCount(o.count);
+  const pickCount = (obj: Record<string, unknown>): number | null => {
+    // BE returns `{ unreadCount }`; keep `count` as a fallback alias.
+    return asCount(obj.unreadCount) ?? asCount(obj.count);
+  };
+  const c0 = pickCount(o);
   if (c0 != null) {
     return { count: c0 };
   }
   if (o.data && typeof o.data === "object" && !Array.isArray(o.data)) {
-    const c1 = asCount((o.data as Record<string, unknown>).count);
+    const c1 = pickCount(o.data as Record<string, unknown>);
     if (c1 != null) {
       return { count: c1 };
     }

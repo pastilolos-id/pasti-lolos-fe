@@ -14,7 +14,7 @@ export default function NotificationIconBadge({
   return (
     <span
       className={cn(
-        "pointer-events-none absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red px-1 text-[10px] font-bold leading-none text-white",
+        "pointer-events-none absolute -right-0.5 -top-0.5 flex w-4.5 lg:w-3.5 aspect-square items-center justify-center rounded-full bg-red text-xs lg:text-[10px] font-bold leading-none text-white",
         className,
       )}
       title={`${count} belum dibaca`}

@@ -74,14 +74,19 @@ export default function SidebarContentSection() {
                     <PopoverTrigger asChild>
                       <SidebarMenuButton
                         tooltip={menu.title}
-                        className="relative overflow-visible"
+                        className="relative overflow-visible group-data-[collapsible=icon]:overflow-visible"
                       >
-                        <Icon size={24} viewBox="0 0 24 24" name={menu.icon} />
-                        <NotificationIconBadge
-                          count={unreadCount}
-                          className="right-1 top-1"
-                        />
-                        <p>{menu.title}</p>
+                        <span className="relative inline-flex shrink-0">
+                          <Icon
+                            size={24}
+                            viewBox="0 0 24 24"
+                            name={menu.icon}
+                          />
+                          <NotificationIconBadge count={unreadCount} />
+                        </span>
+                        <p className="group-data-[collapsible=icon]:hidden">
+                          {menu.title}
+                        </p>
                       </SidebarMenuButton>
                     </PopoverTrigger>
                     <PopoverContent
